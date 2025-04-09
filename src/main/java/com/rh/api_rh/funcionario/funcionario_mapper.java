@@ -1,0 +1,73 @@
+package com.rh.api_rh.funcionario;
+
+import com.rh.api_rh.DTO.cadastro_dto;
+import com.rh.api_rh.endereco.endereco_mapper;
+import com.rh.api_rh.endereco.endereco_model;
+import com.rh.api_rh.endereco.endereco_repository;
+import com.rh.api_rh.endereco.endereco_service;
+import com.rh.api_rh.telefone.telefone_repository;
+import com.rh.api_rh.telefone.telefone_service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import com.rh.api_rh.setor.setor_model;
+import com.rh.api_rh.setor.setor_service;
+import com.rh.api_rh.telefone.telefone_mapper;
+import com.rh.api_rh.telefone.telefone_model;
+import com.rh.api_rh.usuario.usuario_model;
+import com.rh.api_rh.usuario.usuario_service;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class funcionario_mapper {
+
+
+    final telefone_mapper telefoneMapper;
+    final endereco_mapper enderecoMapper;
+    final telefone_service telefoneService;
+    final endereco_service enderecoService;
+    final setor_service setorService;
+    final usuario_service usuarioService;
+
+
+
+
+    public funcionario_model convert(cadastro_dto dto) {
+
+        /// Nesta parte primeiro precisamos criar as entidades telefone e endereco, e também pesquisar a entidade setor para adicionar ao funcionario
+        setor_model setor = setorService.pesquisa(Long.parseLong(dto.getNumerosetor()));
+
+        telefone_model telefone = telefoneMapper.convert(dto);
+        endereco_model endereco = enderecoMapper.convert(dto);
+
+        telefoneService.cadastrar(telefone);
+        enderecoService.cadastrar(endereco);
+
+        usuario_model usuario = usuarioService.criar();
+
+
+        funcionario_model funcionario = new funcionario_model();
+        UUID id = UUID.randomUUID();
+        funcionario.setId(id);
+        funcionario.setNome(dto.getNome());
+        funcionario.setEmail(dto.getEmail());
+        funcionario.setCpf(dto.getCpf());
+        funcionario.setCargo(dto.getCargo());
+        funcionario.setContabancaria(dto.getContabancaria());
+        funcionario.setDataentrada(dto.getDataentrada());
+        funcionario.setSalario(dto.getSalario());
+        funcionario.setData_nascimento(dto.getData_nascimento());
+
+        funcionario.setId_setor(setor);
+        funcionario.setId_telefone(telefone);
+        funcionario.setId_endereco(endereco);
+        funcionario.setIdusuario(usuario);
+
+        return funcionario;
+
+    }
+
+}
