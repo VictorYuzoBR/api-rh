@@ -57,4 +57,17 @@ public class registro_service {
         return senha;
     }
 
+
+    public String gerarcodigotrocasenha() {
+        String codigo = "";
+
+        for (int i = 0; i < 4; i++) {
+            codigo = codigo + numeros[rand.nextInt(numeros.length)];
+        }
+
+        return codigo;
+    }
+
+
+
 }

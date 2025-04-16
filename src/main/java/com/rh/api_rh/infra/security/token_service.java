@@ -24,7 +24,7 @@ public class token_service {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withIssuer("Yuzo")
-                    .withSubject(funcionario.getIdusuario().getRegistro())
+                    .withSubject(funcionario.getId().toString())
                     .withExpiresAt(generateExpiration())
                     .sign(algorithm);
             return token;

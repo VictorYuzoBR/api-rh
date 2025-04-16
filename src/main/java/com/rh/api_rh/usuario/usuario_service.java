@@ -53,4 +53,31 @@ public class usuario_service {
         }
     }
 
+    public usuario_model buscar(UUID id) {
+        try {
+            return usuario_repository.findById(id).get();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String trocasenha(String senha, UUID id) {
+
+        usuario_model usuario = buscar(id);
+        String senhaoriginal = usuario.getSenha();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if (encoder.matches(senha, senhaoriginal)) {
+            return("A senha nova não pode ser igual a antiga");
+        } else {
+
+            String senhahash = new BCryptPasswordEncoder().encode(senha);
+            usuario.setSenha(senhahash);
+            usuario_repository.save(usuario);
+            return("A senha atualizada com sucesso!");
+
+        }
+
+    }
+
 }
