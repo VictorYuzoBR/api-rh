@@ -16,12 +16,18 @@ public class usuario_service {
     @Autowired
     private usuario_repository usuario_repository;
 
-    public usuario_model criar() {
+    public usuarioprovisorio criar() {
 
+        usuarioprovisorio provisorio = new usuarioprovisorio();
         usuario_model usuario = new usuario_model();
         UUID id = UUID.randomUUID();
         String senha = registro_service.gerarsenhaaleatoria();
         String registro = registro_service.gerarregistro();
+
+        provisorio.setSenha(senha);
+        provisorio.setRegistro(registro);
+        provisorio.setId(id);
+
         String senhahash = new BCryptPasswordEncoder().encode(senha);
         System.out.print(senha);
 
@@ -30,7 +36,7 @@ public class usuario_service {
         usuario.setRegistro(registro);
 
         registrar(usuario);
-        return usuario;
+        return provisorio;
 
     }
 

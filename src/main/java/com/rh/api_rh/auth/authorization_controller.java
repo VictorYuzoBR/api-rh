@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -35,17 +36,20 @@ public class authorization_controller {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Validated login_dto dto) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(dto.registro(), dto.senha());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        UserDetails userDetails = (User) auth.getPrincipal();
 
-        Optional<funcionario_model> funcionario = funcionarioRepository.findByIdusuario_Registro(userDetails.getUsername());
-        if (funcionario.isPresent()) {
-            var token = tokenService.generateToken(funcionario.get());
-            return ResponseEntity.ok(token);
-        }
+            var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.badRequest().build();
+            UserDetails userDetails = (User) auth.getPrincipal();
+
+            Optional<funcionario_model> funcionario = funcionarioRepository.findByIdusuario_Registro(userDetails.getUsername());
+            if (funcionario.isPresent()) {
+                var token = tokenService.generateToken(funcionario.get());
+                return ResponseEntity.ok(token);
+            }
+            
+
+        return ResponseEntity.badRequest().body("Usuário ou senha incorretos");
     }
 
 }

@@ -1,12 +1,14 @@
 package com.rh.api_rh.funcionario;
 
 import com.rh.api_rh.DTO.cadastro_dto;
+import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
 import com.rh.api_rh.endereco.endereco_mapper;
 import com.rh.api_rh.endereco.endereco_model;
 import com.rh.api_rh.endereco.endereco_repository;
 import com.rh.api_rh.endereco.endereco_service;
 import com.rh.api_rh.telefone.telefone_repository;
 import com.rh.api_rh.telefone.telefone_service;
+import com.rh.api_rh.usuario.usuarioprovisorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,7 +37,7 @@ public class funcionario_mapper {
 
 
 
-    public funcionario_model convert(cadastro_dto dto) {
+    public emailnotificarcadastro_dto convert(cadastro_dto dto) {
 
         /// Nesta parte primeiro precisamos criar as entidades telefone e endereco, e também pesquisar a entidade setor para adicionar ao funcionario
         setor_model setor = setorService.pesquisa(Long.parseLong(dto.getNumerosetor()));
@@ -46,7 +48,9 @@ public class funcionario_mapper {
         telefoneService.cadastrar(telefone);
         enderecoService.cadastrar(endereco);
 
-        usuario_model usuario = usuarioService.criar();
+        usuarioprovisorio provisorio = usuarioService.criar();
+
+        usuario_model usuario = usuarioService.buscar(provisorio.getId());
 
 
         funcionario_model funcionario = new funcionario_model();
@@ -66,7 +70,11 @@ public class funcionario_mapper {
         funcionario.setId_endereco(endereco);
         funcionario.setIdusuario(usuario);
 
-        return funcionario;
+        emailnotificarcadastro_dto res = new emailnotificarcadastro_dto();
+        res.setFuncionario(funcionario);
+        res.setProvisorio(provisorio);
+
+        return res;
 
     }
 

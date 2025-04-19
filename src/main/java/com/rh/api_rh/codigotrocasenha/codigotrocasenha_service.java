@@ -32,7 +32,7 @@ public class codigotrocasenha_service {
         codigotrocasenha.setData(data);
         repo.save(codigotrocasenha);
 
-        return("Codigo cadastrado com sucesso");
+        return(codigo);
 
     }
 
@@ -50,15 +50,16 @@ public class codigotrocasenha_service {
     }
 
     public List<codigotrocasenha_model> listar() {
+
         return(repo.findAll());
     }
 
-    /// SE AINDA NÃO TIVER PASSADO 5 MINUTOS RETORNA TRUE POIS O CÓDIGO AINDA ESTÁ VALIDO
+    /// SE AINDA NÃO TIVER PASSADO 30 SEGUNDOS PARA TESTES RETORNA TRUE POIS O CÓDIGO AINDA ESTÁ VALIDO
     public boolean validartempo(codigotrocasenha_model codigotrocasenha) {
 
         Date datacodigo = codigotrocasenha.getData();
         Date dataagora = new Date();
-        if (dataagora.getTime() - datacodigo.getTime() <  300000) {
+        if (dataagora.getTime() - datacodigo.getTime() <  30000) {
             repo.delete(codigotrocasenha);
             return true;
         } else {

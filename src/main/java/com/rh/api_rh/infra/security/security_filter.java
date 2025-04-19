@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class security_filter extends OncePerRequestFilter {
@@ -32,7 +33,7 @@ public class security_filter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         if (token != null) {
             var subject = tokenService.validateToken(token);
-            Optional<funcionario_model> funcionario = funcionarioRepository.findByIdusuario_Registro(subject);
+            Optional<funcionario_model> funcionario = funcionarioRepository.findById(UUID.fromString(subject));
             if (funcionario.isPresent()) {
                 funcionario_model func = funcionario.get();
                 User user =  new User(

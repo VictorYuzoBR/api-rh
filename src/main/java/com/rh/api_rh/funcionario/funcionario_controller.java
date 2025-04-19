@@ -2,12 +2,15 @@ package com.rh.api_rh.funcionario;
 
 
 import com.rh.api_rh.DTO.cadastro_dto;
+import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
 import com.rh.api_rh.endereco.endereco_mapper;
 import com.rh.api_rh.endereco.endereco_model;
 import com.rh.api_rh.endereco.endereco_service;
 import com.rh.api_rh.telefone.telefone_mapper;
 import com.rh.api_rh.telefone.telefone_model;
 import com.rh.api_rh.telefone.telefone_service;
+import com.rh.api_rh.usuario.usuarioprovisorio;
+import com.rh.api_rh.util.email_service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ public class funcionario_controller {
     private final telefone_service telefone_service;
     private final telefone_mapper telefone_mapper;
     private final endereco_mapper endereco_mapper;
+    private final email_service email_service;
 
 
 
@@ -34,14 +38,24 @@ public class funcionario_controller {
     public ResponseEntity<String> cadastrar(@RequestBody cadastro_dto dto) {
 
 
-        funcionario_model funcionario = funcionario_mapper.convert(dto);
+        emailnotificarcadastro_dto dados  = funcionario_mapper.convert(dto);
+        funcionario_model funcionario = dados.getFuncionario();
+        usuarioprovisorio provisorio = dados.getProvisorio();
 
         try {
-            return new ResponseEntity<>(funcionario_service.cadastrar(funcionario), HttpStatus.CREATED);
+            String resposta = funcionario_service.cadastrar(funcionario);
+            if (resposta.equals("Cadastrado com sucesso!")) {
+                email_service.enviarcadastro(funcionario.getEmail(), provisorio);
+                return ResponseEntity.ok().body("Cadastrado com sucesso!");
+            } else {
+                return ResponseEntity.badRequest().body("Erro ao cadastrar funcionario!");
+            }
+
+
         } catch (Exception e) {
 
 
-            return new ResponseEntity<>("Cadastrado com sucesso", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Erro ao cadastrar", HttpStatus.BAD_REQUEST);
         }
 
 
