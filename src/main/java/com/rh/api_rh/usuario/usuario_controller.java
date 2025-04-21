@@ -1,10 +1,13 @@
 package com.rh.api_rh.usuario;
 
 import com.rh.api_rh.DTO.trocasenha_dto;
+import com.rh.api_rh.log.log_model;
+import com.rh.api_rh.log.log_repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -13,6 +16,7 @@ import java.util.List;
 public class usuario_controller {
 
     private final usuario_service usuario_service;
+    private final log_repository log_repository;
 
 
     @GetMapping
@@ -29,7 +33,22 @@ public class usuario_controller {
     @PutMapping("/novasenha")
     public ResponseEntity<String> trocarsenha(@RequestBody trocasenha_dto dto) {
 
-        return ResponseEntity.ok(usuario_service.trocasenha(dto.getSenha(), dto.getId()));
+        String res = usuario_service.trocasenha(dto.getSenha(), dto.getId());
+        if (res.equals("A senha foi atualizada com sucesso!")) {
+
+            usuario_model usuario = usuario_service.buscar(dto.getId());
+
+            log_model log = new log_model();
+            log.setRegistro(usuario.getRegistro());
+            log.setAcao("Troca de senha realizada no usuário de registro: "+usuario.getRegistro());
+            log.setData(new Date());
+            log_repository.save(log);
+
+            return ResponseEntity.ok(res);
+        } else {
+            return ResponseEntity.badRequest().body(res);
+        }
+
 
     }
 

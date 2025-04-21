@@ -6,6 +6,8 @@ import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
 import com.rh.api_rh.endereco.endereco_mapper;
 import com.rh.api_rh.endereco.endereco_model;
 import com.rh.api_rh.endereco.endereco_service;
+import com.rh.api_rh.log.log_model;
+import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.telefone.telefone_mapper;
 import com.rh.api_rh.telefone.telefone_model;
 import com.rh.api_rh.telefone.telefone_service;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +34,7 @@ public class funcionario_controller {
     private final telefone_mapper telefone_mapper;
     private final endereco_mapper endereco_mapper;
     private final email_service email_service;
+    private final log_repository log_repository;
 
 
 
@@ -46,6 +50,13 @@ public class funcionario_controller {
             String resposta = funcionario_service.cadastrar(funcionario);
             if (resposta.equals("Cadastrado com sucesso!")) {
                 email_service.enviarcadastro(funcionario.getEmail(), provisorio);
+
+                log_model log = new log_model();
+                log.setRegistro(funcionario.getIdusuario().getRegistro());
+                log.setAcao("Novo funcionário cadastrado no sistema com registro: "+funcionario.getIdusuario().getRegistro());
+                log.setData(new Date());
+                log_repository.save(log);
+
                 return ResponseEntity.ok().body("Cadastrado com sucesso!");
             } else {
                 return ResponseEntity.badRequest().body("Erro ao cadastrar funcionario!");

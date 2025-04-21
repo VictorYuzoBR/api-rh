@@ -5,6 +5,7 @@ import lombok.Data;
 import com.rh.api_rh.usuario.usuario_model;
 
 import java.util.Date;
+import java.util.UUID;
 
 
 @Entity
@@ -15,9 +16,8 @@ public class log_model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id",nullable = false)
-    private usuario_model usuario_id;
+    @Column
+    private String registro;
 
     @Column(nullable = false)
     private String acao;

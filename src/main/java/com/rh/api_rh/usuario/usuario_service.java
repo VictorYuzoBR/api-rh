@@ -80,7 +80,7 @@ public class usuario_service {
             String senhahash = new BCryptPasswordEncoder().encode(senha);
             usuario.setSenha(senhahash);
             usuario_repository.save(usuario);
-            return("A senha atualizada com sucesso!");
+            return("A senha foi atualizada com sucesso!");
 
         }
 
