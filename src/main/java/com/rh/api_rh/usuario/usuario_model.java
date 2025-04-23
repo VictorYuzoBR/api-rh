@@ -3,6 +3,7 @@ package com.rh.api_rh.usuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import lombok.Data;
 
 import java.util.Date;
@@ -22,7 +23,7 @@ public class usuario_model {
     private String senha;
 
     @Column()
-    private Boolean ativo;
+    private String status;
 
     @Column
     private int tentativas;
@@ -30,5 +31,11 @@ public class usuario_model {
     @Column
     private Date databloqueio;
 
+    @PrePersist
+    public void prePersist(){
+        if (this.status == null) {
+            this.status = "ativo";
+        }
+    }
 
 }

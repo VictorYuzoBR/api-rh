@@ -1,6 +1,7 @@
 package com.rh.api_rh.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.rh.api_rh.util.registro_service;
@@ -10,6 +11,9 @@ import java.util.UUID;
 
 @Service
 public class usuario_service {
+
+    @Value("${SALT_SECRETWORD:!Senhasecreta1}")
+    private String salt_secret;
 
     @Autowired
     private registro_service registro_service;
@@ -28,8 +32,9 @@ public class usuario_service {
         provisorio.setRegistro(registro);
         provisorio.setId(id);
 
-        String senhahash = new BCryptPasswordEncoder().encode(senha);
-        System.out.print(senha);
+        String palavraSalt = registro + senha + salt_secret;
+
+        String senhahash = new BCryptPasswordEncoder().encode(palavraSalt);
 
         usuario.setId(id);
         usuario.setSenha(senhahash);
@@ -70,14 +75,17 @@ public class usuario_service {
     public String trocasenha(String senha, UUID id) {
 
         usuario_model usuario = buscar(id);
+
+        String senha2 = usuario.getRegistro() + senha + salt_secret;
+
         String senhaoriginal = usuario.getSenha();
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if (encoder.matches(senha, senhaoriginal)) {
+        if (encoder.matches(senha2, senhaoriginal)) {
             return("A senha nova não pode ser igual a antiga");
         } else {
 
-            String senhahash = new BCryptPasswordEncoder().encode(senha);
+            String senhahash = new BCryptPasswordEncoder().encode(senha2);
             usuario.setSenha(senhahash);
             usuario_repository.save(usuario);
             return("A senha foi atualizada com sucesso!");

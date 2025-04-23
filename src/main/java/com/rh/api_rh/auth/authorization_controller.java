@@ -8,6 +8,7 @@ import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,9 +44,15 @@ public class authorization_controller {
     @Autowired
     private log_repository logRepository;
 
+    @Value("${SALT_SECRETWORD:!Senhasecreta1}")
+    private String salt_secret;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Validated login_dto dto) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(dto.registro(), dto.senha());
+
+        String salt = dto.registro() + dto.senha() + salt_secret;
+
+        var usernamePassword = new UsernamePasswordAuthenticationToken(dto.registro(), salt);
 
             try{
             var auth = this.authenticationManager.authenticate(usernamePassword);
@@ -76,7 +84,7 @@ public class authorization_controller {
 
                 }
 
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha incorretos");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario ou senha incorretos");
 
             }
 
