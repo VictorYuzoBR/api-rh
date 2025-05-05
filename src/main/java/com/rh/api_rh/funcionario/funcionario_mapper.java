@@ -64,6 +64,7 @@ public class funcionario_mapper {
         funcionario.setDataentrada(dto.getDataentrada());
         funcionario.setSalario(dto.getSalario());
         funcionario.setData_nascimento(dto.getData_nascimento());
+        funcionario.setFuncao(dto.getFuncao());
 
         funcionario.setId_setor(setor);
         funcionario.setId_telefone(telefone);

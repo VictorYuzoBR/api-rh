@@ -9,6 +9,8 @@ public class cadastro_dto {
 
     private String nome;
 
+    private String funcao;
+
     private String data_nascimento;
 
     private String cpf;

@@ -50,6 +50,9 @@ public class funcionario_model implements UserDetails {
     @Column(nullable = true)
     private String datasaida;
 
+    @Column(nullable = false)
+    private String funcao;
+
     @OneToOne
     @JoinColumn(name = "idusuario", referencedColumnName = "id", nullable = false)
     private usuario_model idusuario;

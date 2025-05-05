@@ -22,6 +22,8 @@ public class codigotrocasenha_controller {
 
     final com.rh.api_rh.usuario.usuario_service usuario_service;
 
+
+    //todo trocar id usuario por id funcionario
     ///  RECEBE EMAIL E ID DO USUARIO PARA CRIAR, CADASTRAR E ENVIAR CODIGO
     @PostMapping
     public ResponseEntity<String> enviaremail(@RequestBody criacodigotrocasenha_dto dto) {
@@ -36,6 +38,8 @@ public class codigotrocasenha_controller {
         return ResponseEntity.ok(codigotrocasenha_service.listar());
     }
 
+
+    //todo trocar id usuario por id funcionario
     ///ROTA QUE FAZ VALIDAÇÃO DO CÓDIGO, PRIMEIRO VALIDA O CODIGO E DEPOIS TEMPO DE EXPIRAÇÃO, RECEBE UM DTO COM ID DO USUARIO E O CODIGO DIGITADO
     @PostMapping("/validar")
     public ResponseEntity<String> validarcodigo(@RequestBody validarcodigotrocasenha_dto dto) {

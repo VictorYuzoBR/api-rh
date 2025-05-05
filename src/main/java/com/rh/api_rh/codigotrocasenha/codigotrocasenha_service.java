@@ -71,11 +71,16 @@ public class codigotrocasenha_service {
     public codigotrocasenha_model validarcodigo(UUID idusuario, String codigo) {
 
         codigotrocasenha_model codigobanco = repo.findByIdusuario(idusuario);
-        if (codigobanco.getCodigo().equals(codigo)) {
-            return codigobanco;
+        if (codigobanco != null) {
+            if (codigobanco.getCodigo().equals(codigo)) {
+                return codigobanco;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
+
 
     }
 

@@ -1,6 +1,7 @@
 package com.rh.api_rh.funcionario;
 
 
+import com.rh.api_rh.DTO.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro_dto;
 import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
 import com.rh.api_rh.endereco.endereco_mapper;
@@ -93,5 +94,37 @@ public class funcionario_controller {
         }
     }
 
+
+    ///  o DTO recebe o id do funcionario RH que está atualizando o funcionário comum, os dados do funcionário comum serão puxados a partir do email
+    /// então é necessário enviar no DTO os dados presentes no objeto atualizar funcionario_dto a partir da janela de perfil do funcionario comum que
+    /// o usuário RH estará vendo
+    /// exemplo: usuario RH marcio está no perfil do usuario adrian, enviar no dto o id do usuário marcio que estará no token, e pegar os dados dos campos do perfil do
+    /// adrian e enviar no dto
+    @PutMapping
+    public ResponseEntity<String> atualizar(@RequestBody atualizarfuncionario_dto dto) {
+
+        try {
+            String registroDoFuncionarioComum = funcionario_service.atualizar(dto);
+
+            funcionario_model funcionariorh = funcionario_service.buscar(dto.getIdfuncionariorh());
+            String registroDoRh = funcionariorh.getIdusuario().getRegistro();
+
+            String texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + registroDoFuncionarioComum;
+            log_model log = new log_model();
+            log.setAcao(texto);
+            log.setRegistro(registroDoRh);
+            log.setData(new Date());
+            log_repository.save(log);
+
+
+            return ResponseEntity.ok().body("Atualizado com sucesso!");
+
+
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+    }
 
 }

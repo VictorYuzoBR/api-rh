@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class telefone_service {
@@ -31,6 +32,20 @@ public class telefone_service {
 
     public void excluir(telefone_model telefone) {
         telefone_repository.delete(telefone);
+    }
+
+    public telefone_model buscar(String numero) {
+        try {
+            Optional<telefone_model> data = telefone_repository.findByNumero(numero);
+            if (data.isPresent()) {
+            return data.get();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 }

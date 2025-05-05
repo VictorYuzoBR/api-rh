@@ -12,4 +12,6 @@ public interface funcionario_repository extends JpaRepository<funcionario_model,
 
     Optional<funcionario_model> findByIdusuario_Registro(String registro);
 
+    Optional<funcionario_model> findByEmail(String email);
+
 }
