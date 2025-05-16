@@ -7,6 +7,9 @@ import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
+import com.rh.api_rh.refreshToken.refresh_token_model;
+import com.rh.api_rh.refreshToken.refresh_token_service;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,12 +23,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -43,6 +45,9 @@ public class authorization_controller {
 
     @Autowired
     private log_repository logRepository;
+
+    @Autowired
+    private refresh_token_service refreshTokenService;
 
     @Value("${SALT_SECRETWORD:!Senhasecreta1}")
     private String salt_secret;
@@ -68,9 +73,17 @@ public class authorization_controller {
                 log.setData(new Date());
                 logRepository.save(log);
 
-
+                String role = funcionario.get().getCargo().toString();
                 var token = tokenService.generateToken(funcionario.get());
-                return ResponseEntity.ok(token);
+                var refreshtoken = refreshTokenService.generateRefreshToken(funcionario.get());
+
+                Map<String, String> tokens = Map.of(
+                        "access_token", token,
+                        "refresh_token", refreshtoken,
+                        "role", role
+                );
+
+                return ResponseEntity.ok(tokens);
             }
             } catch (UsernameNotFoundException | BadCredentialsException e) {
 
@@ -91,5 +104,39 @@ public class authorization_controller {
 
         return ResponseEntity.badRequest().body("Erro inesperado no login");
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refresh(HttpServletRequest request) {
+        String token = recoverToken(request);
+        if (token != null) {
+            try {
+                String newaccesstoken = refreshTokenService.validateRefreshToken(token);
+                if (newaccesstoken == "") {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Seu refresh token expirou realize o login novamente");
+                }
+                return ResponseEntity.ok(newaccesstoken);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Erro inesperado no refresh");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Erro inesperado no refresh");
+        }
+
+    }
+
+
+    private String recoverToken(HttpServletRequest request) {
+
+        var authHeader = request.getHeader("Authorization");
+        if (authHeader == null) return null;
+        return authHeader.replace("Bearer ", "");
+
+    }
+
+    @GetMapping
+    private List<refresh_token_model> listar() {
+        return refreshTokenService.listar();
+    }
+
 
 }

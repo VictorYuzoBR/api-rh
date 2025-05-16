@@ -2,6 +2,10 @@ package com.rh.api_rh.codigotrocasenha;
 
 import com.rh.api_rh.DTO.criacodigotrocasenha_dto;
 import com.rh.api_rh.DTO.validarcodigotrocasenha_dto;
+import com.rh.api_rh.funcionario.funcionario_model;
+import com.rh.api_rh.funcionario.funcionario_repository;
+import com.rh.api_rh.usuario.usuario_model;
+import com.rh.api_rh.usuario.usuario_repository;
 import com.rh.api_rh.usuario.usuario_service;
 import com.rh.api_rh.util.email_service;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -22,13 +27,23 @@ public class codigotrocasenha_controller {
 
     final com.rh.api_rh.usuario.usuario_service usuario_service;
 
+    final usuario_repository usuario_repo;
 
-    //todo trocar id usuario por id funcionario
-    ///  RECEBE EMAIL E ID DO USUARIO PARA CRIAR, CADASTRAR E ENVIAR CODIGO
+    final funcionario_repository funcionario_repo;
+
+
     @PostMapping
     public ResponseEntity<String> enviaremail(@RequestBody criacodigotrocasenha_dto dto) {
 
-        return ResponseEntity.ok(email_service.enviarcodigosenha(dto.getEmail(), dto.getId()));
+       Optional<funcionario_model> funcionario = funcionario_repo.findByEmail(dto.getEmail());
+       if (funcionario.isPresent()) {
+           UUID iduser = funcionario.get().getIdusuario().getId();
+           return ResponseEntity.ok(email_service.enviarcodigosenha(dto.getEmail(), iduser));
+       } else {
+           return ResponseEntity.badRequest().body("Nenhuma conta associada a este email foi detectada em nosso sistema");
+       }
+
+
 
     }
 
@@ -44,19 +59,26 @@ public class codigotrocasenha_controller {
     @PostMapping("/validar")
     public ResponseEntity<String> validarcodigo(@RequestBody validarcodigotrocasenha_dto dto) {
 
-        UUID id = dto.getId();
-        String codigo = dto.getCodigo();
-        codigotrocasenha_model entidade = codigotrocasenha_service.validarcodigo(id,codigo);
-        if (entidade != null) {
-            if(codigotrocasenha_service.validartempo(entidade)) {
-                return ResponseEntity.ok("Você pode trocar sua senha");
+        Optional<funcionario_model> funcionario = funcionario_repo.findByEmail(dto.getEmail());
+        if (funcionario.isPresent()) {
+            UUID id = funcionario.get().getIdusuario().getId();
+            String codigo = dto.getCodigo();
+            codigotrocasenha_model entidade = codigotrocasenha_service.validarcodigo(id,codigo);
+            if (entidade != null) {
+                if(codigotrocasenha_service.validartempo(entidade)) {
+                    return ResponseEntity.ok("Você pode trocar sua senha");
+                } else {
+                    codigotrocasenha_service.deletar(entidade.getIdusuario());
+                    return ResponseEntity.badRequest().body("Código expirado");
+                }
             } else {
-                codigotrocasenha_service.deletar(entidade.getIdusuario());
-                return ResponseEntity.badRequest().body("Código expirado");
+                return ResponseEntity.badRequest().body("Código inexistente");
             }
         } else {
-            return ResponseEntity.badRequest().body("Código inexistente");
+            return ResponseEntity.badRequest().build();
         }
+
+
 
     }
 

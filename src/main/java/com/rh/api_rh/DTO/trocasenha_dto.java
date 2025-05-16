@@ -9,6 +9,6 @@ public class trocasenha_dto {
 
     private String senha;
 
-    private UUID id;
+    private String email;
 
 }

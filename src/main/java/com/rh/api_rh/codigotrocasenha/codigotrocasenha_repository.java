@@ -10,6 +10,6 @@ public interface codigotrocasenha_repository extends JpaRepository<codigotrocase
 
     codigotrocasenha_model findByIdusuario(UUID idusuario);
 
-    void deleteByIdusuario(UUID idusuario);
+
 
 }

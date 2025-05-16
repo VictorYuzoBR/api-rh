@@ -9,6 +9,6 @@ public class validarcodigotrocasenha_dto {
 
     private String codigo;
 
-    private UUID id;
+    private String email;
 
 }

@@ -9,6 +9,7 @@ import java.util.UUID;
 @Repository
 public interface usuario_repository extends JpaRepository<usuario_model, UUID> {
 
+    usuario_model findByRegistro (String email);
 
 }
 

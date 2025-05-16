@@ -7,8 +7,6 @@ import java.util.UUID;
 @Data
 public class criacodigotrocasenha_dto {
 
-    private UUID id;
-
     private String email;
 
 }
