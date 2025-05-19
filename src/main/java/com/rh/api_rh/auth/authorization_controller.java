@@ -9,6 +9,8 @@ import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.refreshToken.refresh_token_model;
 import com.rh.api_rh.refreshToken.refresh_token_service;
+import com.rh.api_rh.usuario.usuario_model;
+import com.rh.api_rh.usuario.usuario_repository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,11 +51,32 @@ public class authorization_controller {
     @Autowired
     private refresh_token_service refreshTokenService;
 
+    @Autowired
+    private usuario_repository usuarioRepository;
+
     @Value("${SALT_SECRETWORD:!Senhasecreta1}")
     private String salt_secret;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Validated login_dto dto) {
+
+        Optional<usuario_model> datausuario = usuarioRepository.findByRegistro(dto.registro());
+        if (datausuario.isPresent()) {
+            usuario_model usuario = datausuario.get();
+            if (usuario.getStatus().equals("BLOQUEADO")) {
+                Date dataagora = new Date();
+                Long diferenca = ((dataagora.getTime() - usuario.getDatabloqueio().getTime()) / 1000);
+                if (diferenca >= 30) {
+                    usuario.setStatus("ATIVO");
+                    usuarioRepository.save(usuario);
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario bloqueado temporariamente");
+                }
+
+            } else if (usuario.getStatus().equals("DESATIVADO")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario desativado");
+            }
+        }
 
         String salt = dto.registro() + dto.senha() + salt_secret;
 
@@ -73,14 +96,19 @@ public class authorization_controller {
                 log.setData(new Date());
                 logRepository.save(log);
 
+                funcionario.get().getIdusuario().setTentativas(0);
+                funcionarioRepository.save(funcionario.get());
+
                 String role = funcionario.get().getCargo().toString();
+                String email = funcionario.get().getEmail();
                 var token = tokenService.generateToken(funcionario.get());
                 var refreshtoken = refreshTokenService.generateRefreshToken(funcionario.get());
 
                 Map<String, String> tokens = Map.of(
                         "access_token", token,
                         "refresh_token", refreshtoken,
-                        "role", role
+                        "role", role,
+                        "email", email
                 );
 
                 return ResponseEntity.ok(tokens);
@@ -94,6 +122,23 @@ public class authorization_controller {
                     log.setAcao("Tentativa de login falha no usuário de registro "+dto.registro());
                     log.setData(new Date());
                     logRepository.save(log);
+
+                    funcionario_model funcionarioparaalteracao = funcionario.get();
+                    int tentativas = funcionarioparaalteracao.getIdusuario().getTentativas();
+                    tentativas = tentativas + 1;
+                    if (tentativas == 3) {
+                        funcionarioparaalteracao.getIdusuario().setStatus("BLOQUEADO");
+                        Date dataagora = new Date();
+                        funcionarioparaalteracao.getIdusuario().setDatabloqueio(dataagora);
+                    } else if (tentativas == 5) {
+                        funcionarioparaalteracao.getIdusuario().setStatus("DESATIVADO");
+                        Date dataagora = new Date();
+                        funcionarioparaalteracao.getIdusuario().setDatabloqueio(dataagora);
+                    }
+                    funcionarioparaalteracao.getIdusuario().setTentativas(tentativas);
+                    funcionarioRepository.save(funcionarioparaalteracao);
+
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(tentativas);
 
                 }
 

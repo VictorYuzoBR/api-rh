@@ -54,7 +54,7 @@ public class codigotrocasenha_controller {
     }
 
 
-    //todo trocar id usuario por id funcionario
+
     ///ROTA QUE FAZ VALIDAÇÃO DO CÓDIGO, PRIMEIRO VALIDA O CODIGO E DEPOIS TEMPO DE EXPIRAÇÃO, RECEBE UM DTO COM ID DO USUARIO E O CODIGO DIGITADO
     @PostMapping("/validar")
     public ResponseEntity<String> validarcodigo(@RequestBody validarcodigotrocasenha_dto dto) {
