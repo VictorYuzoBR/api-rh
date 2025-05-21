@@ -5,12 +5,10 @@ import com.rh.api_rh.DTO.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro_dto;
 import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
 import com.rh.api_rh.endereco.endereco_mapper;
-import com.rh.api_rh.endereco.endereco_model;
 import com.rh.api_rh.endereco.endereco_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.telefone.telefone_mapper;
-import com.rh.api_rh.telefone.telefone_model;
 import com.rh.api_rh.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -36,6 +35,7 @@ public class funcionario_controller {
     private final endereco_mapper endereco_mapper;
     private final email_service email_service;
     private final log_repository log_repository;
+    private final funcionario_repository funcionario_repository;
 
 
 
@@ -83,6 +83,34 @@ public class funcionario_controller {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<funcionario_model> perfil(@PathVariable UUID id) {
+        try {
+            funcionario_model funcionario = funcionario_service.buscar(id);
+            if (funcionario != null) {
+                return ResponseEntity.ok(funcionario);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/buscarporcargo/{cargo}")
+    public ResponseEntity<List<funcionario_model>> buscarporcargo(@PathVariable Cargo cargo) {
+        try {
+            List<funcionario_model> funcionarios = funcionario_repository.findByCargo(cargo);
+            return ResponseEntity.ok(funcionarios);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> excluir(@PathVariable UUID id) {
 
@@ -106,19 +134,21 @@ public class funcionario_controller {
         try {
             String registroDoFuncionarioComum = funcionario_service.atualizar(dto);
 
-            funcionario_model funcionariorh = funcionario_service.buscar(dto.getIdfuncionariorh());
-            String registroDoRh = funcionariorh.getIdusuario().getRegistro();
+            Optional<funcionario_model> funcionariorh = funcionario_repository.findByEmail(dto.getEmailfuncionariorh());
+            if (funcionariorh.isPresent()) {
+                String registroDoRh = funcionariorh.get().getIdusuario().getRegistro();
+                String texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + registroDoFuncionarioComum;
+                log_model log = new log_model();
+                log.setAcao(texto);
+                log.setRegistro(registroDoRh);
+                log.setData(new Date());
+                log_repository.save(log);
 
-            String texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + registroDoFuncionarioComum;
-            log_model log = new log_model();
-            log.setAcao(texto);
-            log.setRegistro(registroDoRh);
-            log.setData(new Date());
-            log_repository.save(log);
 
-
-            return ResponseEntity.ok().body("Atualizado com sucesso!");
-
+                return ResponseEntity.ok().body("Atualizado com sucesso!");
+            } else {
+                return ResponseEntity.badRequest().body("O email do funcionário RH está incorreto");
+            }
 
 
         } catch (Exception e) {

@@ -7,7 +7,7 @@ import java.util.UUID;
 @Data
 public class atualizarfuncionario_dto {
 
-    private UUID idfuncionariorh;
+    private String emailfuncionariorh;
     private String email;
     private String funcao;
     private float salario;
