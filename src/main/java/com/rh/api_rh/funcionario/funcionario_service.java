@@ -1,8 +1,12 @@
 package com.rh.api_rh.funcionario;
 
 import com.rh.api_rh.DTO.atualizarfuncionario_dto;
+import com.rh.api_rh.DTO.cadastro_dto;
+import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
 import com.rh.api_rh.endereco.endereco_mapper;
 import com.rh.api_rh.endereco.endereco_service;
+import com.rh.api_rh.log.log_model;
+import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.setor.setor_model;
 import com.rh.api_rh.setor.setor_repository;
 import com.rh.api_rh.setor.setor_service;
@@ -10,10 +14,14 @@ import com.rh.api_rh.telefone.telefone_mapper;
 import com.rh.api_rh.telefone.telefone_model;
 import com.rh.api_rh.telefone.telefone_repository;
 import com.rh.api_rh.telefone.telefone_service;
+import com.rh.api_rh.usuario.usuarioprovisorio;
+import com.rh.api_rh.util.email_service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +41,12 @@ public class funcionario_service {
     private setor_service setor_service;
     @Autowired
     private telefone_repository telefone_repository;
-
+    @Autowired
+    private funcionario_mapper funcionario_mapper;
+    @Autowired
+    private email_service email_service;
+    @Autowired
+    private log_repository log_repository;
 
     public String cadastrar(funcionario_model funcionario) {
 
@@ -119,5 +132,73 @@ public class funcionario_service {
 
         return "Um erro inesperado!";
     }
+
+    public String aceitarTermo(String email) {
+
+        try {
+            Optional<funcionario_model> data = funcionario_repository.findByEmail(email);
+            if (data.isPresent()) {
+                funcionario_model funcionario = data.get();
+                funcionario.getIdusuario().setAceitoutermos(true);
+                funcionario_repository.save(funcionario);
+                return ("Atualizado com sucesso!");
+            } else {
+                return ("Deu ruim");
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+
+    }
+
+    public String generateadmin() {
+
+        cadastro_dto dto = new cadastro_dto();
+        dto.setNome("Adrian");
+        dto.setFuncao("DBA");
+        dto.setData_nascimento("01/01/2001");
+        dto.setCpf("145.145.14.45");
+        dto.setEmail("adrianfelipe182021@gmail.com");
+        Cargo cargo = Cargo.ADMIN;
+        dto.setCargo(cargo);
+        dto.setSalario(20000.00f);
+        dto.setContabancaria("56165156");
+        dto.setDataentrada("02/02/2002");
+        dto.setCep("6546565");
+        dto.setLogradouro("rua do adrian");
+        dto.setBairro("bairro do adrian");
+        dto.setCidade("cidade do adrian");
+        dto.setEstado("estado do adrian");
+        dto.setNumero("154");
+        dto.setComplemento("teste");
+        dto.setNumerotelefone("45545");
+        dto.setNumerosetor("1");
+
+        emailnotificarcadastro_dto dados  = funcionario_mapper.convert(dto);
+        funcionario_model funcionario = dados.getFuncionario();
+        usuarioprovisorio provisorio = dados.getProvisorio();
+
+        try {
+            String resposta = cadastrar(funcionario);
+            if (resposta.equals("Cadastrado com sucesso!")) {
+                email_service.enviarcadastro(funcionario.getEmail(), provisorio);
+
+                log_model log = new log_model();
+                log.setRegistro(funcionario.getIdusuario().getRegistro());
+                log.setAcao("Novo funcionário cadastrado no sistema com registro: "+funcionario.getIdusuario().getRegistro());
+                log.setData(new Date());
+                log_repository.save(log);
+
+                return ("Cadastrado com sucesso!");
+            } else {
+                return ("Erro ao cadastrar funcionario!");
+            }
+        } catch (Exception e) {
+        return e.getMessage();}
+    }
+
+
+
+
 
 }

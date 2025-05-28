@@ -1,5 +1,6 @@
 package com.rh.api_rh.usuario;
 
+import com.rh.api_rh.funcionario.funcionario_model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.rh.api_rh.util.registro_service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -87,11 +89,19 @@ public class usuario_service {
 
             String senhahash = new BCryptPasswordEncoder().encode(senha2);
             usuario.setSenha(senhahash);
+
+            if (usuario.isPrimeirologin() == true) {
+                usuario.setPrimeirologin(false);
+            }
+
             usuario_repository.save(usuario);
+
             return("A senha foi atualizada com sucesso!");
 
         }
 
     }
+
+
 
 }

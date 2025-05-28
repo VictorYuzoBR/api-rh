@@ -1,6 +1,7 @@
 package com.rh.api_rh.funcionario;
 
 
+import com.rh.api_rh.DTO.aceitartermo_dto;
 import com.rh.api_rh.DTO.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro_dto;
 import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
@@ -156,5 +157,35 @@ public class funcionario_controller {
         }
 
     }
+
+    @PostMapping("/aceitartermo")
+    public ResponseEntity<String> aceitartermo(@RequestBody aceitartermo_dto dto) {
+
+        try {
+            String res = funcionario_service.aceitarTermo(dto.getEmail());
+            if (res.equals("Atualizado com sucesso!")) {
+                return ResponseEntity.ok().body("Atualizado com sucesso!");
+            }
+             else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+
+    }
+
+    @GetMapping("/generateadmin")
+    public ResponseEntity<String> generateadmin() {
+
+        String res = funcionario_service.generateadmin();
+        return ResponseEntity.ok().body(res);
+
+    }
+
+
+
+
 
 }

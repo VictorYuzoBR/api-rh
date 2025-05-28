@@ -27,7 +27,11 @@ public class Security_config {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers(HttpMethod.GET, "/telefone").hasRole("RH")
+                                .requestMatchers(HttpMethod.GET, "/telefone").hasAnyRole("RH","ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/funcionario").hasAnyRole("RH","ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/log").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/funcioanrio").hasAnyRole("RH","ADMIN")
+
                                 .anyRequest().permitAll()
                         )
                 .addFilterBefore(security_filter, UsernamePasswordAuthenticationFilter.class)

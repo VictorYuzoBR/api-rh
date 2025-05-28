@@ -31,6 +31,12 @@ public class usuario_model {
     @Column
     private Date databloqueio;
 
+    @Column
+    private boolean primeirologin = true;
+
+    @Column
+    private boolean aceitoutermos = false;
+
     @PrePersist
     public void prePersist(){
         if (this.status == null) {

@@ -12,6 +12,7 @@ import com.rh.api_rh.refreshToken.refresh_token_service;
 import com.rh.api_rh.usuario.usuario_model;
 import com.rh.api_rh.usuario.usuario_repository;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -103,12 +104,16 @@ public class authorization_controller {
                 String email = funcionario.get().getEmail();
                 var token = tokenService.generateToken(funcionario.get());
                 var refreshtoken = refreshTokenService.generateRefreshToken(funcionario.get());
+                String aceitoutermo = Boolean.toString(funcionario.get().getIdusuario().isAceitoutermos());
+                String primeirologin = Boolean.toString(funcionario.get().getIdusuario().isPrimeirologin());
 
                 Map<String, String> tokens = Map.of(
                         "access_token", token,
                         "refresh_token", refreshtoken,
                         "role", role,
-                        "email", email
+                        "email", email,
+                        "termo", aceitoutermo,
+                        "primeirologin", primeirologin
                 );
 
                 return ResponseEntity.ok(tokens);
