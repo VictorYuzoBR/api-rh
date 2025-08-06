@@ -158,7 +158,7 @@ public class funcionario_service {
         dto.setFuncao("DBA");
         dto.setData_nascimento("01/01/2001");
         dto.setCpf("145.145.14.45");
-        dto.setEmail("adrianfelipe182021@gmail.com");
+        dto.setEmail("victoryuzofb4@gmail.com");
         Cargo cargo = Cargo.ADMIN;
         dto.setCargo(cargo);
         dto.setSalario(20000.00f);

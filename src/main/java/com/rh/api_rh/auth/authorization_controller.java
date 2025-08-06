@@ -2,6 +2,7 @@ package com.rh.api_rh.auth;
 
 import com.rh.api_rh.DTO.LoginResponse_dto;
 import com.rh.api_rh.DTO.login_dto;
+import com.rh.api_rh.DTO.refresh_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.infra.security.token_service;
@@ -156,13 +157,15 @@ public class authorization_controller {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<String> refresh(HttpServletRequest request) {
-        String token = recoverToken(request);
-        if (token != null) {
+    public ResponseEntity<String> refresh(@RequestBody refresh_dto dto) {
+
+        String refreshtoken = dto.getToken();
+
+        if (refreshtoken != null) {
             try {
-                String newaccesstoken = refreshTokenService.validateRefreshToken(token);
+                String newaccesstoken = refreshTokenService.validateRefreshToken(refreshtoken);
                 if (newaccesstoken == "") {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Seu refresh token expirou realize o login novamente");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(refreshtoken);
                 }
                 return ResponseEntity.ok(newaccesstoken);
             } catch (Exception e) {

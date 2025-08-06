@@ -100,7 +100,7 @@ public class refresh_token_service {
 
 
     public Instant generateExpiration() {
-        return LocalDateTime.now().plusMinutes(3).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusMinutes(1).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public Instant generateAccessExpiration() {
