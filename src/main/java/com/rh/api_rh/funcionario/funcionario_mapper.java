@@ -2,21 +2,17 @@ package com.rh.api_rh.funcionario;
 
 import com.rh.api_rh.DTO.cadastro_dto;
 import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
-import com.rh.api_rh.endereco.endereco_mapper;
-import com.rh.api_rh.endereco.endereco_model;
-import com.rh.api_rh.endereco.endereco_repository;
-import com.rh.api_rh.endereco.endereco_service;
-import com.rh.api_rh.telefone.telefone_repository;
-import com.rh.api_rh.telefone.telefone_service;
+import com.rh.api_rh.funcionario.endereco.endereco_mapper;
+import com.rh.api_rh.funcionario.endereco.endereco_model;
+import com.rh.api_rh.funcionario.endereco.endereco_service;
+import com.rh.api_rh.funcionario.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.rh.api_rh.setor.setor_model;
 import com.rh.api_rh.setor.setor_service;
-import com.rh.api_rh.telefone.telefone_mapper;
-import com.rh.api_rh.telefone.telefone_model;
+import com.rh.api_rh.funcionario.telefone.telefone_mapper;
+import com.rh.api_rh.funcionario.telefone.telefone_model;
 import com.rh.api_rh.usuario.usuario_model;
 import com.rh.api_rh.usuario.usuario_service;
 

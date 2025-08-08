@@ -1,8 +1,7 @@
-package com.rh.api_rh.codigotrocasenha;
+package com.rh.api_rh.usuario.codigotrocasenha;
 
 import com.rh.api_rh.util.registro_service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

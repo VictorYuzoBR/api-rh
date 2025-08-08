@@ -5,12 +5,12 @@ import com.rh.api_rh.DTO.aceitartermo_dto;
 import com.rh.api_rh.DTO.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro_dto;
 import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
-import com.rh.api_rh.endereco.endereco_mapper;
-import com.rh.api_rh.endereco.endereco_service;
+import com.rh.api_rh.funcionario.endereco.endereco_mapper;
+import com.rh.api_rh.funcionario.endereco.endereco_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
-import com.rh.api_rh.telefone.telefone_mapper;
-import com.rh.api_rh.telefone.telefone_service;
+import com.rh.api_rh.funcionario.telefone.telefone_mapper;
+import com.rh.api_rh.funcionario.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
 import lombok.RequiredArgsConstructor;
@@ -61,14 +61,14 @@ public class funcionario_controller {
 
                 return ResponseEntity.ok().body("Cadastrado com sucesso!");
             } else {
-                return ResponseEntity.badRequest().body("Erro ao cadastrar funcionario!");
+                return ResponseEntity.badRequest().body("Erro ao cadastrarParaCandidato funcionario!");
             }
 
 
         } catch (Exception e) {
 
 
-            return new ResponseEntity<>("Erro ao cadastrar", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Erro ao cadastrarParaCandidato", HttpStatus.BAD_REQUEST);
         }
 
 

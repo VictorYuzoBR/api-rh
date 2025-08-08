@@ -7,24 +7,16 @@ import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_reposit
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_repository;
 import com.rh.api_rh.candidato.experiencia.experiencia_model;
-import com.rh.api_rh.candidato.experiencia.experiencia_repository;
 import com.rh.api_rh.candidato.experiencia.experiencia_service;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_model;
-import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_repository;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_service;
-import com.rh.api_rh.candidato.habilidade.habilidade_model;
 import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
-import com.rh.api_rh.candidato.habilidade.habilidade_repository;
 import com.rh.api_rh.candidato.habilidade.habilidade_service;
-import com.rh.api_rh.candidato.idioma.idioma_model;
 import com.rh.api_rh.candidato.idioma.idioma_model_apenas_formulario;
-import com.rh.api_rh.candidato.idioma.idioma_repository;
 import com.rh.api_rh.candidato.idioma.idioma_service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,14 +63,14 @@ public class candidato_service {
 
             candidato_model candidato = candidatorepository.save(dto_mapeado.getCandidato());
 
-            habilidadeService.cadastrar(habilidades, candidato);
+            habilidadeService.cadastrarParaCandidato(habilidades, candidato);
             experienciaService.cadastrar(experiencias, candidato);
             idiomaService.cadastrar(idiomas, candidato);
             formacaoAcademicaService.cadastrar(formacao, candidato);
 
 
         } catch (Exception e) {
-            return("falha ao cadastrar");
+            return("falha ao cadastrarParaCandidato");
         }
 
         return("candidato criado com sucesso ");

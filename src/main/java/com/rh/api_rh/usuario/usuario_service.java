@@ -53,7 +53,7 @@ public class usuario_service {
             usuario_repository.save(usuario);
             return "Usuario cadastrado com sucesso!";
         } catch (Exception e) {
-            return "Erro ao cadastrar usuario!";
+            return "Erro ao cadastrarParaCandidato usuario!";
         }
 
     }

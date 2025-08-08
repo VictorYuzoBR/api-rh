@@ -3,6 +3,9 @@ package com.rh.api_rh.candidato.habilidade;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_repository;
 import com.rh.api_rh.candidato.candidato_model;
+import com.rh.api_rh.candidato.vaga.vaga_model;
+import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
+import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_repository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +22,11 @@ public class habilidade_service {
     @Autowired
     private candidato_habilidade_repository candidatoHabilidadeRepository;
 
+    @Autowired
+    private vaga_habilidade_repository  vagaHabilidadeRepository;
+
     @Transactional(rollbackOn =  Exception.class)
-    public String cadastrar(List<habilidade_model_apenas_formulario> habilidades, candidato_model candidato) {
+    public String cadastrarParaCandidato(List<habilidade_model_apenas_formulario> habilidades, candidato_model candidato) {
 
         for (habilidade_model_apenas_formulario habilidade : habilidades) {
             try {
@@ -49,12 +55,60 @@ public class habilidade_service {
                     candidatoHabilidadeRepository.save(auxiliar);
                 }
             } catch (Exception e) {
-                return ("falha ao cadastrar alguma das habilidades");
+                return ("falha ao cadastrarParaCandidato alguma das habilidades");
             }
         }
 
         return "sucesso";
 
     }
+
+
+    @Transactional(rollbackOn = Exception.class)
+    public String cadastrarParaVaga(List<String> habilidades, vaga_model vaga) {
+
+        for (String habilidade : habilidades) {
+
+            try {
+
+                vaga_habilidade_model auxiliar = new vaga_habilidade_model();
+                Optional<habilidade_model> jaexistente = habilidadeRepository.findByHabilidade(habilidade);
+
+                if (jaexistente.isEmpty()) {
+
+                    habilidade_model habilidadeParaCadastrar = new habilidade_model();
+                    habilidadeParaCadastrar.setHabilidade(habilidade);
+
+                    habilidadeRepository.save(habilidadeParaCadastrar);
+
+                    auxiliar.setVaga(vaga);
+                    auxiliar.setHabilidade(habilidadeParaCadastrar);
+
+                    vagaHabilidadeRepository.save(auxiliar);
+
+
+                } else {
+                    auxiliar.setVaga(vaga);
+                    auxiliar.setHabilidade(jaexistente.get());
+
+                    vagaHabilidadeRepository.save(auxiliar);
+                }
+
+            } catch (Exception e) {
+                return ("falha ao cadastrar");
+            }
+
+
+        }
+
+        return "sucesso";
+
+
+    }
+
+    public List<habilidade_model> listar() {
+        return habilidadeRepository.findAll();
+    }
+
 
 }

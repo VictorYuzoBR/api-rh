@@ -1,4 +1,4 @@
-package com.rh.api_rh.codigotrocasenha;
+package com.rh.api_rh.usuario.codigotrocasenha;
 
 
 import jakarta.persistence.*;

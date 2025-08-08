@@ -1,4 +1,4 @@
-package com.rh.api_rh.telefone;
+package com.rh.api_rh.funcionario.telefone;
 
 import com.rh.api_rh.DTO.cadastro_dto;
 import org.springframework.stereotype.Service;

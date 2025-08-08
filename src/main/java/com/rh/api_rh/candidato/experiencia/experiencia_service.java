@@ -22,7 +22,7 @@ public class experiencia_service {
                 experiencia.setCandidato(candidato);
                 experiencia_repository.save(experiencia);
             } catch (Exception e) {
-                return ("Erro ao cadastrar experiencia");
+                return ("Erro ao cadastrarParaCandidato experiencia");
             }
 
         }

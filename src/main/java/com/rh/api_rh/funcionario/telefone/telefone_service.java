@@ -1,4 +1,4 @@
-package com.rh.api_rh.telefone;
+package com.rh.api_rh.funcionario.telefone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class telefone_service {
             telefone_repository.save(telefone);
             return "Cadastrado com sucesso!";
         } catch (Exception e) {
-            return "Erro ao cadastrar telefone!";
+            return "Erro ao cadastrarParaCandidato telefone!";
         }
     }
 

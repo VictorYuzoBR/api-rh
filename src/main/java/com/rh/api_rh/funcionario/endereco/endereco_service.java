@@ -1,4 +1,4 @@
-package com.rh.api_rh.endereco;
+package com.rh.api_rh.funcionario.endereco;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class endereco_service {
             endereco_repository.save(endereco);
             return "Cadastrado com sucesso!";
         } catch (Exception e) {
-            return "Erro ao cadastrar endereco!";
+            return "Erro ao cadastrarParaCandidato endereco!";
         }
     }
 

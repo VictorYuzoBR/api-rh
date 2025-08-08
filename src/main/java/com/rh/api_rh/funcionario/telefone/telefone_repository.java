@@ -1,4 +1,4 @@
-package com.rh.api_rh.telefone;
+package com.rh.api_rh.funcionario.telefone;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

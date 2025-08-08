@@ -1,4 +1,4 @@
-package com.rh.api_rh.endereco;
+package com.rh.api_rh.funcionario.endereco;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

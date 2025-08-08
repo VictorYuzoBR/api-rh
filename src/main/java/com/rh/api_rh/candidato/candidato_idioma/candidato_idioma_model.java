@@ -15,11 +15,11 @@ public class candidato_idioma_model {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "idcandidato", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "idcandidato", referencedColumnName = "id")
     private candidato_model candidato;
 
     @ManyToOne
-    @JoinColumn(name = "ididioma", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "ididioma", referencedColumnName = "id")
     private idioma_model idioma;
 
     @Column(nullable = false)

@@ -1,4 +1,4 @@
-package com.rh.api_rh.codigotrocasenha;
+package com.rh.api_rh.usuario.codigotrocasenha;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

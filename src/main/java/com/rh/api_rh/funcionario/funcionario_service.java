@@ -3,22 +3,17 @@ package com.rh.api_rh.funcionario;
 import com.rh.api_rh.DTO.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro_dto;
 import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
-import com.rh.api_rh.endereco.endereco_mapper;
-import com.rh.api_rh.endereco.endereco_service;
+import com.rh.api_rh.funcionario.endereco.endereco_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.setor.setor_model;
-import com.rh.api_rh.setor.setor_repository;
 import com.rh.api_rh.setor.setor_service;
-import com.rh.api_rh.telefone.telefone_mapper;
-import com.rh.api_rh.telefone.telefone_model;
-import com.rh.api_rh.telefone.telefone_repository;
-import com.rh.api_rh.telefone.telefone_service;
+import com.rh.api_rh.funcionario.telefone.telefone_model;
+import com.rh.api_rh.funcionario.telefone.telefone_repository;
+import com.rh.api_rh.funcionario.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -58,7 +53,7 @@ public class funcionario_service {
 
             telefone_service.excluir(funcionario.getId_telefone());
             endereco_service.deletar(funcionario.getId_endereco());
-            return "Erro ao cadastrar funcionario.";
+            return "Erro ao cadastrarParaCandidato funcionario.";
         }
 
     }
@@ -191,7 +186,7 @@ public class funcionario_service {
 
                 return ("Cadastrado com sucesso!");
             } else {
-                return ("Erro ao cadastrar funcionario!");
+                return ("Erro ao cadastrarParaCandidato funcionario!");
             }
         } catch (Exception e) {
         return e.getMessage();}

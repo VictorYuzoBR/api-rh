@@ -1,4 +1,4 @@
-package com.rh.api_rh.telefone;
+package com.rh.api_rh.funcionario.telefone;
 
 import jakarta.persistence.*;
 import lombok.Data;

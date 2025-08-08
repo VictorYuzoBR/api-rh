@@ -1,10 +1,10 @@
 package com.rh.api_rh.funcionario;
 
 
-import com.rh.api_rh.endereco.endereco_model;
+import com.rh.api_rh.funcionario.endereco.endereco_model;
 import jakarta.persistence.*;
 import com.rh.api_rh.setor.setor_model;
-import com.rh.api_rh.telefone.telefone_model;
+import com.rh.api_rh.funcionario.telefone.telefone_model;
 import com.rh.api_rh.usuario.usuario_model;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

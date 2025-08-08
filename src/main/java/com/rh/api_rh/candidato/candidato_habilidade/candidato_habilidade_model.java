@@ -15,11 +15,11 @@ public class candidato_habilidade_model {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "idcandidato", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "idcandidato", referencedColumnName = "id")
     private candidato_model candidato;
 
     @ManyToOne
-    @JoinColumn(name = "idhabilidade", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "idhabilidade", referencedColumnName = "id")
     private habilidade_model habilidade;
 
     @Column(nullable = false)

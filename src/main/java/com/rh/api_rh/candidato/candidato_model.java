@@ -2,9 +2,6 @@ package com.rh.api_rh.candidato;
 
 import com.rh.api_rh.candidato.experiencia.experiencia_model;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_model;
-import com.rh.api_rh.candidato.habilidade.habilidade_model;
-import com.rh.api_rh.candidato.idioma.idioma_model;
-import com.rh.api_rh.telefone.telefone_model;
 import jakarta.persistence.*;
 import lombok.Data;
 

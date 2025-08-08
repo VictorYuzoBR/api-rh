@@ -1,7 +1,6 @@
 package com.rh.api_rh.util;
 
-import com.rh.api_rh.codigotrocasenha.codigotrocasenha_service;
-import com.rh.api_rh.usuario.usuario_model;
+import com.rh.api_rh.usuario.codigotrocasenha.codigotrocasenha_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

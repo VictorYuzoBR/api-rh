@@ -1,4 +1,4 @@
-package com.rh.api_rh.endereco;
+package com.rh.api_rh.funcionario.endereco;
 
 
 import com.rh.api_rh.DTO.cadastro_dto;

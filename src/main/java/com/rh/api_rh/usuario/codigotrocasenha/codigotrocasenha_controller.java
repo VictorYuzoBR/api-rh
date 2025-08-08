@@ -1,13 +1,10 @@
-package com.rh.api_rh.codigotrocasenha;
+package com.rh.api_rh.usuario.codigotrocasenha;
 
 import com.rh.api_rh.DTO.criacodigotrocasenha_dto;
 import com.rh.api_rh.DTO.validarcodigotrocasenha_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
-import com.rh.api_rh.usuario.usuario_model;
 import com.rh.api_rh.usuario.usuario_repository;
-import com.rh.api_rh.usuario.usuario_service;
-import com.rh.api_rh.util.email_service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

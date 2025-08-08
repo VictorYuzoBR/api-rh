@@ -50,12 +50,14 @@ public class idioma_service {
 
 
             } catch (Exception e) {
-                return("falha ao cadastrar alguma das habilidades");
+                return("falha ao cadastrarParaCandidato alguma das habilidades");
             }
 
         }
         return("sucesso");
 
     }
+
+
 
 }
