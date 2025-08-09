@@ -1,15 +1,17 @@
 package com.rh.api_rh.candidato.vaga;
 
-import com.rh.api_rh.DTO.cadastrarVaga_dto;
+import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 
 @RequiredArgsConstructor()
@@ -18,6 +20,10 @@ import java.util.List;
 public class vaga_controller {
 
     private final vaga_service vagaservice;
+
+    private final vaga_application_service vagaapplicationservice;
+
+    private final vaga_repository vagarepository;
 
     @PostMapping
     public ResponseEntity<String> cadastrar(@RequestBody cadastrarVaga_dto dto) {
@@ -64,6 +70,35 @@ public class vaga_controller {
         } catch (Exception e) {
             return null;
         }
+
+    }
+
+    @PostMapping("/candidatura")
+    public ResponseEntity<String> candidatar(@RequestBody cadastroCandidatura_dto dto) {
+
+        try {
+            String res = vagaservice.candidatar(dto);
+            if (!res.equals("sucesso")) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+            } else{
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            }
+        }   catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/teste/{id}")
+    public String calcularporcentagem(@PathVariable Long id) {
+
+        Optional<vaga_model> test = vagarepository.findById(id);
+        if (test.isPresent()) {
+            vaga_model vaga = test.get();
+            Integer res = vagaapplicationservice.calcularPorcentagemCandidatos(vaga);
+            return("a porcentagem de candidados que possuem todas as habilidades é: " + res);
+        }
+        else return("erro");
 
     }
 

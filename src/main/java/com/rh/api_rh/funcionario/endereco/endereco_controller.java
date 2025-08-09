@@ -1,7 +1,7 @@
 package com.rh.api_rh.funcionario.endereco;
 
 
-import com.rh.api_rh.DTO.cadastro_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class endereco_controller {
     endereco_mapper endereco_mapper;
 
     @PostMapping
-    public ResponseEntity<String> cadastrar(@RequestBody cadastro_dto dto) {
+    public ResponseEntity<String> cadastrar(@RequestBody cadastroFuncionario_dto dto) {
 
         endereco_model endereco = endereco_mapper.convert(dto);
 

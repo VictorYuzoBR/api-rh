@@ -1,4 +1,4 @@
-package com.rh.api_rh.DTO;
+package com.rh.api_rh.DTO.cadastro;
 
 import com.rh.api_rh.candidato.habilidade.habilidade_apenas_formulario_vaga;
 import com.rh.api_rh.candidato.vaga.vaga_model;

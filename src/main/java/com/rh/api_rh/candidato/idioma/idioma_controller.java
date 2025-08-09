@@ -1,9 +1,7 @@
 package com.rh.api_rh.candidato.idioma;
 
-import ch.qos.logback.core.html.IThrowableRenderer;
-import com.rh.api_rh.DTO.cadastroIdioma_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroIdioma_dto;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

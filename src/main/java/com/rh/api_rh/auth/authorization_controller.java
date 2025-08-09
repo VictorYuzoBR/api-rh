@@ -1,8 +1,7 @@
 package com.rh.api_rh.auth;
 
-import com.rh.api_rh.DTO.LoginResponse_dto;
-import com.rh.api_rh.DTO.login_dto;
-import com.rh.api_rh.DTO.refresh_dto;
+import com.rh.api_rh.DTO.login.loginFuncionario_dto;
+import com.rh.api_rh.DTO.login.refresh_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.infra.security.token_service;
@@ -13,7 +12,6 @@ import com.rh.api_rh.refreshToken.refresh_token_service;
 import com.rh.api_rh.usuario.usuario_model;
 import com.rh.api_rh.usuario.usuario_repository;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,11 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +56,7 @@ public class authorization_controller {
     private String salt_secret;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Validated login_dto dto) {
+    public ResponseEntity login(@RequestBody @Validated loginFuncionario_dto dto) {
 
         Optional<usuario_model> datausuario = usuarioRepository.findByRegistro(dto.registro());
         if (datausuario.isPresent()) {

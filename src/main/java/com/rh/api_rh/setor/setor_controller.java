@@ -1,6 +1,6 @@
 package com.rh.api_rh.setor;
 
-import com.rh.api_rh.DTO.setor_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroSetor_dto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class setor_controller {
     }
 
     @PostMapping
-    public ResponseEntity<String> cadastrar(@RequestBody setor_dto setordto) {
+    public ResponseEntity<String> cadastrar(@RequestBody cadastroSetor_dto setordto) {
 
         setor_model setor = setor_mapper.convert(setordto);
 

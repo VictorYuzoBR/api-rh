@@ -1,8 +1,8 @@
 package com.rh.api_rh.funcionario;
 
-import com.rh.api_rh.DTO.atualizarfuncionario_dto;
-import com.rh.api_rh.DTO.cadastro_dto;
-import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarfuncionario_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
+import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
@@ -148,7 +148,7 @@ public class funcionario_service {
 
     public String generateadmin() {
 
-        cadastro_dto dto = new cadastro_dto();
+        cadastroFuncionario_dto dto = new cadastroFuncionario_dto();
         dto.setNome("Adrian");
         dto.setFuncao("DBA");
         dto.setData_nascimento("01/01/2001");

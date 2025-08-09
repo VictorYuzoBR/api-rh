@@ -1,7 +1,7 @@
 package com.rh.api_rh.candidato.vaga;
 
-import com.rh.api_rh.DTO.cadastrarVagaMapeado_dto;
-import com.rh.api_rh.DTO.cadastrarVaga_dto;
+import com.rh.api_rh.DTO.cadastro.cadastrarVagaMapeado_dto;
+import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
 import org.springframework.stereotype.Service;
 
 @Service

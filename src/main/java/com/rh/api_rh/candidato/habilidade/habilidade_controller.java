@@ -1,6 +1,6 @@
 package com.rh.api_rh.candidato.habilidade;
 
-import com.rh.api_rh.DTO.cadastroHabilidade_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroHabilidade_dto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

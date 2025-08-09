@@ -1,10 +1,10 @@
 package com.rh.api_rh.funcionario;
 
 
-import com.rh.api_rh.DTO.aceitartermo_dto;
-import com.rh.api_rh.DTO.atualizarfuncionario_dto;
-import com.rh.api_rh.DTO.cadastro_dto;
-import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
+import com.rh.api_rh.DTO.login.aceitartermo_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarfuncionario_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
+import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.funcionario.endereco.endereco_mapper;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
 import com.rh.api_rh.log.log_model;
@@ -41,7 +41,7 @@ public class funcionario_controller {
 
 
     @PostMapping
-    public ResponseEntity<String> cadastrar(@RequestBody cadastro_dto dto) {
+    public ResponseEntity<String> cadastrar(@RequestBody cadastroFuncionario_dto dto) {
 
 
         emailnotificarcadastro_dto dados  = funcionario_mapper.convert(dto);

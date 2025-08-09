@@ -1,4 +1,4 @@
-package com.rh.api_rh.DTO;
+package com.rh.api_rh.DTO.login;
 
 import lombok.Data;
 

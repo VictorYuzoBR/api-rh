@@ -1,7 +1,7 @@
 package com.rh.api_rh.usuario.codigotrocasenha;
 
-import com.rh.api_rh.DTO.criacodigotrocasenha_dto;
-import com.rh.api_rh.DTO.validarcodigotrocasenha_dto;
+import com.rh.api_rh.DTO.login.criacodigotrocasenha_dto;
+import com.rh.api_rh.DTO.login.validarcodigotrocasenha_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.usuario.usuario_repository;

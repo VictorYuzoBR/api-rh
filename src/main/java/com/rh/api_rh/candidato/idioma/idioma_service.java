@@ -1,6 +1,6 @@
 package com.rh.api_rh.candidato.idioma;
 
-import com.rh.api_rh.DTO.cadastroIdioma_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroIdioma_dto;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_repository;
 import com.rh.api_rh.candidato.candidato_model;

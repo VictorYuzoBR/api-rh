@@ -1,12 +1,12 @@
 package com.rh.api_rh.funcionario.endereco;
 
-import com.rh.api_rh.DTO.cadastro_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import org.springframework.stereotype.Service;
 
 @Service
 public class endereco_mapper {
 
-    public endereco_model convert(cadastro_dto dto) {
+    public endereco_model convert(cadastroFuncionario_dto dto) {
 
         endereco_model endereco = new endereco_model();
 

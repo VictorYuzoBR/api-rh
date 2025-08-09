@@ -1,7 +1,7 @@
 package com.rh.api_rh.funcionario;
 
-import com.rh.api_rh.DTO.cadastro_dto;
-import com.rh.api_rh.DTO.emailnotificarcadastro_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
+import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.funcionario.endereco.endereco_mapper;
 import com.rh.api_rh.funcionario.endereco.endereco_model;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
@@ -33,7 +33,7 @@ public class funcionario_mapper {
 
 
 
-    public emailnotificarcadastro_dto convert(cadastro_dto dto) {
+    public emailnotificarcadastro_dto convert(cadastroFuncionario_dto dto) {
 
         /// Nesta parte primeiro precisamos criar as entidades telefone e endereco, e também pesquisar a entidade setor para adicionar ao funcionario
         setor_model setor = setorService.pesquisa(Long.parseLong(dto.getNumerosetor()));

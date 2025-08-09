@@ -1,6 +1,6 @@
 package com.rh.api_rh.usuario;
 
-import com.rh.api_rh.DTO.trocasenha_dto;
+import com.rh.api_rh.DTO.login.trocasenha_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.log.log_model;

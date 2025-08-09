@@ -1,6 +1,6 @@
 package com.rh.api_rh.candidato.habilidade;
 
-import com.rh.api_rh.DTO.cadastroHabilidade_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroHabilidade_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_repository;
 import com.rh.api_rh.candidato.candidato_model;

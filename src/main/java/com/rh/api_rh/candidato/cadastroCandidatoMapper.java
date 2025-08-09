@@ -1,7 +1,7 @@
 package com.rh.api_rh.candidato;
 
-import com.rh.api_rh.DTO.cadastroCandidatoMapeado_dto;
-import com.rh.api_rh.DTO.cadastroCandidato_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroCandidatoMapeado_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import org.springframework.stereotype.Service;
 
 @Service

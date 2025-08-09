@@ -1,4 +1,4 @@
-package com.rh.api_rh.DTO;
+package com.rh.api_rh.DTO.cadastro;
 
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.usuario.usuarioprovisorio;

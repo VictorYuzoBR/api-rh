@@ -1,8 +1,6 @@
-package com.rh.api_rh.DTO;
+package com.rh.api_rh.DTO.login;
 
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 public class trocasenha_dto {

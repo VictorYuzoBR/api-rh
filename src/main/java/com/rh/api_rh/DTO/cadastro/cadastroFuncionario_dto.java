@@ -1,11 +1,11 @@
-package com.rh.api_rh.DTO;
+package com.rh.api_rh.DTO.cadastro;
 
 import com.rh.api_rh.funcionario.Cargo;
 import lombok.Data;
 
 
 @Data
-public class cadastro_dto {
+public class cadastroFuncionario_dto {
 
     private String nome;
 

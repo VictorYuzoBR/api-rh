@@ -1,13 +1,11 @@
 package com.rh.api_rh.candidato;
 
-import com.rh.api_rh.DTO.cadastroCandidato_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

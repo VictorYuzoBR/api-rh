@@ -1,6 +1,6 @@
 package com.rh.api_rh.funcionario.telefone;
 
-import com.rh.api_rh.DTO.cadastro_dto;
+import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class telefone_controller {
     final telefone_mapper telefone_mapper;
 
     @PostMapping
-    public ResponseEntity<String> cadastrar(@RequestBody cadastro_dto dto) {
+    public ResponseEntity<String> cadastrar(@RequestBody cadastroFuncionario_dto dto) {
 
         telefone_model telefone = telefone_mapper.convert(dto);
 
