@@ -1,5 +1,6 @@
 package com.rh.api_rh.candidato.habilidade;
 
+import com.rh.api_rh.DTO.cadastroHabilidade_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_repository;
 import com.rh.api_rh.candidato.candidato_model;
@@ -36,17 +37,7 @@ public class habilidade_service {
 
                 if (jaexistente.isEmpty()) {
 
-                    habilidade_model habilidadeParaCadastrar = new habilidade_model();
-                    habilidadeParaCadastrar.setHabilidade(habilidade.getHabilidade());
-
-                    habilidadeRepository.save(habilidadeParaCadastrar);
-
-
-                    auxiliar.setCandidato(candidato);
-                    auxiliar.setHabilidade(habilidadeParaCadastrar);
-                    auxiliar.setExperienciaEmAnos(habilidade.getTempoExperiencia());
-
-                    candidatoHabilidadeRepository.save(auxiliar);
+                    throw new IllegalArgumentException("Habilidade não existe no banco de dados");
 
                 } else {
                     auxiliar.setCandidato(candidato);
@@ -55,7 +46,7 @@ public class habilidade_service {
                     candidatoHabilidadeRepository.save(auxiliar);
                 }
             } catch (Exception e) {
-                return ("falha ao cadastrarParaCandidato alguma das habilidades");
+                throw e;
             }
         }
 
@@ -65,37 +56,30 @@ public class habilidade_service {
 
 
     @Transactional(rollbackOn = Exception.class)
-    public String cadastrarParaVaga(List<String> habilidades, vaga_model vaga) {
+    public String cadastrarParaVaga(List<habilidade_apenas_formulario_vaga> habilidades, vaga_model vaga) {
 
-        for (String habilidade : habilidades) {
+        for (habilidade_apenas_formulario_vaga habilidade : habilidades) {
 
             try {
 
                 vaga_habilidade_model auxiliar = new vaga_habilidade_model();
-                Optional<habilidade_model> jaexistente = habilidadeRepository.findByHabilidade(habilidade);
+                Optional<habilidade_model> jaexistente = habilidadeRepository.findByHabilidade(habilidade.getHabilidade());
 
                 if (jaexistente.isEmpty()) {
 
-                    habilidade_model habilidadeParaCadastrar = new habilidade_model();
-                    habilidadeParaCadastrar.setHabilidade(habilidade);
-
-                    habilidadeRepository.save(habilidadeParaCadastrar);
-
-                    auxiliar.setVaga(vaga);
-                    auxiliar.setHabilidade(habilidadeParaCadastrar);
-
-                    vagaHabilidadeRepository.save(auxiliar);
+                    throw new IllegalArgumentException("habilidade não existe no banco de dados");
 
 
                 } else {
                     auxiliar.setVaga(vaga);
                     auxiliar.setHabilidade(jaexistente.get());
+                    auxiliar.setPeso(habilidade.getPeso());
 
                     vagaHabilidadeRepository.save(auxiliar);
                 }
 
             } catch (Exception e) {
-                return ("falha ao cadastrar");
+                throw e;
             }
 
 
@@ -108,6 +92,18 @@ public class habilidade_service {
 
     public List<habilidade_model> listar() {
         return habilidadeRepository.findAll();
+    }
+
+    public habilidade_model cadastrarHabilidade(cadastroHabilidade_dto dto) {
+        habilidade_model habilidade = new habilidade_model();
+        habilidade.setHabilidade(dto.getHabilidade());
+        try {
+            habilidadeRepository.save(habilidade);
+        }  catch (Exception e) {
+            return null;
+        }
+        return habilidade;
+
     }
 
 

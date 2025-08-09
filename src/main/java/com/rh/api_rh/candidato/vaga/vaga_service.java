@@ -26,7 +26,7 @@ public class vaga_service {
     @Autowired
     private vaga_habilidade_repository vagahabilidaderepository;
 
-    @Transactional
+    @Transactional(rollbackOn =  Exception.class)
     public String cadastrar(cadastrarVaga_dto dto) {
 
         try {
@@ -37,12 +37,15 @@ public class vaga_service {
             } else {
 
                 vaga_model vaga = vagarepository.save(dados.getVaga());
-                habilidadeservice.cadastrarParaVaga(dados.getHabilidades(), vaga);
+                String res = habilidadeservice.cadastrarParaVaga(dados.getHabilidades(), vaga);
+                if (!res.equals("sucesso")) {
+                    throw new IllegalStateException("uma das habilidade requisitadas não está cadastrada");
+                }
 
             }
 
         }  catch (Exception e) {
-            return null;
+            throw e;
         }
         return "sucesso";
 

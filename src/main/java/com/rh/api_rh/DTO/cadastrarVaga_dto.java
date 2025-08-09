@@ -1,5 +1,6 @@
 package com.rh.api_rh.DTO;
 
+import com.rh.api_rh.candidato.habilidade.habilidade_apenas_formulario_vaga;
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class cadastrarVaga_dto {
 
     private String palavrasChave;
 
-    private List<String> habilidades;
+    private List<habilidade_apenas_formulario_vaga> habilidades;
 
 
 

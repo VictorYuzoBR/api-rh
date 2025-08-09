@@ -49,7 +49,7 @@ public class candidato_service {
     @Autowired
     private cadastroCandidatoMapper mapper;
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public String cadastrar(cadastroCandidato_dto dto){
 
         cadastroCandidatoMapeado_dto dto_mapeado = mapper.convert(dto);
@@ -63,14 +63,31 @@ public class candidato_service {
 
             candidato_model candidato = candidatorepository.save(dto_mapeado.getCandidato());
 
-            habilidadeService.cadastrarParaCandidato(habilidades, candidato);
-            experienciaService.cadastrar(experiencias, candidato);
-            idiomaService.cadastrar(idiomas, candidato);
-            formacaoAcademicaService.cadastrar(formacao, candidato);
+            if (habilidades.size() > 0) {
+                String res1 = habilidadeService.cadastrarParaCandidato(habilidades, candidato);
+                if (!res1.equals("sucesso")) {
+                    throw new IllegalArgumentException("Alguma habilidade não está no sistema");
+                }
+            }
+
+            if (experiencias.size() > 0) {
+                experienciaService.cadastrar(experiencias, candidato);
+            }
+
+            if (idiomas.size() > 0) {
+                String res2 = idiomaService.cadastrarParaCandidato(idiomas, candidato);
+                if  (!res2.equals("sucesso")) {
+                    throw new IllegalArgumentException("Algum idioma não está no sistema");
+                }
+            }
+
+            if (formacao.size() > 0) {
+                formacaoAcademicaService.cadastrar(formacao, candidato);
+            }
 
 
         } catch (Exception e) {
-            return("falha ao cadastrarParaCandidato");
+                throw e;
         }
 
         return("candidato criado com sucesso ");

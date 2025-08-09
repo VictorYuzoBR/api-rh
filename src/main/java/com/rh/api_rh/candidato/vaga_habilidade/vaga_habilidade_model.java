@@ -19,5 +19,8 @@ public class vaga_habilidade_model {
     @ManyToOne
     private habilidade_model habilidade;
 
+    @Column(nullable = false)
+    private Integer peso;
+
 
 }
