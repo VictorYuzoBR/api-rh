@@ -10,6 +10,7 @@ import com.rh.api_rh.candidato.experiencia.experiencia_model;
 import com.rh.api_rh.candidato.experiencia.experiencia_service;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_model;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_service;
+import com.rh.api_rh.candidato.habilidade.habilidade_model;
 import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
 import com.rh.api_rh.candidato.habilidade.habilidade_service;
 import com.rh.api_rh.candidato.idioma.idioma_model_apenas_formulario;
@@ -18,6 +19,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,6 +126,43 @@ public class candidato_service {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<candidato_model> listarComBaseHabilidades(List<String> requisitos ){
+
+        List<candidato_model> res =  new ArrayList<candidato_model>();
+
+        List<candidato_model> todos = candidatorepository.findAll();
+
+        Integer tamanhorequisitos = requisitos.size();
+
+        for (candidato_model candidato : todos) {
+            Integer cumprido = 0;
+            List<candidato_habilidade_model> habilidadesCandidato = candidatohabilidaderepository.findByCandidato(candidato);
+
+            for (candidato_habilidade_model habilidade : habilidadesCandidato) {
+                String habilidadeString = habilidade.getHabilidade().getHabilidade();
+
+                for (String requisito : requisitos) {
+
+                    if (requisito.equals(habilidadeString)) {
+
+                        cumprido++;
+                        break;
+
+                    }
+
+                }
+
+            }
+            if (cumprido.equals(tamanhorequisitos)) {
+                res.add(candidato);
+            }
+
+        }
+
+        return res;
+
     }
 
 

@@ -1,5 +1,6 @@
 package com.rh.api_rh.candidato;
 
+import com.rh.api_rh.DTO.aplicacao.candidato.buscarComBaseHabilidades_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,21 @@ public class candidato_controller {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @PostMapping("/filtrar")
+    public ResponseEntity<List<candidato_model>> filtrarPorHabilidades(@RequestBody buscarComBaseHabilidades_dto dto){
+
+
+        try {
+
+            List<candidato_model> res =  candidato_service.listarComBaseHabilidades(dto.getHabilidades());
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
 

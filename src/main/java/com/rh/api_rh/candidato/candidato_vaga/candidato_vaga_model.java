@@ -22,6 +22,6 @@ public class candidato_vaga_model {
     private vaga_model vaga;
 
     @Column
-    private String fase;
+    private etapas etapa;
 
 }

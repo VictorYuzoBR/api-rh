@@ -15,4 +15,5 @@ public class candidato_vaga_service {
         return candidatovagaRepository.findAll();
     }
 
+
 }

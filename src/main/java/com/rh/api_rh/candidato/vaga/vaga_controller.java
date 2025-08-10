@@ -2,6 +2,7 @@ package com.rh.api_rh.candidato.vaga;
 
 import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
+import com.rh.api_rh.DTO.response.quantidadePessoasEtapa_dto;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -99,6 +100,19 @@ public class vaga_controller {
             return("a porcentagem de candidados que possuem todas as habilidades é: " + res);
         }
         else return("erro");
+
+    }
+
+    @GetMapping("/etapas/{id}")
+    public ResponseEntity<quantidadePessoasEtapa_dto> calcularPessoasEtapa(@PathVariable Long id) {
+
+        try {
+
+            quantidadePessoasEtapa_dto res =  vagaservice.calcularPessoasEtapa(id);
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+        }    catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 
     }
 
