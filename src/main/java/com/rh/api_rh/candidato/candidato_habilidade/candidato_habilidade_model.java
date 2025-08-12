@@ -23,7 +23,7 @@ public class candidato_habilidade_model {
     private habilidade_model habilidade;
 
     @Column(nullable = false)
-    private Integer experienciaEmAnos;
+    private Integer experienciaEmMeses;
 
 
 }

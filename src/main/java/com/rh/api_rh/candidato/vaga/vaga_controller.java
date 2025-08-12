@@ -2,6 +2,7 @@ package com.rh.api_rh.candidato.vaga;
 
 import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
+import com.rh.api_rh.DTO.response.melhoresCandidatos_dto;
 import com.rh.api_rh.DTO.response.quantidadePessoasEtapa_dto;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
 import lombok.RequiredArgsConstructor;
@@ -114,6 +115,23 @@ public class vaga_controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
+    }
+
+    @GetMapping("/melhores/{id}")
+    public ResponseEntity<List<melhoresCandidatos_dto>> melhores(@PathVariable Long id) {
+        try {
+
+            Optional<vaga_model> vaga = vagarepository.findById(id);
+            if (vaga.isPresent()) {
+                List<melhoresCandidatos_dto> lista = vagaapplicationservice.melhoresCandidatos(vaga.get());
+                return ResponseEntity.status(HttpStatus.OK).body(lista);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

@@ -42,7 +42,7 @@ public class habilidade_service {
                 } else {
                     auxiliar.setCandidato(candidato);
                     auxiliar.setHabilidade(jaexistente.get());
-                    auxiliar.setExperienciaEmAnos(habilidade.getTempoExperiencia());
+                    auxiliar.setExperienciaEmMeses(habilidade.getTempoExperiencia());
                     candidatoHabilidadeRepository.save(auxiliar);
                 }
             } catch (Exception e) {
