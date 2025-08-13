@@ -1,4 +1,4 @@
-package com.rh.api_rh.DTO.response;
+package com.rh.api_rh.DTO.aplicacao.vaga;
 
 import com.rh.api_rh.candidato.candidato_model;
 import lombok.Data;

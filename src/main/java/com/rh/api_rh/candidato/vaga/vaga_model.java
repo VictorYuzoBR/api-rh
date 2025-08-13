@@ -34,6 +34,8 @@ public class vaga_model {
     @Column
     private String palavrasChave;
 
+    @Column
+    private String nivel;
 
 
 }

@@ -3,7 +3,7 @@ package com.rh.api_rh.candidato.vaga;
 import com.rh.api_rh.DTO.cadastro.cadastrarVagaMapeado_dto;
 import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
-import com.rh.api_rh.DTO.response.quantidadePessoasEtapa_dto;
+import com.rh.api_rh.DTO.aplicacao.vaga.quantidadePessoasEtapa_dto;
 import com.rh.api_rh.candidato.candidato_model;
 import com.rh.api_rh.candidato.candidato_repository;
 import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;

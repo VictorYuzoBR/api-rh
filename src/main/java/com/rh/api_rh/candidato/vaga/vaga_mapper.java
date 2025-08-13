@@ -22,6 +22,7 @@ public class vaga_mapper {
             vaga.setModelo(dto.getModelo());
             vaga.setTitulo(dto.getTitulo());
             vaga.setTipoContrato(dto.getTipoContrato());
+            vaga.setNivel(dto.getNivel());
 
             res.setVaga(vaga);
 

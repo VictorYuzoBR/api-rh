@@ -29,6 +29,8 @@ public class cadastrarVaga_dto {
 
     private String palavrasChave;
 
+    private String nivel;
+
     private List<habilidade_apenas_formulario_vaga> habilidades;
 
 

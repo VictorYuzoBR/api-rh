@@ -1,9 +1,8 @@
-package com.rh.api_rh.DTO.response;
+package com.rh.api_rh.DTO.aplicacao.vaga;
 
 import lombok.Data;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Data
