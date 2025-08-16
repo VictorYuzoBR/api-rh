@@ -1,10 +1,10 @@
 package com.rh.api_rh.candidato.vaga;
 
-import com.rh.api_rh.DTO.aplicacao.vaga.listaCompatibilidade_dto;
+import com.rh.api_rh.DTO.aplicacao.vaga.*;
 import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
-import com.rh.api_rh.DTO.aplicacao.vaga.melhoresCandidatos_dto;
-import com.rh.api_rh.DTO.aplicacao.vaga.quantidadePessoasEtapa_dto;
+import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
+import com.rh.api_rh.candidato.candidato_vaga.etapas;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -142,7 +142,6 @@ public class vaga_controller {
             if (res != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(res);
             } else {
-                System.out.print(("este erro"));
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
@@ -151,6 +150,75 @@ public class vaga_controller {
         }
 
     }
+
+    @PostMapping("/calcularCompatibilidade")
+    public ResponseEntity<listaCompatibilidade_dto>  calcularCompatibilidade(@RequestBody compatibilidadeUnica_dto dto) {
+
+        try {
+            listaCompatibilidade_dto res = vagaapplicationservice.compatibilidadeUnica(dto);
+
+            if (res != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("/avancarEtapa")
+    public ResponseEntity<candidato_vaga_model> avancarEtapa(@RequestBody avancarEtapa_dto dto) {
+
+        try {
+            candidato_vaga_model res = vagaapplicationservice.avancarEtapa(dto);
+            if  (res != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("/desistencia")
+    public ResponseEntity<candidato_vaga_model> desistencia(@RequestBody avancarEtapa_dto dto) {
+
+        try {
+            candidato_vaga_model res = vagaapplicationservice.desistencia(dto);
+            if  (res != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("/finalizarAplicacao")
+    public ResponseEntity<candidato_vaga_model> finalizar(@RequestBody avancarEtapa_dto dto) {
+
+        try {
+            candidato_vaga_model res = vagaapplicationservice.finalizarAplicacao(dto);
+            if  (res != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+
+
+
 
 
 }
