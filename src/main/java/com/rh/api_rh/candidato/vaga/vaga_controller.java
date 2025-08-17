@@ -6,6 +6,7 @@ import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
 import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
 import com.rh.api_rh.candidato.candidato_vaga.etapas;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
+import com.rh.api_rh.util.email_service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ public class vaga_controller {
     private final vaga_application_service vagaapplicationservice;
 
     private final vaga_repository vagarepository;
+
+    private final email_service emailService;
 
     @PostMapping
     public ResponseEntity<String> cadastrar(@RequestBody cadastrarVaga_dto dto) {
@@ -175,6 +178,7 @@ public class vaga_controller {
             candidato_vaga_model res = vagaapplicationservice.avancarEtapa(dto);
             if  (res != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(res);
+
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }

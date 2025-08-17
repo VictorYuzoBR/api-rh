@@ -1,9 +1,11 @@
 package com.rh.api_rh.candidato;
 
 import com.rh.api_rh.DTO.aplicacao.candidato.buscarComBaseHabilidades_dto;
+import com.rh.api_rh.DTO.aplicacao.candidato.enviarEmailNovaVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
+import com.rh.api_rh.util.email_service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.List;
 public class candidato_controller {
 
     private final candidato_service candidato_service;
+    private final email_service email_service;
 
     @PostMapping
     public ResponseEntity<String> cadastrar(@RequestBody cadastroCandidato_dto dto){
@@ -79,6 +82,18 @@ public class candidato_controller {
             return ResponseEntity.status(HttpStatus.OK).body(res);
 
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("/enviarEmailNovaVaga")
+    public ResponseEntity<String> enviarEmailNovaVaga(@RequestBody enviarEmailNovaVaga_dto dto){
+
+        try {
+            String res = candidato_service.enviarEmailParaCandidatosComHabilidade(dto);
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+        }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 

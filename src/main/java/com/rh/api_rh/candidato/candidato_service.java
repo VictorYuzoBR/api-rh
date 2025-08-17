@@ -1,5 +1,6 @@
 package com.rh.api_rh.candidato;
 
+import com.rh.api_rh.DTO.aplicacao.candidato.enviarEmailNovaVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatoMapeado_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
@@ -15,6 +16,7 @@ import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
 import com.rh.api_rh.candidato.habilidade.habilidade_service;
 import com.rh.api_rh.candidato.idioma.idioma_model_apenas_formulario;
 import com.rh.api_rh.candidato.idioma.idioma_service;
+import com.rh.api_rh.util.email_service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,9 @@ public class candidato_service {
 
     @Autowired
     private cadastroCandidatoMapper mapper;
+
+    @Autowired
+    private email_service emailService;
 
     @Transactional(rollbackOn = Exception.class)
     public String cadastrar(cadastroCandidato_dto dto){
@@ -162,6 +167,31 @@ public class candidato_service {
         }
 
         return res;
+
+    }
+
+    public String enviarEmailParaCandidatosComHabilidade(enviarEmailNovaVaga_dto dto) {
+
+        if (dto.getCandidatos().isEmpty()) {
+            return "lista vazia";
+        }
+
+        try {
+
+            for (candidato_model candidato : dto.getCandidatos()) {
+
+                String aux = emailService.enviarEmailNovaVaga(candidato, dto.getTituloVaga());
+                if (!aux.equals("Email enviado com sucesso!")) {
+                    return "erro ao enviar um dos emails";
+                }
+
+            }
+
+            return "emails enviados com sucesso!";
+
+        }  catch (Exception e) {
+            return "erro ao enviar um dos emails";
+        }
 
     }
 

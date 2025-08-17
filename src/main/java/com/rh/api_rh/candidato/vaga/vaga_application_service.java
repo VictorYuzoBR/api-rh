@@ -16,6 +16,7 @@ import com.rh.api_rh.candidato.experiencia.experiencia_repository;
 import com.rh.api_rh.candidato.habilidade.habilidade_model;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_repository;
+import com.rh.api_rh.util.email_service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,8 @@ public class vaga_application_service {
 
     @Autowired
     private candidato_repository candidatoRepository;
+    @Autowired
+    private email_service email_service;
 
     public Integer calcularPorcentagemCandidatos(vaga_model vaga) {
 
@@ -581,6 +584,7 @@ public class vaga_application_service {
                 }
 
                 candidatoVagaRepository.save(aplicacao);
+                email_service.enviarAvancoEtapa(candidato, vaga);
                 return aplicacao;
 
             }
@@ -649,6 +653,7 @@ public class vaga_application_service {
 
                 aplicacao.setEtapa(etapas.FINALIZADO);
                 candidatoVagaRepository.save(aplicacao);
+                email_service.enviarFinalizacaoCandidatura(candidato, vaga);
                 return aplicacao;
 
             }
