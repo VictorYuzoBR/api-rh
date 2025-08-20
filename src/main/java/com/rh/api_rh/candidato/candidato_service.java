@@ -19,6 +19,8 @@ import com.rh.api_rh.candidato.idioma.idioma_service;
 import com.rh.api_rh.util.email_service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -56,6 +58,9 @@ public class candidato_service {
     @Autowired
     private email_service emailService;
 
+    @Value("${SALT_SECRETWORD:!Senhasecreta1}")
+    private String salt_secret;
+
     @Transactional(rollbackOn = Exception.class)
     public String cadastrar(cadastroCandidato_dto dto){
 
@@ -67,6 +72,13 @@ public class candidato_service {
         List<formacaoAcademica_model> formacao =  dto_mapeado.getFormacaoAcademica();
 
         try {
+
+            String palavraSalt = dto_mapeado.getCandidato().getEmail() + dto_mapeado.getCandidato().getPassword() + salt_secret;
+
+            String senhahash = new BCryptPasswordEncoder().encode(palavraSalt);
+
+            dto_mapeado.getCandidato().setPassword(senhahash);
+
 
             candidato_model candidato = candidatorepository.save(dto_mapeado.getCandidato());
 
@@ -195,6 +207,33 @@ public class candidato_service {
 
     }
 
+    public candidato_model buscar(String email) {
+
+        try{
+            Optional<candidato_model> candidato = candidatorepository.findByEmail(email);
+            if (candidato.isPresent()) {
+                return candidato.get();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String aceitartermo(Long id) {
+
+        try {
+            Optional<candidato_model> candidato = candidatorepository.findById(id);
+            if (candidato.isPresent()) {
+                candidato.get().setAceitouTermo(true);
+                candidatorepository.save(candidato.get());
+                return ("termo aceito");
+            } else return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 
 }

@@ -99,6 +99,20 @@ public class candidato_controller {
 
     }
 
+    @PostMapping("/aceitartermo/{id}")
+    public ResponseEntity<String> aceitartermo(@PathVariable Long id){
+        try {
+            String res = candidato_service.aceitartermo(id);
+            if (res == null){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            }
+        }   catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.rh.api_rh.util;
 
 import com.rh.api_rh.candidato.candidato_model;
+import com.rh.api_rh.candidato.codigotrocasenhaCandidato.codigotrocasenhaCandidato_service;
 import com.rh.api_rh.candidato.vaga.vaga_model;
 import com.rh.api_rh.usuario.codigotrocasenha.codigotrocasenha_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
@@ -24,6 +25,9 @@ public class email_service {
     @Autowired
     private codigotrocasenha_service codigotrocasenhaservice;
 
+    @Autowired
+    private codigotrocasenhaCandidato_service  codigotrocasenhaCandidatoservice;
+
     @Value("${spring.mail.username}")
     private String remetente;
 
@@ -46,6 +50,28 @@ public class email_service {
         }
 
     }
+
+    public String enviarcodigosenhacandidato(String email, String codigo) {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setFrom(remetente);
+            message.setSubject("Teste");
+            message.setText("Seu código para troca de senha é: " + codigo);
+            mail_sender.send(message);
+
+            return("Email enviado com sucesso!");
+
+        } catch (Exception e) {
+            return ("Erro ao enviar e-mail");
+        }
+
+    }
+
+
+
+
 
 
     public String enviarcadastro(String email, usuarioprovisorio usuario) {

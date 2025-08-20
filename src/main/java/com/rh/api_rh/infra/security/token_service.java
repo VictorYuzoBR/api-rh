@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.rh.api_rh.candidato.candidato_model;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.refreshToken.refresh_token_model;
 import com.rh.api_rh.refreshToken.refresh_token_repository;
@@ -33,6 +35,7 @@ public class token_service {
             String token = JWT.create()
                     .withIssuer("Yuzo")
                     .withSubject(funcionario.getId().toString())
+                    .withClaim("type", "funcionario")
                     .withExpiresAt(generateExpiration())
                     .sign(algorithm);
             return token;
@@ -43,6 +46,27 @@ public class token_service {
         }
 
     }
+
+    public String generateTokenCandidato(candidato_model candidato) {
+
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            String token = JWT.create()
+                    .withIssuer("Yuzo")
+                    .withSubject(candidato.getId().toString())
+                    .withClaim("type", "candidato")
+                    .withExpiresAt(generateExpiration())
+                    .sign(algorithm);
+            return token;
+        } catch (
+                JWTCreationException e
+        ) {
+            throw new RuntimeException("Erro ao gerar token", e);
+        }
+
+    }
+
+
 
     public String validateToken(String token) {
         try {
@@ -65,6 +89,22 @@ public class token_service {
 
     public Instant generateExpiration() {
         return LocalDateTime.now().plusMinutes(1).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+    public String returnClaim(String token) {
+
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            DecodedJWT decodedJWT = JWT.require(algorithm)
+                    .withIssuer("Yuzo")
+                    .build()
+                    .verify(token);
+            String type = decodedJWT.getClaim("type").asString();
+
+            return type;
+
+    }  catch (JWTVerificationException e) {
+        return "";}
     }
 
 }
