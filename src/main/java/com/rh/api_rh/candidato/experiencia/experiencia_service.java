@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class experiencia_service {
@@ -28,6 +29,17 @@ public class experiencia_service {
         }
 
         return ("sucesso");
+
+    }
+
+    public Boolean comparar(experiencia_model e1, experiencia_model e2) {
+
+        if (e1 == null || e2 == null) return false;
+
+        return Objects.equals(e1.getEmpresa(), e2.getEmpresa()) &&
+                Objects.equals(e1.getDescricao(), e2.getDescricao()) &&
+                Objects.equals(e1.getDataInicio(), e2.getDataInicio()) &&
+                Objects.equals(e1.getDataFim(), e2.getDataFim());
 
     }
 

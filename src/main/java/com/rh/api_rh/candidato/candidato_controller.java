@@ -1,7 +1,9 @@
 package com.rh.api_rh.candidato;
 
+import com.rh.api_rh.DTO.aplicacao.candidato.atualizarCandidato_dto;
 import com.rh.api_rh.DTO.aplicacao.candidato.buscarComBaseHabilidades_dto;
 import com.rh.api_rh.DTO.aplicacao.candidato.enviarEmailNovaVaga_dto;
+import com.rh.api_rh.DTO.aplicacao.candidato.retornarPerfil_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
@@ -112,6 +114,40 @@ public class candidato_controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/perfil/{id}")
+    public ResponseEntity<retornarPerfil_dto>  perfil(@PathVariable Long id){
+
+        try {
+            retornarPerfil_dto dto =  candidato_service.perfil(id);
+            if (dto == null){
+                return ResponseEntity.badRequest().body(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(dto);
+            }
+
+        }    catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PutMapping("/atualizar")
+    public ResponseEntity<candidato_model> atualizar(@RequestBody atualizarCandidato_dto dto){
+
+        try {
+            candidato_model res =  candidato_service.atualizar(dto);
+            if (res == null){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            }
+        }   catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
 
 
 

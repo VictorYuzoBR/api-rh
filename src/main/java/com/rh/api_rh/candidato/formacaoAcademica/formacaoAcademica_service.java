@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class formacaoAcademica_service {
@@ -28,6 +29,18 @@ public class formacaoAcademica_service {
         }
 
         return ("sucesso");
+    }
+
+    public boolean comparar (formacaoAcademica_model f1, formacaoAcademica_model f2) {
+
+        if (f1 == null || f2 == null) return false;
+
+        return Objects.equals(f1.getInstituicao(), f2.getInstituicao()) &&
+                Objects.equals(f1.getCurso(), f2.getCurso()) &&
+                Objects.equals(f1.getSituacao(), f2.getSituacao()) &&
+                Objects.equals(f1.getDataInicio(), f2.getDataInicio()) &&
+                Objects.equals(f1.getDataFim(), f2.getDataFim());
+
     }
 
 }

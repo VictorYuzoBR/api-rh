@@ -1,6 +1,8 @@
 package com.rh.api_rh.candidato;
 
+import com.rh.api_rh.DTO.aplicacao.candidato.atualizarCandidato_dto;
 import com.rh.api_rh.DTO.aplicacao.candidato.enviarEmailNovaVaga_dto;
+import com.rh.api_rh.DTO.aplicacao.candidato.retornarPerfil_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatoMapeado_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
@@ -8,8 +10,10 @@ import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_reposit
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_repository;
 import com.rh.api_rh.candidato.experiencia.experiencia_model;
+import com.rh.api_rh.candidato.experiencia.experiencia_repository;
 import com.rh.api_rh.candidato.experiencia.experiencia_service;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_model;
+import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_repository;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_service;
 import com.rh.api_rh.candidato.habilidade.habilidade_model;
 import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
@@ -23,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +48,9 @@ public class candidato_service {
     private formacaoAcademica_service formacaoAcademicaService;
 
     @Autowired
+    private experiencia_repository experienciarepository;
+
+    @Autowired
     private idioma_service idiomaService;
 
     @Autowired
@@ -57,6 +65,9 @@ public class candidato_service {
 
     @Autowired
     private email_service emailService;
+
+    @Autowired
+    private formacaoAcademica_repository formacaoAcademicarepository;
 
     @Value("${SALT_SECRETWORD:!Senhasecreta1}")
     private String salt_secret;
@@ -233,6 +244,239 @@ public class candidato_service {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public retornarPerfil_dto perfil(Long id) {
+
+        try {
+
+            retornarPerfil_dto res =  new retornarPerfil_dto();
+
+            Optional<candidato_model> candidato = candidatorepository.findById(id);
+            if (candidato.isPresent()) {
+
+                res.setCidade(candidato.get().getCidade());
+                res.setEstado(candidato.get().getEstado());
+                res.setNome(candidato.get().getNome());
+                res.setTelefone(candidato.get().getTelefone());
+                res.setEmail(candidato.get().getEmail());
+                res.setGithub(candidato.get().getGithub());
+                res.setLinkedin(candidato.get().getLinkedin());
+
+                List<formacaoAcademica_model> listaFormacao = formacaoAcademicarepository.findByCandidato(candidato.get());
+                res.setFormacaoAcademica(listaFormacao);
+
+                List<experiencia_model> listaExperiencia = experienciarepository.findByCandidato(candidato.get());
+                res.setExperiencias(listaExperiencia);
+
+                List<habilidade_model_apenas_formulario> listaHabilidadeRes = new ArrayList<>();
+                List<candidato_habilidade_model> listaHabilidade = candidatohabilidaderepository.findByCandidato(candidato.get());
+                for (candidato_habilidade_model habilidade : listaHabilidade) {
+
+                    habilidade_model_apenas_formulario item =  new habilidade_model_apenas_formulario();
+                    item.setHabilidade(habilidade.getHabilidade().getHabilidade());
+                    item.setTempoExperiencia(habilidade.getExperienciaEmMeses());
+                    listaHabilidadeRes.add(item);
+
+                }
+                res.setHabilidades(listaHabilidadeRes);
+
+                List<idioma_model_apenas_formulario> listaIdiomaRes = new ArrayList<>();
+                Optional<List<candidato_idioma_model>> listaIdioma = candidatoidiomarepository.findByCandidatoId(candidato.get().getId());
+                if (listaIdioma.isPresent()) {
+
+                    for (candidato_idioma_model idioma : listaIdioma.get()) {
+
+                        idioma_model_apenas_formulario item =   new idioma_model_apenas_formulario();
+                        item.setIdioma(idioma.getIdioma().getIdioma());
+                        item.setNivel(idioma.getNivel());
+                        listaIdiomaRes.add(item);
+
+                    }
+
+                }
+
+                res.setIdiomas(listaIdiomaRes);
+
+                return res;
+
+
+            } else {
+                return null;
+            }
+
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public candidato_model atualizar(atualizarCandidato_dto dto) {
+
+        try {
+            retornarPerfil_dto candidatoAntigo = perfil(dto.getId());
+
+            Optional<candidato_model> candidato = candidatorepository.findById(dto.getId());
+            if (candidato.isPresent()) {
+
+                candidato.get().setCidade(dto.getCidade());
+                candidato.get().setEstado(dto.getEstado());
+                candidato.get().setGithub(dto.getGithub());
+                candidato.get().setLinkedin(dto.getLinkedin());
+                candidato.get().setTelefone(dto.getTelefone());
+
+
+
+                for (experiencia_model experiencia : candidatoAntigo.getExperiencias()) {
+
+                    System.out.println("Empresa: " + experiencia.getEmpresa());
+                    System.out.println("Descrição: " + experiencia.getDescricao());
+                    System.out.println("Data de Início: " + experiencia.getDataInicio());
+                    System.out.println("Data de Fim: " + experiencia.getDataFim());
+
+                    Boolean aindaExiste = false;
+                    for (experiencia_model aux : dto.getExperiencias()) {
+
+                        System.out.println("Empresa aux " + aux.getEmpresa());
+                        System.out.println("Descrição aux: " + aux.getDescricao());
+                        System.out.println("Data de Início aux: " + aux.getDataInicio());
+                        System.out.println("Data de Fim aux: " + aux.getDataFim());
+
+                        if (experienciaService.comparar(experiencia, aux)) {
+                            aindaExiste = true;
+                            dto.getExperiencias().remove(aux);
+                            break;
+                        } else {
+                            System.out.println("nao é igual");
+                        }
+
+                    }
+                    if (!aindaExiste) {
+
+                        experienciarepository.delete(experiencia);
+
+                    }
+
+
+                }
+
+                if (dto.getExperiencias().size() > 0) {
+
+                    experienciaService.cadastrar(dto.getExperiencias(), candidato.get());
+
+                }
+
+
+
+                for (formacaoAcademica_model formacao : candidatoAntigo.getFormacaoAcademica()) {
+
+                    Boolean aindaExiste = false;
+                    for (formacaoAcademica_model aux : dto.getFormacaoAcademica()) {
+
+                        if (formacaoAcademicaService.comparar(formacao, aux)) {
+                            aindaExiste = true;
+                            dto.getFormacaoAcademica().remove(aux);
+                            break;
+                        }
+
+                    }
+                    if (!aindaExiste) {
+
+                        formacaoAcademicarepository.delete(formacao);
+
+                    }
+
+                }
+
+                if  (dto.getFormacaoAcademica().size() > 0) {
+
+                    formacaoAcademicaService.cadastrar(dto.getFormacaoAcademica(), candidato.get());
+
+                }
+
+
+
+                List<candidato_habilidade_model> listaHabilidade = candidatohabilidaderepository.findByCandidato(candidato.get());
+                for (candidato_habilidade_model habilidade : listaHabilidade) {
+
+                    Boolean aindaExiste = false;
+                    for (habilidade_model_apenas_formulario aux : dto.getHabilidades()) {
+
+                        if (habilidade.getHabilidade().getHabilidade().equals(aux.getHabilidade())) {
+                            aindaExiste = true;
+                            dto.getHabilidades().remove(aux);
+
+                            if (!habilidade.getExperienciaEmMeses().equals(aux.getTempoExperiencia())) {
+
+                                habilidade.setExperienciaEmMeses(aux.getTempoExperiencia());
+                                candidatohabilidaderepository.save(habilidade);
+
+                            }
+
+                            break;
+                        }
+
+                    }
+
+                    if (!aindaExiste) {
+                        candidatohabilidaderepository.delete(habilidade);
+                    }
+
+
+                }
+
+                habilidadeService.cadastrarParaCandidato(dto.getHabilidades(), candidato.get());
+
+
+                Optional<List<candidato_idioma_model>> listaIdioma = candidatoidiomarepository.findByCandidatoId(candidato.get().getId());
+                if (listaIdioma.isPresent()) {
+
+                    for (candidato_idioma_model idioma : listaIdioma.get()) {
+
+                        Boolean aindaExiste = false;
+                        for (idioma_model_apenas_formulario aux : dto.getIdiomas()) {
+
+                            if (idioma.getIdioma().getIdioma().equals(aux.getIdioma())) {
+
+                                aindaExiste = true;
+                                dto.getIdiomas().remove(aux);
+                                if (!idioma.getNivel().equals(aux.getNivel())) {
+
+                                    idioma.setNivel(aux.getNivel());
+                                    candidatoidiomarepository.save(idioma);
+
+                                }
+                                break;
+
+                            }
+
+                        }
+
+                        if (!aindaExiste) {
+                            candidatoidiomarepository.delete(idioma);
+
+                        }
+
+                    }
+
+
+                }
+                idiomaService.cadastrarParaCandidato(dto.getIdiomas(), candidato.get());
+
+
+                candidatorepository.save(candidato.get());
+
+                return candidato.get();
+
+
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 

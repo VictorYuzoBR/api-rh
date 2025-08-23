@@ -5,6 +5,7 @@ import com.rh.api_rh.candidato.candidato_model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -22,10 +23,10 @@ public class experiencia_model {
     private String descricao;
 
     @Column
-    private Date dataInicio;
+    private LocalDate dataInicio;
 
     @Column
-    private Date dataFim;
+    private LocalDate  dataFim;
 
     @ManyToOne
     @JoinColumn(name = "candidato_id")
