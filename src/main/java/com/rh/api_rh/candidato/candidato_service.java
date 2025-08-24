@@ -312,6 +312,7 @@ public class candidato_service {
 
     }
 
+    @Transactional(rollbackOn =  Exception.class)
     public candidato_model atualizar(atualizarCandidato_dto dto) {
 
         try {
@@ -474,7 +475,7 @@ public class candidato_service {
                 return null;
             }
         } catch (Exception e) {
-            return null;
+            throw  new RuntimeException(e);
         }
 
     }

@@ -1,6 +1,7 @@
 package com.rh.api_rh.funcionario;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rh.api_rh.funcionario.endereco.endereco_model;
 import jakarta.persistence.*;
 import com.rh.api_rh.setor.setor_model;
@@ -53,6 +54,7 @@ public class funcionario_model implements UserDetails {
     @Column(nullable = false)
     private String funcao;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "idusuario", referencedColumnName = "id", nullable = false)
     private usuario_model idusuario;
@@ -70,6 +72,7 @@ public class funcionario_model implements UserDetails {
     private endereco_model id_endereco;
 
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.cargo == Cargo.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_RH"), new SimpleGrantedAuthority("ROLE_FUNCIONARIO"));
@@ -77,11 +80,13 @@ public class funcionario_model implements UserDetails {
         else return List.of(new SimpleGrantedAuthority("ROLE_FUNCIONARIO"));
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return this.idusuario.getSenha();
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
         return this.idusuario.getRegistro();

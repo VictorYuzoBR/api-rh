@@ -3,6 +3,8 @@ package com.rh.api_rh.util;
 import com.rh.api_rh.candidato.candidato_model;
 import com.rh.api_rh.candidato.codigotrocasenhaCandidato.codigotrocasenhaCandidato_service;
 import com.rh.api_rh.candidato.vaga.vaga_model;
+import com.rh.api_rh.comunicado.comunicado_model;
+import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.usuario.codigotrocasenha.codigotrocasenha_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,6 +147,24 @@ public class email_service {
             message.setText("Prezado "+candidato.getNome()+", Nós do time BIKUBE gostariamos de informar que uma nova vaga para "+titulo+" foi aberta em nosso site, verificamos que " +
                     "seu perfil atende aos requisitos exigidos na vaga e gostariamos de convida-lo para participar do processo seletivo! Caso possua interesse, " +
                     "responda este email com uma mensagem de confirmação e logo uma pessoa de nosso time irá entrar em contato para mais informações, atenciosamente, time BIKUBE.");
+            mail_sender.send(message);
+            return("Email enviado com sucesso!");
+
+        }   catch (Exception e) {
+            return ("Erro ao enviar e-mail");
+        }
+
+    }
+
+    public String enviarComunicado(comunicado_model comunicado, funcionario_model funcionario) {
+
+        try {
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(funcionario.getEmail());
+            message.setFrom(remetente);
+            message.setSubject("Comunicado BIKUBE");
+            message.setText(comunicado.getTexto());
             mail_sender.send(message);
             return("Email enviado com sucesso!");
 
