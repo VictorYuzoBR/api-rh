@@ -174,4 +174,23 @@ public class email_service {
 
     }
 
+    public String enviarCodigoConfirmarEmailCandidato(String email, String codigo) {
+
+        try {
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setFrom(remetente);
+            message.setSubject("Codigo para confirmação de email");
+            message.setText("Olá, seu código para confirmação de email é: "+codigo+", este é um email automático e não precisa ser respondido, por favor, retorne para página de" +
+                    "confirmação de código e digite o código enviado. Time BIKUBE.");
+            mail_sender.send(message);
+            return("Email enviado com sucesso!");
+
+        }   catch (Exception e) {
+            return ("Erro ao enviar e-mail");
+        }
+
+    }
+
 }
