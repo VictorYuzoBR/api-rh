@@ -2,11 +2,13 @@ package com.rh.api_rh.espelho;
 
 import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Data
 public class espelho_model {
 
     @Id
@@ -34,6 +36,7 @@ public class espelho_model {
     @Column
     private String cep = "00000-000";
 
+    /// dados funcionario
     @Column
     private String nomeFuncionario;
     @Column
@@ -42,8 +45,7 @@ public class espelho_model {
     private String registro;
     @Column
 
-    @JoinColumn
-    @OneToMany
+    @OneToMany(mappedBy = "espelho", orphanRemoval = true)
     private List<espelho_item_model> listaEntradas;
 
 }

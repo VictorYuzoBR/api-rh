@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
 import com.rh.api_rh.espelho.espelho_model;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalTime;
 
 @Entity
+@Data
 public class entrada_espelho_model {
 
     @Id
@@ -22,6 +24,7 @@ public class entrada_espelho_model {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private espelho_item_model item;
 
 
