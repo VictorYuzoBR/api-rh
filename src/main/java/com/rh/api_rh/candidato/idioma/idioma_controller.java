@@ -15,14 +15,19 @@ public class idioma_controller {
     private final idioma_service idiomaservice;
 
     @PostMapping
-    public ResponseEntity<idioma_model> cadastrar(@RequestBody cadastroIdioma_dto dto) {
+    public ResponseEntity<?> cadastrar(@RequestBody cadastroIdioma_dto dto) {
         idioma_model idioma = new idioma_model();
         try {
            idioma =  idiomaservice.cadastrar(dto);
+           if (idioma == null) {
+               return ResponseEntity.badRequest().body("idioma ja estava cadastrado");
+           } else {
+               return ResponseEntity.ok().body(idioma);
+           }
         } catch (Exception e) {
             throw e;
         }
-        return ResponseEntity.ok().body(idioma);
+
 
     }
 

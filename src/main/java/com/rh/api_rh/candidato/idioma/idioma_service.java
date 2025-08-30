@@ -24,6 +24,13 @@ public class idioma_service {
         for (idioma_model_apenas_formulario idioma : idiomas) {
 
             try {
+
+                if (!idioma.getNivel().equals("1") && !idioma.getNivel().equals("2") && !idioma.getNivel().equals("3")) {
+
+                    throw new IllegalArgumentException("nivel de idioma enviado não faz parte dos aceitos");
+
+                }
+
                 candidato_idioma_model auxiliar =  new candidato_idioma_model();
                 Optional<idioma_model> jaexistente = idiomarepository.findByIdioma(idioma.getIdioma());
 
@@ -53,6 +60,12 @@ public class idioma_service {
     }
 
     public idioma_model cadastrar(cadastroIdioma_dto dto) {
+
+        Optional<idioma_model> jaexistente = idiomarepository.findByIdioma(dto.getIdioma());
+        if (jaexistente.isPresent()) {
+            return null;
+        }
+
         idioma_model idioma = new idioma_model();
         idioma.setIdioma(dto.getIdioma());
         try {

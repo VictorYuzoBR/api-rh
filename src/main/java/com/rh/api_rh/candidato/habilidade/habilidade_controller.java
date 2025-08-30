@@ -28,14 +28,20 @@ public class habilidade_controller {
     }
 
     @PostMapping
-    public  ResponseEntity<habilidade_model> cadastrar(@RequestBody cadastroHabilidade_dto dto) {
+    public  ResponseEntity<?> cadastrar(@RequestBody cadastroHabilidade_dto dto) {
         habilidade_model habilidade = new habilidade_model();
         try {
            habilidade = habilidadeService.cadastrarHabilidade(dto);
+           if (habilidade == null) {
+               return ResponseEntity.badRequest().body("habilidade ja estava cadastrada");
+           } else {
+               return ResponseEntity.status(HttpStatus.OK).body(habilidade);
+           }
+
         } catch (Exception e) {
             return null;
         }
-        return ResponseEntity.status(HttpStatus.OK).body(habilidade);
+
     }
 
 }

@@ -95,6 +95,12 @@ public class habilidade_service {
     }
 
     public habilidade_model cadastrarHabilidade(cadastroHabilidade_dto dto) {
+
+        Optional<habilidade_model> jaexistente = habilidadeRepository.findByHabilidade(dto.getHabilidade());
+        if (jaexistente.isPresent()) {
+            return null;
+        }
+
         habilidade_model habilidade = new habilidade_model();
         habilidade.setHabilidade(dto.getHabilidade());
         try {
