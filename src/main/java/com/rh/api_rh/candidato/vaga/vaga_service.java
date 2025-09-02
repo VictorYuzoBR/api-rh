@@ -81,6 +81,13 @@ public class vaga_service {
         Optional<vaga_model> vaga = vagarepository.findById(dto.getIdvaga());
 
         if(candidato.isPresent() && vaga.isPresent()) {
+
+            Optional<candidato_vaga_model> jaexiste = candidatovagarepository.findByCandidatoAndVaga(candidato.get(), vaga.get());
+            if(jaexiste.isPresent()) {
+                return"candidato ja aplicou para esta vaga";
+            }
+
+
             candidato_vaga_model aplicacao = new candidato_vaga_model();
             aplicacao.setCandidato(candidato.get());
             aplicacao.setVaga(vaga.get());

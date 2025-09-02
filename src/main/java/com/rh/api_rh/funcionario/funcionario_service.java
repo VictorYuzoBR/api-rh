@@ -153,7 +153,7 @@ public class funcionario_service {
         dto.setFuncao("DBA");
         dto.setData_nascimento("01/01/2001");
         dto.setCpf("145.145.14.45");
-        dto.setEmail("victoryuzofb4@gmail.com");
+        dto.setEmail("victoryuzoumc@gmail.com");
         Cargo cargo = Cargo.ADMIN;
         dto.setCargo(cargo);
         dto.setSalario(20000.00f);
@@ -172,6 +172,9 @@ public class funcionario_service {
         emailnotificarcadastro_dto dados  = funcionario_mapper.convert(dto);
         funcionario_model funcionario = dados.getFuncionario();
         usuarioprovisorio provisorio = dados.getProvisorio();
+
+        System.out.println(provisorio.getRegistro());
+        System.out.println(provisorio.getSenha());
 
         try {
             String resposta = cadastrar(funcionario);

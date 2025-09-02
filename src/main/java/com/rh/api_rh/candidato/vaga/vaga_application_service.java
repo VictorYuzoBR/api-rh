@@ -205,14 +205,27 @@ public class vaga_application_service {
                 candidatoPontuacao.setCandidato(candidato);
                 candidatoPontuacao.setPontuacao(pontuacao);
 
-                if (dezMelhores.size() < 10) {
+                if (dezMelhores.isEmpty()) {
                     dezMelhores.add(candidatoPontuacao);
                 } else {
+                    boolean foiadicionado = false;
 
                     for (int i = 0; i < dezMelhores.size(); i++) {
-                        if (dezMelhores.get(i).getPontuacao() < pontuacao) {
-                            dezMelhores.set(i, candidatoPontuacao);
+
+                        if (pontuacao >= dezMelhores.get(i).getPontuacao()) {
+
+                            dezMelhores.add(i, candidatoPontuacao);
+                            foiadicionado = true;
+                            break;
                         }
+
+                    }
+                    if (!foiadicionado) {
+                        dezMelhores.add(candidatoPontuacao);
+                    }
+
+                    if (dezMelhores.size() > 10) {
+                        dezMelhores.remove(10);
                     }
 
                 }

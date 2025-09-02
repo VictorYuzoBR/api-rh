@@ -9,6 +9,7 @@ import com.rh.api_rh.candidato.candidato_model;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.refreshToken.refresh_token_model;
 import com.rh.api_rh.refreshToken.refresh_token_repository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -88,7 +89,7 @@ public class token_service {
 
 
     public Instant generateExpiration() {
-        return LocalDateTime.now().plusMinutes(1).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusMinutes(5).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public String returnClaim(String token) {
@@ -105,6 +106,26 @@ public class token_service {
 
     }  catch (JWTVerificationException e) {
         return "";}
+    }
+
+    public String returnIdRh(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null) return null;
+        String token =  authHeader.replace("Bearer ", "");
+
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            DecodedJWT decodedJWT = JWT.require(algorithm)
+                    .withIssuer("Yuzo")
+                    .build()
+                    .verify(token);
+            String id = decodedJWT.getSubject();
+
+            return id;
+        }  catch (JWTVerificationException e) {
+            return "";
+        }
+
     }
 
 }
