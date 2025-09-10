@@ -53,7 +53,7 @@ public class authorization_controller {
         try {
             return authorizationService.loginFuncionario(dto);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro inesperado no login");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
@@ -85,7 +85,7 @@ public class authorization_controller {
         try {
             return authorizationService.loginCandidato(dto);
         }  catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro inesperado no login");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }

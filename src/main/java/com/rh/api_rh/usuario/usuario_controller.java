@@ -46,13 +46,6 @@ public class usuario_controller {
             String res = usuario_service.trocasenha(dto.getSenha(), id);
             if (res.equals("A senha foi atualizada com sucesso!")) {
 
-                usuario_model usuario = usuario_service.buscar(id);
-
-                log_model log = new log_model();
-                log.setRegistro(usuario.getRegistro());
-                log.setAcao("Troca de senha realizada no usuário de registro: "+usuario.getRegistro());
-                log.setData(new Date());
-                log_repository.save(log);
 
                 return ResponseEntity.ok(res);
             } else {

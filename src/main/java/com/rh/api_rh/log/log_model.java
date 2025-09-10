@@ -16,7 +16,7 @@ public class log_model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String registro;
 
     @Column(nullable = false)
@@ -24,5 +24,8 @@ public class log_model {
 
     @Column(nullable = false)
     private Date data;
+
+    @Column(nullable = false)
+    private String tipo;
 
 }

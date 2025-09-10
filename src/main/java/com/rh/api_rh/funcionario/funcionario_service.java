@@ -13,7 +13,9 @@ import com.rh.api_rh.funcionario.telefone.telefone_repository;
 import com.rh.api_rh.funcionario.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -48,7 +50,20 @@ public class funcionario_service {
         try {
 
             funcionario_repository.save(funcionario);
+
+            log_model log = new log_model();
+            log.setRegistro(funcionario.getIdusuario().getRegistro());
+            log.setAcao("Novo funcionário cadastrado no sistema com registro: "+funcionario.getIdusuario().getRegistro());
+            log.setTipo("funcionario");
+            log.setData(new Date());
+            log_repository.save(log);
+
+
             return "Cadastrado com sucesso!";
+
+
+
+
         } catch (Exception e) {
 
             telefone_service.excluir(funcionario.getId_telefone());
@@ -87,7 +102,8 @@ public class funcionario_service {
 
     }
 
-    public String atualizar(atualizarfuncionario_dto dto) {
+    @Transactional(rollbackOn =  Exception.class)
+    public String atualizar(atualizarfuncionario_dto dto, UUID idrh) {
 
         try {
             Optional<funcionario_model> data = funcionario_repository.findByEmail(dto.getEmail());
@@ -117,12 +133,30 @@ public class funcionario_service {
                 }
 
                 funcionario_repository.save(funcionario);
-                return funcionario.getIdusuario().getRegistro();
+
+
+                Optional<funcionario_model> funcionariorh = funcionario_repository.findById(idrh);
+                if (funcionariorh.isPresent()) {
+                    String registroDoRh = funcionariorh.get().getIdusuario().getRegistro();
+                    String texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + funcionario.getIdusuario().getRegistro();;
+                    log_model log = new log_model();
+                    log.setAcao(texto);
+                    log.setRegistro(registroDoRh);
+                    log.setData(new Date());
+                    log.setTipo("funcionario");
+                    log_repository.save(log);
+
+
+                    return ("Atualizado com sucesso!");
+                } else {
+                    return ("erro ao buscar funcionario rh");
+                }
+
 
 
             }
         } catch (Exception e) {
-            return e.getMessage();
+            throw new RuntimeException("Erro ao atualizar o funcionario", e);
         }
 
         return "Um erro inesperado!";
@@ -185,6 +219,7 @@ public class funcionario_service {
                 log.setRegistro(funcionario.getIdusuario().getRegistro());
                 log.setAcao("Novo funcionário cadastrado no sistema com registro: "+funcionario.getIdusuario().getRegistro());
                 log.setData(new Date());
+                log.setTipo("funcionario");
                 log_repository.save(log);
 
                 return ("Cadastrado com sucesso!");

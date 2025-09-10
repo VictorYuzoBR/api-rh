@@ -7,12 +7,14 @@ import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.funcionario.endereco.endereco_mapper;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
+import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.funcionario.telefone.telefone_mapper;
 import com.rh.api_rh.funcionario.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,7 @@ public class funcionario_controller {
     private final email_service email_service;
     private final log_repository log_repository;
     private final funcionario_repository funcionario_repository;
+    private final token_service token_service;
 
 
 
@@ -52,12 +55,6 @@ public class funcionario_controller {
             String resposta = funcionario_service.cadastrar(funcionario);
             if (resposta.equals("Cadastrado com sucesso!")) {
                 email_service.enviarcadastro(funcionario.getEmail(), provisorio);
-
-                log_model log = new log_model();
-                log.setRegistro(funcionario.getIdusuario().getRegistro());
-                log.setAcao("Novo funcionário cadastrado no sistema com registro: "+funcionario.getIdusuario().getRegistro());
-                log.setData(new Date());
-                log_repository.save(log);
 
                 return ResponseEntity.ok().body("Cadastrado com sucesso!");
             } else {
@@ -130,25 +127,16 @@ public class funcionario_controller {
     /// exemplo: usuario RH marcio está no perfil do usuario adrian, enviar no dto o id do usuário marcio que estará no token, e pegar os dados dos campos do perfil do
     /// adrian e enviar no dto
     @PutMapping
-    public ResponseEntity<String> atualizar(@RequestBody atualizarfuncionario_dto dto) {
+    public ResponseEntity<String> atualizar(@RequestBody atualizarfuncionario_dto dto, HttpServletRequest request) {
 
         try {
-            String registroDoFuncionarioComum = funcionario_service.atualizar(dto);
+            UUID idrh = UUID.fromString(token_service.returnIdRh(request));
 
-            Optional<funcionario_model> funcionariorh = funcionario_repository.findByEmail(dto.getEmailfuncionariorh());
-            if (funcionariorh.isPresent()) {
-                String registroDoRh = funcionariorh.get().getIdusuario().getRegistro();
-                String texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + registroDoFuncionarioComum;
-                log_model log = new log_model();
-                log.setAcao(texto);
-                log.setRegistro(registroDoRh);
-                log.setData(new Date());
-                log_repository.save(log);
-
-
+            String res = funcionario_service.atualizar(dto, idrh);
+            if (res.equals("Atualizado com sucesso!")) {
                 return ResponseEntity.ok().body("Atualizado com sucesso!");
             } else {
-                return ResponseEntity.badRequest().body("O email do funcionário RH está incorreto");
+                return ResponseEntity.badRequest().body(res);
             }
 
 

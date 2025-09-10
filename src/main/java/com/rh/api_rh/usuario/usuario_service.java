@@ -1,12 +1,15 @@
 package com.rh.api_rh.usuario;
 
 import com.rh.api_rh.funcionario.funcionario_model;
+import com.rh.api_rh.log.log_model;
+import com.rh.api_rh.log.log_repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.rh.api_rh.util.registro_service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,6 +24,9 @@ public class usuario_service {
     private registro_service registro_service;
     @Autowired
     private usuario_repository usuario_repository;
+
+    @Autowired
+    private log_repository log_repository;
 
     public usuarioprovisorio criar() {
 
@@ -95,6 +101,17 @@ public class usuario_service {
             }
 
             usuario_repository.save(usuario);
+
+
+            log_model log = new log_model();
+            log.setRegistro(usuario.getRegistro());
+            log.setAcao("Troca de senha realizada no usuário de registro: "+usuario.getRegistro());
+            log.setData(new Date());
+            log.setTipo("funcionario");
+            log_repository.save(log);
+
+
+
 
             return("A senha foi atualizada com sucesso!");
 

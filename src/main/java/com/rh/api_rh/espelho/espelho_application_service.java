@@ -34,7 +34,8 @@ public class espelho_application_service {
     @Autowired
     private entrada_espelho_repository entradaEspelhoRepository;
 
-    @Scheduled(fixedRate = 20000)
+    ///  tirar um 0 quando quiser testar
+    @Scheduled(fixedRate = 200000)
     public void gerarEspelho() {
 
         List<funcionario_model> funcionarios = funcionarioService.listar();
@@ -63,7 +64,7 @@ public class espelho_application_service {
 
     }
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 300000)
     public void gerarItemDiario() {
 
         YearMonth anoMesAtual = YearMonth.now();
@@ -158,7 +159,7 @@ public class espelho_application_service {
 
     }
 
-    @Scheduled(fixedRate = 40000)
+    @Scheduled(fixedRate = 400000)
     public void gerarAusencia() {
 
         LocalDate hoje = LocalDate.now();

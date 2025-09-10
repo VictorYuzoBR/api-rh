@@ -4,8 +4,7 @@ import lombok.Data;
 
 @Data
 public class atualizarfuncionario_dto {
-
-    private String emailfuncionariorh;
+    
     private String email;
     private String funcao;
     private float salario;

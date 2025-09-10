@@ -95,6 +95,7 @@ public class authorization_service {
                 log.setRegistro(dto.registro());
                 log.setAcao("Tentativa de login bem sucedida no usuário de registro "+dto.registro());
                 log.setData(new Date());
+                log.setTipo("funcionario");
                 logRepository.save(log);
 
                 funcionario.get().getIdusuario().setTentativas(0);
@@ -126,6 +127,7 @@ public class authorization_service {
                 log.setRegistro(dto.registro());
                 log.setAcao("Tentativa de login falha no usuário de registro "+dto.registro());
                 log.setData(new Date());
+                log.setTipo("funcionario");
                 logRepository.save(log);
 
                 funcionario_model funcionarioparaalteracao = funcionario.get();
@@ -196,6 +198,7 @@ public class authorization_service {
                 log.setRegistro(String.valueOf(candidato.getId()));
                 log.setAcao("Tentativa de login bem sucedida no candidato de id "+candidato.getId());
                 log.setData(new Date());
+                log.setTipo("candidato");
                 logRepository.save(log);
 
                 candidato.setTentativas(0);
@@ -229,6 +232,7 @@ public class authorization_service {
                 log.setRegistro(String.valueOf(candidato.getId()));
                 log.setAcao("Tentativa de login falha no candidato de id "+candidato.getId());
                 log.setData(new Date());
+                log.setTipo("funcionario");
                 logRepository.save(log);
 
                 int tentativas = candidato.getTentativas();
