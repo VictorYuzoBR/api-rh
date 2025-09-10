@@ -14,4 +14,6 @@ public interface candidato_habilidade_repository extends JpaRepository<candidato
 
     List<candidato_habilidade_model> findByCandidato(candidato_model candidato);
 
+    void deleteByCandidato(candidato_model candidato);
+
 }

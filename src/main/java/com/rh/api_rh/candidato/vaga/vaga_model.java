@@ -18,7 +18,7 @@ public class vaga_model {
     @Column
     private String modelo;
 
-    @Lob
+
     @Column
     private String descricao;
 

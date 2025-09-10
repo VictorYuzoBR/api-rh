@@ -7,6 +7,8 @@ import com.rh.api_rh.DTO.aplicacao.candidato.retornarPerfil_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
+import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
+import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_service;
 import com.rh.api_rh.util.email_service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ public class candidato_controller {
 
     private final candidato_service candidato_service;
     private final email_service email_service;
+    private final candidato_vaga_service candidato_vaga_service;
 
     @PostMapping
     public ResponseEntity<String> cadastrar(@RequestBody cadastroCandidato_dto dto){
@@ -143,6 +146,40 @@ public class candidato_controller {
                 return ResponseEntity.status(HttpStatus.OK).body(res);
             }
         }   catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String>  excluir(@PathVariable Long id){
+
+        try {
+            String res = candidato_service.excluir(id);
+            if (res.equals("excluido com sucesso")) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            } else {
+                return ResponseEntity.badRequest().body(res);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @GetMapping("/buscarCandidaturas/{id}")
+    public ResponseEntity<?> buscarCandidaturas(@PathVariable Long id){
+
+        try {
+
+            List<candidato_vaga_model> res = candidato_service.buscarCandidaturasUsuario(id);
+            if  (res == null){
+                return ResponseEntity.badRequest().body("aaa");
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            }
+
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 

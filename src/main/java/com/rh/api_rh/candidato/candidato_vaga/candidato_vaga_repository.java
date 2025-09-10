@@ -15,4 +15,6 @@ public interface candidato_vaga_repository extends JpaRepository<candidato_vaga_
 
     Optional<candidato_vaga_model> findByCandidatoAndVaga(candidato_model candidato, vaga_model vaga);
 
+    List<candidato_vaga_model> findByCandidato(candidato_model candidato);
+
 }

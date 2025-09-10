@@ -37,7 +37,7 @@ public class setor_service {
             setor_repository.save(setor);
             return "Cadastrado com sucesso!";
         } catch (Exception e) {
-            return "Erro ao cadastrarParaCandidato o setor";
+            return "Erro ao cadastrar o setor";
         }
 
     }

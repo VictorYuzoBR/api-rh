@@ -9,6 +9,8 @@ import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_repository;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_repository;
+import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
+import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_repository;
 import com.rh.api_rh.candidato.experiencia.experiencia_model;
 import com.rh.api_rh.candidato.experiencia.experiencia_repository;
 import com.rh.api_rh.candidato.experiencia.experiencia_service;
@@ -68,6 +70,9 @@ public class candidato_service {
 
     @Autowired
     private formacaoAcademica_repository formacaoAcademicarepository;
+
+    @Autowired
+    private candidato_vaga_repository candidatovagaRepository;
 
     @Value("${SALT_SECRETWORD:!Senhasecreta1}")
     private String salt_secret;
@@ -230,6 +235,27 @@ public class candidato_service {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<candidato_vaga_model> buscarCandidaturasUsuario(Long id) {
+
+        try {
+            List<candidato_vaga_model> lista =  new ArrayList<>();
+
+            Optional<candidato_model> candidato = candidatorepository.findById(id);
+            if (candidato.isPresent()) {
+
+                lista = candidatovagaRepository.findByCandidato(candidato.get());
+                return lista;
+
+            } else {
+                return lista;
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
     public String aceitartermo(Long id) {
@@ -474,6 +500,31 @@ public class candidato_service {
             } else {
                 return null;
             }
+        } catch (Exception e) {
+            throw  new RuntimeException(e);
+        }
+
+    }
+
+    @Transactional(rollbackOn =  Exception.class)
+    public String excluir(Long id) {
+
+        try {
+
+
+
+            Optional<candidato_model> candidato = candidatorepository.findById(id);
+            if (candidato.isPresent()) {
+
+                candidatohabilidaderepository.deleteByCandidato(candidato.get());
+                candidatoidiomarepository.deleteByCandidato(candidato.get());
+
+                candidatorepository.delete(candidato.get());
+                return ("excluido com sucesso");
+            } else {
+                return ("falha ao excluir");
+            }
+
         } catch (Exception e) {
             throw  new RuntimeException(e);
         }
