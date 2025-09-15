@@ -76,6 +76,7 @@ public class refresh_token_service {
                     String newtoken = JWT.create()
                             .withIssuer("Yuzo")
                             .withSubject(idfuncionario)
+                            .withClaim("type", "funcionario")
                             .withExpiresAt(generateAccessExpiration())
                             .sign(algorithm);
 
