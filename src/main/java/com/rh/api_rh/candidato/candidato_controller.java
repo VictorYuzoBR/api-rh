@@ -5,6 +5,7 @@ import com.rh.api_rh.DTO.aplicacao.candidato.buscarComBaseHabilidades_dto;
 import com.rh.api_rh.DTO.aplicacao.candidato.enviarEmailNovaVaga_dto;
 import com.rh.api_rh.DTO.aplicacao.candidato.retornarPerfil_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
+import com.rh.api_rh.DTO.login.trocaSenhaCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
 import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
@@ -179,6 +180,22 @@ public class candidato_controller {
                 return ResponseEntity.status(HttpStatus.OK).body(res);
             }
 
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PutMapping("/trocarSenhaCandidato")
+    public ResponseEntity<String> trocarSenha(@RequestBody trocaSenhaCandidato_dto dto){
+
+        try {
+            String res = candidato_service.trocarSenha(dto);
+            if (res.equals("sucesso")) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            }  else {
+                return ResponseEntity.badRequest().body(res);
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

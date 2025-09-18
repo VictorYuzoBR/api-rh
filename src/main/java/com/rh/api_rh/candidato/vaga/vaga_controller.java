@@ -6,7 +6,9 @@ import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
 import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
 import com.rh.api_rh.candidato.candidato_vaga.etapas;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
+import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.util.email_service;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @RequiredArgsConstructor()
@@ -28,6 +31,8 @@ public class vaga_controller {
     private final vaga_repository vagarepository;
 
     private final email_service emailService;
+
+    private final token_service tokenservice;
 
     @PostMapping
     public ResponseEntity<String> cadastrar(@RequestBody cadastrarVaga_dto dto) {
@@ -214,6 +219,38 @@ public class vaga_controller {
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("/finalizarVaga")
+    public ResponseEntity<String> finalizarVaga(@RequestBody finalizarVaga_dto dto, HttpServletRequest request) {
+
+        try {
+
+            UUID idrh = UUID.fromString(tokenservice.returnIdRh(request));
+
+            String res = vagaservice.finalizarVaga(dto.getVagaid(), idrh);
+            if (res.equals("sucesso")) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            } else {
+                return ResponseEntity.badRequest().body(res);
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @GetMapping("/listarVagasAtivas")
+    public ResponseEntity<List<vaga_model>> listarVagasAtivas() {
+
+        try {
+            List<vaga_model> res = vagaservice.listarVagasAtivas();
+            return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

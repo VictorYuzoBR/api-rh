@@ -12,12 +12,16 @@ import com.rh.api_rh.candidato.candidato_vaga.etapas;
 import com.rh.api_rh.candidato.habilidade.habilidade_service;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_repository;
+import com.rh.api_rh.funcionario.funcionario_model;
+import com.rh.api_rh.funcionario.funcionario_service;
+import com.rh.api_rh.infra.security.token_service;
+import com.rh.api_rh.log.log_model;
+import com.rh.api_rh.log.log_repository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class vaga_service {
@@ -39,6 +43,14 @@ public class vaga_service {
 
     @Autowired
     private candidato_vaga_repository candidatovagarepository;
+
+    @Autowired
+    private funcionario_service funcionarioservice;
+
+    @Autowired
+    private log_repository logrepository;
+
+
 
     @Transactional(rollbackOn =  Exception.class)
     public String cadastrar(cadastrarVaga_dto dto) {
@@ -151,6 +163,45 @@ public class vaga_service {
         }
         return dto;
 
+
+    }
+
+    public String finalizarVaga(Long idvaga, UUID idrh) {
+
+        try {
+
+            Optional<vaga_model> vaga = vagarepository.findById(idvaga);
+            if (vaga.isPresent()) {
+
+                vaga.get().setStatus("finalizado");
+                vagarepository.save(vaga.get());
+
+                funcionario_model funcionario = funcionarioservice.buscar(idrh);
+                log_model log = new log_model();
+
+                log.setTipo(("funcionario"));
+                log.setRegistro(funcionario.getIdusuario().getRegistro());
+                log.setAcao("Funcionario de registro: "+funcionario.getIdusuario().getRegistro()+" encerrou a vaga de id: "+idvaga);
+                log.setData(new Date());
+                logrepository.save(log);
+
+                return "sucesso";
+
+
+            } else {
+                return "id não encontrado";
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+
+    }
+
+    public List<vaga_model> listarVagasAtivas() {
+
+        List<vaga_model> vagas = new ArrayList<vaga_model>();
+        vagas =  vagarepository.findByStatus("ativo");
+        return vagas;
 
     }
 

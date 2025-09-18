@@ -35,6 +35,7 @@ public class Security_config {
     ) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         ///.requestMatchers(HttpMethod.GET, "/telefone").hasAnyRole("RH", "ADMIN")

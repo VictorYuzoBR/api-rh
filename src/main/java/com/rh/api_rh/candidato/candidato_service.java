@@ -5,6 +5,7 @@ import com.rh.api_rh.DTO.aplicacao.candidato.enviarEmailNovaVaga_dto;
 import com.rh.api_rh.DTO.aplicacao.candidato.retornarPerfil_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatoMapeado_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
+import com.rh.api_rh.DTO.login.trocaSenhaCandidato_dto;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_repository;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
@@ -527,6 +528,42 @@ public class candidato_service {
 
         } catch (Exception e) {
             throw  new RuntimeException(e);
+        }
+
+    }
+
+    public String trocarSenha(trocaSenhaCandidato_dto dto) {
+
+        try {
+            System.out.println(dto.getEmail());
+
+            Optional<candidato_model> data = candidatorepository.findByEmail(dto.getEmail());
+            if (data.isPresent()) {
+
+                candidato_model candidato = data.get();
+
+                String senhanova = candidato.getEmail() + dto.getNovasenha() + salt_secret;
+                String senhaoriginal = candidato.getPassword();
+
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+                if (encoder.matches(senhanova, senhaoriginal)) {
+                    return "não pode ser a mesma senha";
+                } else {
+
+                    String senhanovahash = encoder.encode(senhanova);
+                    candidato.setPassword(senhanovahash);
+                    candidatorepository.save(candidato);
+
+                    return "sucesso";
+
+                }
+
+            } else {
+                return ("candidato não encontrado");
+            }
+        } catch (Exception e) {
+            return ("falha ao trocar senha");
         }
 
     }

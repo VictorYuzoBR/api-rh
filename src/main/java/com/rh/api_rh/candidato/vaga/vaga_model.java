@@ -37,5 +37,8 @@ public class vaga_model {
     @Column
     private String nivel;
 
+    @Column
+    private String status = "ativo";
+
 
 }
