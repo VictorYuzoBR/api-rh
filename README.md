@@ -1,4 +1,4 @@
-# API-RESTFUL SISTEMA DE RH UTILIZANDO SPRINGBOOT
+# API-REST SISTEMA DE RH UTILIZANDO SPRINGBOOT
 
 ## DESCRIÇÃO
 Projeto realizado utilizando java springboot para criação de um sistema de RH de fácil manipulação.
@@ -82,7 +82,7 @@ Projeto realizado utilizando java springboot para criação de um sistema de RH 
 
 ## Objetivos alcançados
 
-* Ser uma API-RESTFUL
+* Ser uma API-REST
 * Utilização de mapper
 * Utilização de DTO
 * Utilização de hashing + salt para armazenamento de senhas
