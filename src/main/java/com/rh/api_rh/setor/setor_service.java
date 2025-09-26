@@ -31,13 +31,19 @@ public class setor_service {
     }
 
 
-    public String cadastrar(setor_model setor) {
+    public setor_model cadastrar(setor_model setor) {
 
         try {
+
+            Optional<setor_model> jaexiste =  setor_repository.findByNome(setor.getNome());
+            if (jaexiste.isPresent()) {
+                return null;
+            }
+
             setor_repository.save(setor);
-            return "Cadastrado com sucesso!";
+            return setor;
         } catch (Exception e) {
-            return "Erro ao cadastrar o setor";
+            throw  new RuntimeException("Erro ao cadastrar o setor", e);
         }
 
     }
@@ -47,6 +53,21 @@ public class setor_service {
             return setor_repository.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Erro ao listar o setor", e);
+        }
+    }
+
+    public String deletar(Long id) {
+        try {
+            Optional<setor_model> setor = setor_repository.findById(id);
+            if (setor.isPresent()) {
+                setor_repository.delete(setor.get());
+                return "Deletado com sucesso!";
+            } else {
+                return "Erro ao deletar o setor";
+            }
+
+        }  catch (Exception e) {
+            throw new RuntimeException("Erro ao deletar o setor", e);
         }
     }
 

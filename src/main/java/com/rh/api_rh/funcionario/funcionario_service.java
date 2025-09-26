@@ -45,7 +45,7 @@ public class funcionario_service {
     @Autowired
     private log_repository log_repository;
 
-    public String cadastrar(funcionario_model funcionario) {
+    public funcionario_model cadastrar(funcionario_model funcionario) {
 
         try {
 
@@ -59,7 +59,7 @@ public class funcionario_service {
             log_repository.save(log);
 
 
-            return "Cadastrado com sucesso!";
+            return funcionario;
 
 
 
@@ -68,7 +68,7 @@ public class funcionario_service {
 
             telefone_service.excluir(funcionario.getId_telefone());
             endereco_service.deletar(funcionario.getId_endereco());
-            return "Erro ao cadastrarParaCandidato funcionario.";
+            return null;
         }
 
     }
@@ -79,11 +79,18 @@ public class funcionario_service {
 
     }
 
-    public String excluir(funcionario_model funcionario) {
-        funcionario_repository.delete(funcionario);
-        telefone_service.excluir(funcionario.getId_telefone());
-        endereco_service.deletar(funcionario.getId_endereco());
-        return "Excluido com sucesso!";
+    public String excluir(UUID id) {
+
+        try {
+            funcionario_model funcionario = buscar(id);
+
+            funcionario_repository.delete(funcionario);
+            telefone_service.excluir(funcionario.getId_telefone());
+            endereco_service.deletar(funcionario.getId_endereco());
+            return "Excluido com sucesso!";
+        } catch (Exception e) {
+            return null;
+        }
 
     }
 
@@ -94,7 +101,7 @@ public class funcionario_service {
             if (funcionario.isPresent()) {
                 return funcionario.get();
             } else {
-                throw new RuntimeException("Funcionário não encontrado com o id: " + id);
+                return null;
             }
         } catch (Exception e) {
             throw new RuntimeException("Erro ao buscar o funcionário", e);
@@ -122,15 +129,38 @@ public class funcionario_service {
                     return "Setor inexistente";
                 }
 
-                telefone_model telefone = telefone_service.buscar(dto.getTelefone());
-                if (telefone != null) {
-                    try {
-                        telefone.setNumero(dto.getTelefone());
-                        telefone_repository.save(telefone);
-                    } catch (Exception e) {
-                        return "Erro ao atualizar telefone";
+                if (dto.getTelefonenovo() != null) {
+
+                    telefone_model telefone = telefone_service.buscar(dto.getTelefone());
+                    if (telefone != null) {
+                        try {
+
+                            telefone_model telefonejaexiste = telefone_service.buscar(dto.getTelefonenovo());
+                            if (telefonejaexiste != null) {
+                                return "novo numero de telefone ja existe";
+                            }
+
+                            telefone.setNumero(dto.getTelefonenovo());
+                            telefone_repository.save(telefone);
+                        } catch (Exception e) {
+                            return "Erro ao atualizar telefone";
+                        }
                     }
+
                 }
+
+                if (dto.getEmailnovo() != null) {
+
+                    Optional<funcionario_model> funcionariojaexiste = funcionario_repository.findByEmail(dto.getEmailnovo());
+                    if (funcionariojaexiste.isPresent()) {
+                        return "email novo ja em uso";
+                    }
+
+                    funcionario.setEmail(dto.getEmailnovo());
+
+                }
+
+
 
                 funcionario_repository.save(funcionario);
 
@@ -211,8 +241,8 @@ public class funcionario_service {
         System.out.println(provisorio.getSenha());
 
         try {
-            String resposta = cadastrar(funcionario);
-            if (resposta.equals("Cadastrado com sucesso!")) {
+            funcionario_model result = cadastrar(funcionario);
+            if (result != null) {
                 email_service.enviarcadastro(funcionario.getEmail(), provisorio);
 
                 log_model log = new log_model();

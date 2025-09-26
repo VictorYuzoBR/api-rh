@@ -15,6 +15,7 @@ import com.rh.api_rh.funcionario.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class funcionario_controller {
 
 
     @PostMapping
-    public ResponseEntity<String> cadastrar(@RequestBody cadastroFuncionario_dto dto) {
+    public ResponseEntity<funcionario_model> cadastrar(@RequestBody @Valid cadastroFuncionario_dto dto) {
 
 
         emailnotificarcadastro_dto dados  = funcionario_mapper.convert(dto);
@@ -52,20 +53,19 @@ public class funcionario_controller {
         usuarioprovisorio provisorio = dados.getProvisorio();
 
         try {
-            String resposta = funcionario_service.cadastrar(funcionario);
-            if (resposta.equals("Cadastrado com sucesso!")) {
+            funcionario_model result = funcionario_service.cadastrar(funcionario);
+            if (result != null) {
                 email_service.enviarcadastro(funcionario.getEmail(), provisorio);
 
-                return ResponseEntity.ok().body("Cadastrado com sucesso!");
+                return ResponseEntity.ok().body(result);
             } else {
-                return ResponseEntity.badRequest().body("Erro ao cadastrarParaCandidato funcionario!");
+                return ResponseEntity.badRequest().build();
             }
 
 
         } catch (Exception e) {
 
-
-            return new ResponseEntity<>("Erro ao cadastrarParaCandidato", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
 
@@ -112,22 +112,22 @@ public class funcionario_controller {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> excluir(@PathVariable UUID id) {
 
-        funcionario_model funcionario = funcionario_service.buscar(id);
         try {
-            return new ResponseEntity<>(funcionario_service.excluir(funcionario), HttpStatus.OK);
+            String res = funcionario_service.excluir(id);
+            if  (res.equals("Excluido com sucesso!")) {
+                return ResponseEntity.ok().body("Excluido com sucesso!");
+            } else {
+                return ResponseEntity.badRequest().body(res);
+            }
+
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
 
-    ///  o DTO recebe o id do funcionario RH que está atualizando o funcionário comum, os dados do funcionário comum serão puxados a partir do email
-    /// então é necessário enviar no DTO os dados presentes no objeto atualizar funcionario_dto a partir da janela de perfil do funcionario comum que
-    /// o usuário RH estará vendo
-    /// exemplo: usuario RH marcio está no perfil do usuario adrian, enviar no dto o id do usuário marcio que estará no token, e pegar os dados dos campos do perfil do
-    /// adrian e enviar no dto
     @PutMapping
-    public ResponseEntity<String> atualizar(@RequestBody atualizarfuncionario_dto dto, HttpServletRequest request) {
+    public ResponseEntity<String> atualizar(@RequestBody @Valid atualizarfuncionario_dto dto, HttpServletRequest request) {
 
         try {
             UUID idrh = UUID.fromString(token_service.returnIdRh(request));
