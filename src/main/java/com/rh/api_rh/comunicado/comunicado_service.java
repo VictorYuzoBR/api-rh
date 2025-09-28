@@ -85,4 +85,35 @@ public class comunicado_service {
 
     }
 
+    public List<comunicado_model> listarComunicados() {
+        return comunicadorepository.findAll();
+    }
+
+    public comunicado_model buscarComunicado(Long id) {
+
+        Optional<comunicado_model> comunicado = comunicadorepository.findById(id);
+        if (comunicado.isPresent()) {
+            return comunicado.get();
+        } else {
+            return null;
+        }
+
+
+    }
+
+    public String alterarVisto(Long id) {
+
+        Optional<comunicado_funcionario_model> comunicado = comunicadofuncionariorepository.findById(id);
+        if (comunicado.isPresent()) {
+            comunicado.get().setVisto(true);
+            comunicadofuncionariorepository.save(comunicado.get());
+            return("ok");
+        } else {
+            return null;
+        }
+
+    }
+
+
+
 }

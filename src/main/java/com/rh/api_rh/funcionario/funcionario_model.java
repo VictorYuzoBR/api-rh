@@ -54,6 +54,9 @@ public class funcionario_model implements UserDetails {
     @Column(nullable = false)
     private String funcao;
 
+    @Column
+    private String status = "ativo";
+
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "idusuario", referencedColumnName = "id", nullable = false)
@@ -65,7 +68,7 @@ public class funcionario_model implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "id_setor", referencedColumnName = "id",nullable = false)
-    private setor_model id_setor;
+    private setor_model idsetor;
 
     @ManyToOne
     @JoinColumn(name = "id_endereco", referencedColumnName = "id",nullable = false)

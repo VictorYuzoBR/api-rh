@@ -1,5 +1,6 @@
 package com.rh.api_rh.funcionario;
 
+import com.rh.api_rh.setor.setor_model;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
@@ -16,5 +17,11 @@ public interface funcionario_repository extends JpaRepository<funcionario_model,
     Optional<funcionario_model> findByEmail(String email);
 
     List<funcionario_model> findByCargo(Cargo cargo);
+
+    List<funcionario_model> findByIdsetor(setor_model setor);
+
+    List<funcionario_model> findByFuncao(String funcao);
+
+    List<funcionario_model> findByNome(String nome);
 
 }

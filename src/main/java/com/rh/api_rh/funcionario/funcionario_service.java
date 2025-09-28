@@ -15,13 +15,9 @@ import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class funcionario_service {
@@ -124,7 +120,7 @@ public class funcionario_service {
 
                 setor_model setor = setor_service.pesquisa(dto.getIdsetor());
                 if (setor != null) {
-                    funcionario.setId_setor(setor);
+                    funcionario.setIdsetor(setor);
                 } else {
                     return "Setor inexistente";
                 }
@@ -258,6 +254,67 @@ public class funcionario_service {
             }
         } catch (Exception e) {
         return e.getMessage();}
+    }
+
+    public List<funcionario_model> listarPorSetorRecebendoLista(List<Long> idsetor) {
+
+        List<funcionario_model> result = new ArrayList<>();
+
+        try {
+            for (Long id : idsetor) {
+
+                setor_model setor = setor_service.pesquisa(id);
+
+                List<funcionario_model> listaauxiliar = funcionario_repository.findByIdsetor(setor);
+
+                result.addAll(listaauxiliar);
+
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public List<funcionario_model> listarPorFuncaoRecebendoLista(List<String> funcoes) {
+
+        List<funcionario_model> result = new ArrayList<>();
+
+        try {
+            for (String funcao : funcoes) {
+
+
+                List<funcionario_model> listaauxiliar = funcionario_repository.findByFuncao(funcao);
+
+                result.addAll(listaauxiliar);
+
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public List<funcionario_model> listarPorNomeRecebendoLista(List<String> nomes) {
+
+        List<funcionario_model> result = new ArrayList<>();
+
+        try {
+            for (String nome : nomes) {
+
+
+                List<funcionario_model> listaauxiliar = funcionario_repository.findByNome(nome);
+
+                result.addAll(listaauxiliar);
+
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 

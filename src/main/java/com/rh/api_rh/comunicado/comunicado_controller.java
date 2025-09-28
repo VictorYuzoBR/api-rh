@@ -1,5 +1,6 @@
 package com.rh.api_rh.comunicado;
 
+import com.rh.api_rh.DTO.aplicacao.comunicado.alterarVisto_dto;
 import com.rh.api_rh.DTO.aplicacao.comunicado.enviarComunicado_dto;
 import com.rh.api_rh.comunicado.comunicado_funcionario.comunicado_funcionario_model;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +24,13 @@ public class comunicado_controller {
         try {
             String res = comunicadoservice.enviar(dto);
             if (res == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
             } else {
                 return ResponseEntity.ok(res);
             }
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
     }
@@ -49,6 +50,48 @@ public class comunicado_controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
+    }
+
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<comunicado_model> buscarComunicado(@PathVariable Long id) {
+
+        try {
+            comunicado_model res =  comunicadoservice.buscarComunicado(id);
+            if (res != null) {
+                return ResponseEntity.ok(res);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("/alterarVisto")
+    public ResponseEntity<String> alterarVisto(@RequestBody alterarVisto_dto dto) {
+
+        try {
+            String res =  comunicadoservice.alterarVisto(dto.getIdcomunicadotabelaaxuiliar());
+            if (res != null) {
+                return ResponseEntity.ok(res);
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @GetMapping
+    public  ResponseEntity<List<comunicado_model>> buscarComunicados() {
+        try {
+            List<comunicado_model> res = comunicadoservice.listarComunicados();
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

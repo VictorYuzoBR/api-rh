@@ -4,7 +4,6 @@ import com.rh.api_rh.DTO.aplicacao.ferias.atualizarFerias_dto;
 import com.rh.api_rh.DTO.cadastro.cadastrarFerias_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_service;
-import com.rh.api_rh.infra.security.token_service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +50,7 @@ public class ferias_service {
                 novaferias.setStatus("solicitado");
                 novaferias.setDataInicio(dto.getDataInicio());
                 novaferias.setDataFim(dto.getDataFim());
-                novaferias.setSetorfuncionario(funcionario.getId_setor().getNome());
+                novaferias.setSetorfuncionario(funcionario.getIdsetor().getNome());
                 ferias_repository.save(novaferias);
                 return ("solicitação enviada com sucesso");
             }

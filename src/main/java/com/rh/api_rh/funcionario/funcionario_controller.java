@@ -1,6 +1,9 @@
 package com.rh.api_rh.funcionario;
 
 
+import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoFuncao_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoNome_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoSetor_dto;
 import com.rh.api_rh.DTO.login.aceitartermo_dto;
 import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
@@ -17,6 +20,7 @@ import com.rh.api_rh.util.email_service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -169,6 +173,60 @@ public class funcionario_controller {
 
         String res = funcionario_service.generateadmin();
         return ResponseEntity.ok().body(res);
+
+    }
+
+    @GetMapping("/buscarParaEnviarComunicadoSetor")
+    public ResponseEntity<List<funcionario_model>>  buscarParaEnviarComunicadoSetor(@RequestBody buscarParaEnviarComunicadoSetor_dto dto) {
+
+        try {
+
+            List<funcionario_model> result = funcionario_service.listarPorSetorRecebendoLista(dto.getIdsetores());
+            if (result != null) {
+                return ResponseEntity.ok().body(result);
+            } else {
+                return ResponseEntity.badRequest().body(null);
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+    }
+
+    @GetMapping("/buscarParaEnviarComunicadoFuncao")
+    public ResponseEntity<List<funcionario_model>>  buscarParaEnviarComunicadoFuncao(@RequestBody buscarParaEnviarComunicadoFuncao_dto dto) {
+
+        try {
+
+            List<funcionario_model> result = funcionario_service.listarPorFuncaoRecebendoLista(dto.getFuncoes());
+            if (result != null) {
+                return ResponseEntity.ok().body(result);
+            } else {
+                return ResponseEntity.badRequest().body(null);
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+    }
+
+    @GetMapping("/buscarParaEnviarComunicadoNome")
+    public ResponseEntity<List<funcionario_model>>  buscarParaEnviarComunicadoNome(@RequestBody buscarParaEnviarComunicadoNome_dto dto) {
+
+        try {
+
+            List<funcionario_model> result = funcionario_service.listarPorNomeRecebendoLista(dto.getNomes());
+            if (result != null) {
+                return ResponseEntity.ok().body(result);
+            } else {
+                return ResponseEntity.badRequest().body(null);
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
 
     }
 
