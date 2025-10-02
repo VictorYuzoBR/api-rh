@@ -97,4 +97,17 @@ public class ferias_service {
 
     }
 
+    public List<ferias_model> listarTodosSolicitado() {
+
+        try {
+
+            List<ferias_model> lista =  ferias_repository.findByStatus("solicitado");
+            return lista;
+
+        } catch (Exception e) {
+            return  null;
+        }
+
+    }
+
 }

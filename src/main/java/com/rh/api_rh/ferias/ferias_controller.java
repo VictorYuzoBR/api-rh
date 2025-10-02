@@ -84,4 +84,36 @@ public class ferias_controller {
 
     }
 
+    @GetMapping("/feriasConflitantes/{id}")
+    public ResponseEntity<?> listarFeriasConflitantes(@PathVariable Long id) {
+
+        try {
+            List<ferias_model> lista = ferias_application_service.feriasConflitantes(id);
+            if (lista == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (lista.isEmpty()) {
+                return ResponseEntity.ok().body("Não há ferias conflitantes para está solicitacao");
+            } else {
+                return ResponseEntity.ok().body(lista);
+            }
+
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ferias_model>> listarSolicitacoesPendentes() {
+
+        try {
+            List<ferias_model> lista = ferias_service.listarTodosSolicitado();
+            return ResponseEntity.ok().body(lista);
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+    }
+
 }

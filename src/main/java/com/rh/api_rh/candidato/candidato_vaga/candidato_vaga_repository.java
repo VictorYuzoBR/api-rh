@@ -17,4 +17,6 @@ public interface candidato_vaga_repository extends JpaRepository<candidato_vaga_
 
     List<candidato_vaga_model> findByCandidato(candidato_model candidato);
 
+    List<candidato_vaga_model> findByVagaAndEtapa(vaga_model vaga, etapas etapa);
+
 }

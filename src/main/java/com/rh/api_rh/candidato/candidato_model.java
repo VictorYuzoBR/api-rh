@@ -57,25 +57,31 @@ public class candidato_model implements UserDetails {
     @OneToMany(mappedBy = "candidato", orphanRemoval = true)
     private List<experiencia_model> experiencias;
 
+    @JsonIgnore
     @Column()
     private String status = "ativo";
 
+    @JsonIgnore
     @Column
     private int tentativas = 0;
 
+    @JsonIgnore
     @Column
     private Date databloqueio;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return password;
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
         return email;

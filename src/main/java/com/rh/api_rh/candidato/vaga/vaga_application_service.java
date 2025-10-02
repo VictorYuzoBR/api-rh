@@ -114,7 +114,7 @@ public class vaga_application_service {
         try {
             List<melhoresCandidatos_dto> dezMelhores =  new ArrayList<>();
 
-            List<candidato_vaga_model>  listaAplicacoes = candidatoVagaRepository.findByVaga(vaga);
+            List<candidato_vaga_model>  listaAplicacoes = candidatoVagaRepository.findByVagaAndEtapa(vaga, etapas.TRIAGEM);
 
 
             List<vaga_habilidade_model> habilidadesRequisitadas = vagaHabilidadeRepository.findByVaga(vaga);
@@ -207,6 +207,7 @@ public class vaga_application_service {
 
                 if (dezMelhores.isEmpty()) {
                     dezMelhores.add(candidatoPontuacao);
+
                 } else {
                     boolean foiadicionado = false;
 
@@ -258,7 +259,7 @@ public class vaga_application_service {
 
             List<listaCompatibilidade_dto> listaRes = new ArrayList<>();
 
-            List<candidato_vaga_model> listaAplicacoes = candidatoVagaRepository.findByVaga(vaga);
+            List<candidato_vaga_model>  listaAplicacoes = candidatoVagaRepository.findByVagaAndEtapa(vaga, etapas.TRIAGEM);
 
             if (listaAplicacoes.size() == 0) {
                 return listaRes;
