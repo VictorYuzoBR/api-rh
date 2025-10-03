@@ -9,6 +9,8 @@ import com.rh.api_rh.funcionario.funcionario_repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,16 +46,7 @@ public class espelho_service {
 
     }
 
-    public espelho_item_model buscarItemPorId(Long id) {
 
-        Optional<espelho_item_model> optional = espelhoItemRepository.findById(id);
-        if (optional.isPresent()) {
-            return optional.get();
-        }   else {
-            return null;
-        }
-
-    }
 
     public entrada_espelho_model buscarEntradaPorId(Long id) {
 
@@ -83,6 +76,32 @@ public class espelho_service {
         }
 
 
+    }
+
+    public espelho_model retornarEspelhoDoMesDoFuncionario(UUID idfuncionario) {
+
+        try {
+            Optional<funcionario_model> funcionario = funcionarioRepository.findById(idfuncionario);
+            if (funcionario.isPresent()) {
+
+                String registro = funcionario.get().getIdusuario().getRegistro();
+
+                YearMonth anoMesAtual = YearMonth.now();
+                LocalDate primeiroDia = anoMesAtual.atDay(1);
+
+                Optional<espelho_model> espelho = espelhoRepository.findByPeriodoInicioAndRegistro(primeiroDia, registro);
+                if (espelho.isPresent()) {
+                    return espelho.get();
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+
+        }catch (Exception e) {
+            return null;
+        }
     }
 
 }

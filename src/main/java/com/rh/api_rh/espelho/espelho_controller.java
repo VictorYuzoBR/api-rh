@@ -1,6 +1,7 @@
 package com.rh.api_rh.espelho;
 
 import com.rh.api_rh.DTO.aplicacao.espelho.descreverAbono_dto;
+import com.rh.api_rh.DTO.aplicacao.espelho.gerarFeriado_dto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,6 +80,43 @@ public class espelho_controller {
         }
 
     }
+
+    @PostMapping("/gerarFeriado")
+    public ResponseEntity<String>  gerarFeriado(@RequestBody gerarFeriado_dto dto) {
+
+        try {
+            String res = espelhoApplicationService.gerarFeriado(dto.getData());
+            if (!res.equals("feriado gerado com sucesso")) {
+                return  ResponseEntity.badRequest().body(res);
+            } else {
+                return ResponseEntity.ok().body(res);
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    ///  retorna espelho do mes de um funcionario
+    @GetMapping("/espelhoDoMes/{id}")
+    public ResponseEntity<espelho_model> espelhoDoMes(@PathVariable UUID id) {
+
+        try {
+            espelho_model res = espelhoService.retornarEspelhoDoMesDoFuncionario(id);
+            if  (res != null) {
+                return ResponseEntity.ok(res);
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+
 
 
 

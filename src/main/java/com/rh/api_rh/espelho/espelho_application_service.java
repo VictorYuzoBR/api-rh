@@ -35,7 +35,7 @@ public class espelho_application_service {
     private entrada_espelho_repository entradaEspelhoRepository;
 
     ///  tirar um 0 quando quiser testar
-    @Scheduled(fixedRate = 200000)
+    @Scheduled(fixedRate = 20000)
     public void gerarEspelho() {
 
         List<funcionario_model> funcionarios = funcionarioService.listar();
@@ -64,7 +64,7 @@ public class espelho_application_service {
 
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 30000)
     public void gerarItemDiario() {
 
         YearMonth anoMesAtual = YearMonth.now();
@@ -159,7 +159,7 @@ public class espelho_application_service {
 
     }
 
-    @Scheduled(fixedRate = 400000)
+    @Scheduled(fixedRate = 40000)
     public void gerarAusencia() {
 
         LocalDate hoje = LocalDate.now();
@@ -193,6 +193,65 @@ public class espelho_application_service {
             return("erro");
         }
 
+
+    }
+
+    public String gerarFeriado(LocalDate dia) {
+
+        try {
+
+            LocalDate hoje = LocalDate.now();
+            int mesHoje = hoje.getMonthValue();
+            int mesDataEnviada = dia.getMonthValue();
+
+            if (mesDataEnviada == mesHoje) {
+
+                YearMonth anoMesAtual = YearMonth.now();
+                LocalDate primeiroDia = anoMesAtual.atDay(1);
+                List<espelho_model> espelhos = espelhoRepository.findByPeriodoInicio(primeiroDia);
+
+                for (espelho_model item : espelhos) {
+
+                    boolean diaJaExiste = false;
+
+                    List<espelho_item_model> listaItensDiarios = item.getListaEntradas();
+
+                    for (espelho_item_model item2 : listaItensDiarios) {
+
+                        if (item2.getData().equals(dia)) {
+
+                            item2.setDescricaoAbono("feriado");
+                            espelhoItemRepository.save(item2);
+
+                            diaJaExiste = true;
+                            break;
+                        }
+
+                    }
+
+                    if (!diaJaExiste) {
+
+                        espelho_item_model espelhoItem = new espelho_item_model();
+                        espelhoItem.setData(dia);
+                        espelhoItem.setEspelho(item);
+                        espelhoItem.setDescricaoAbono("feriado");
+                        espelhoItemRepository.save(espelhoItem);
+
+                    }
+
+                }
+
+                return ("feriado gerado com sucesso");
+
+            } else {
+
+                return ("Só pode gerar um feriado para o mês atual");
+
+            }
+
+        } catch (Exception e) {
+            return ("erro ao gerar feriado");
+        }
 
     }
 
