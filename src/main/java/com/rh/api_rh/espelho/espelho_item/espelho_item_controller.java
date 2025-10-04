@@ -1,6 +1,5 @@
-package com.rh.api_rh.espelho.espelho_item.entrada_espelho;
+package com.rh.api_rh.espelho.espelho_item;
 
-import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

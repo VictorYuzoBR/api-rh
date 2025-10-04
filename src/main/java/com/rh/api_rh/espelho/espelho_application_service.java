@@ -115,25 +115,28 @@ public class espelho_application_service {
                     if (tamanho > 3) {
                         return ("maximo de pontos diarios atingido");
                     }
+                    entrada_espelho_model entrada = new entrada_espelho_model();
+                    entrada.setItem(espelhoItem.get());
+
+                    entrada.setHora(LocalTime.now());
+
 
                     entrada_espelho_model aux = entradas.get(tamanho - 1);
                     if (aux.getTipo().equals("entrada")) {
-                        entrada_espelho_model entrada = new entrada_espelho_model();
-                        entrada.setItem(espelhoItem.get());
-                        entrada.setTipo("saida");
-                        entrada.setHora(LocalTime.now());
-                        entradaEspelhoRepository.save(entrada);
 
+                        entrada.setTipo("saida");
 
                     } else {
-                        entrada_espelho_model entrada = new entrada_espelho_model();
-                        entrada.setItem(espelhoItem.get());
+
                         entrada.setTipo("entrada");
-                        entrada.setHora(LocalTime.now());
-                        entradaEspelhoRepository.save(entrada);
 
 
                     }
+
+
+
+                    entradaEspelhoRepository.save(entrada);
+
                     return("ponto criado com sucesso");
 
                 } else {
@@ -143,6 +146,9 @@ public class espelho_application_service {
                     entrada.setTipo("entrada");
                     entrada.setHora(LocalTime.now());
                     entradaEspelhoRepository.save(entrada);
+
+                    espelhoItem.get().setAusencia(false);
+                    espelhoItemRepository.save(espelhoItem.get());
 
                     return("ponto criado com sucesso");
 
@@ -221,6 +227,7 @@ public class espelho_application_service {
                         if (item2.getData().equals(dia)) {
 
                             item2.setDescricaoAbono("feriado");
+                            item2.setAusencia(true);
                             espelhoItemRepository.save(item2);
 
                             diaJaExiste = true;

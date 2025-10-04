@@ -3,6 +3,7 @@ package com.rh.api_rh.candidato.vaga;
 import com.rh.api_rh.DTO.aplicacao.vaga.*;
 import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
+import com.rh.api_rh.candidato.candidato_model;
 import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
 import com.rh.api_rh.candidato.candidato_vaga.etapas;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
@@ -209,6 +210,7 @@ public class vaga_controller {
 
     }
 
+    /// para descontinuar um candidato
     @PostMapping("/finalizarAplicacao")
     public ResponseEntity<candidato_vaga_model> finalizar(@RequestBody avancarEtapa_dto dto) {
 
@@ -224,6 +226,8 @@ public class vaga_controller {
         }
 
     }
+
+    /// para concluir o candidato
 
     @PostMapping("/finalizarVaga")
     public ResponseEntity<String> finalizarVaga(@RequestBody finalizarVaga_dto dto, HttpServletRequest request) {
@@ -251,6 +255,24 @@ public class vaga_controller {
         try {
             List<vaga_model> res = vagaservice.listarVagasAtivas();
             return ResponseEntity.status(HttpStatus.OK).body(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @GetMapping("/listarPorUmaEtapa")
+    public ResponseEntity<List<listaCompatibilidade_dto>> listarPorUmaEtapa(@RequestParam Long idvaga, etapas etapa) {
+
+        try {
+
+            List<listaCompatibilidade_dto> res = vagaservice.listarPorUmaEtapa(idvaga, etapa);
+            if (res != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

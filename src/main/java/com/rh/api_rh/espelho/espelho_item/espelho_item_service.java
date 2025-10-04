@@ -1,7 +1,5 @@
-package com.rh.api_rh.espelho.espelho_item.entrada_espelho;
+package com.rh.api_rh.espelho.espelho_item;
 
-import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
-import com.rh.api_rh.espelho.espelho_item.espelho_item_repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

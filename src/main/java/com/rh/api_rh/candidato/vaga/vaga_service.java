@@ -1,5 +1,7 @@
 package com.rh.api_rh.candidato.vaga;
 
+import com.rh.api_rh.DTO.aplicacao.vaga.compatibilidadeUnica_dto;
+import com.rh.api_rh.DTO.aplicacao.vaga.listaCompatibilidade_dto;
 import com.rh.api_rh.DTO.cadastro.cadastrarVagaMapeado_dto;
 import com.rh.api_rh.DTO.cadastro.cadastrarVaga_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroCandidatura_dto;
@@ -14,7 +16,6 @@ import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_model;
 import com.rh.api_rh.candidato.vaga_habilidade.vaga_habilidade_repository;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_service;
-import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
 import jakarta.transaction.Transactional;
@@ -50,6 +51,8 @@ public class vaga_service {
     @Autowired
     private log_repository logrepository;
 
+    @Autowired
+    private vaga_application_service vagaapplicationservice;
 
 
     @Transactional(rollbackOn =  Exception.class)
@@ -173,6 +176,13 @@ public class vaga_service {
             Optional<vaga_model> vaga = vagarepository.findById(idvaga);
             if (vaga.isPresent()) {
 
+                List<candidato_vaga_model>  listaAplicacoes = candidatovagarepository.findByVaga(vaga.get());
+
+                for (candidato_vaga_model aplicacao : listaAplicacoes) {
+                    aplicacao.setEtapa(etapas.FINALIZADO);
+                    candidatovagarepository.save(aplicacao);
+                }
+
                 vaga.get().setStatus("finalizado");
                 vagarepository.save(vaga.get());
 
@@ -204,6 +214,42 @@ public class vaga_service {
         return vagas;
 
     }
+
+    public List<listaCompatibilidade_dto> listarPorUmaEtapa(Long idvaga, etapas etapa) {
+
+        List<listaCompatibilidade_dto> res = new ArrayList<>();
+
+        try {
+
+            Optional<vaga_model> vaga = vagarepository.findById(idvaga);
+            if (vaga.isPresent()) {
+
+                List<candidato_vaga_model> candidaturas = candidatovagarepository.findByVagaAndEtapa(vaga.get(), etapa);
+
+                for (candidato_vaga_model c : candidaturas) {
+
+                    compatibilidadeUnica_dto dto = new compatibilidadeUnica_dto();
+                    dto.setCandidatoid(c.getCandidato().getId());
+                    dto.setVagaid(idvaga);
+
+                    listaCompatibilidade_dto item = vagaapplicationservice.compatibilidadeUnica(dto);
+
+                    res.add(item);
+
+                }
+
+                return res;
+
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+
+    }
+
 
 
 }
