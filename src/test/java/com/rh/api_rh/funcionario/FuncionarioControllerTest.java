@@ -3,13 +3,15 @@ package com.rh.api_rh.funcionario;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarfuncionario_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoFuncao_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoNome_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoSetor_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroSetor_dto;
+import com.rh.api_rh.DTO.login.aceitartermo_dto;
 import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.setor.setor_model;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,12 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
 @Rollback
@@ -46,6 +50,27 @@ class FuncionarioControllerTest {
 
     @Autowired
     private token_service tokenService;
+
+    @Test
+    @Order(1)
+    @DisplayName("Rota utilizada apenas em testes")
+    void generateadmin() throws Exception {
+
+        cadastroSetor_dto dto2 = new cadastroSetor_dto();
+        dto2.setNome("teste");
+
+        String json = objectMapper.writeValueAsString(dto2);
+
+        mockMvc.perform(post("/setor")
+                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        mockMvc.perform(get("/funcionario/generateadmin"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+    }
 
     @Test
     @DisplayName("Deve cadastrar com sucesso um setor e funcionario")
@@ -769,10 +794,254 @@ class FuncionarioControllerTest {
     }
 
     @Test
-    void aceitartermo() {
+    @DisplayName("deve atualizar o status de aceitação de termo de uso do funcionário corretamente")
+    void aceitartermo() throws Exception {
+
+        cadastroSetor_dto dto2 = new cadastroSetor_dto();
+        dto2.setNome("teste");
+
+        String json = objectMapper.writeValueAsString(dto2);
+
+        MvcResult resultsetor =  mockMvc.perform(post("/setor")
+                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonsetor =  resultsetor.getResponse().getContentAsString();
+        setor_model setor = objectMapper.readValue(jsonsetor, setor_model.class);
+
+        String setorid = setor.getId().toString();
+
+        cadastroFuncionario_dto dto =  new cadastroFuncionario_dto();
+        dto.setNome("teste");
+        dto.setFuncao("teste");
+        dto.setData_nascimento("12-12-12");
+        dto.setCpf("123456789");
+        dto.setEmail("victoryuzoumc@gmail.com");
+        dto.setCargo(Cargo.FUNCIONARIO);
+        dto.setSalario((Float.valueOf(1000.00f)));
+        dto.setContabancaria("351352-0");
+        dto.setDataentrada("12-12-12");
+        dto.setCep("3516556");
+        dto.setLogradouro("Rua dos Santos");
+        dto.setBairro("Bairro dos Santos");
+        dto.setCidade("Cidade dos Santos");
+        dto.setEstado("Estado dos Santos");
+        dto.setNumero("12345");
+        dto.setComplemento("Complemento dos Santos");
+        dto.setNumerotelefone("1234");
+        dto.setNumerosetor(setorid);
+
+        String json2 = objectMapper.writeValueAsString(dto);
+
+        MvcResult result =  mockMvc.perform(post("/funcionario")
+                        .contentType(MediaType.APPLICATION_JSON).content(json2))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonfuncionario = result.getResponse().getContentAsString();
+        funcionario_model funcionario =  objectMapper.readValue(jsonfuncionario, funcionario_model.class);
+
+        aceitartermo_dto dtoatualizar = new aceitartermo_dto();
+        dtoatualizar.setIdfuncionario(funcionario.getId());
+
+        String jsonaceitartermo = objectMapper.writeValueAsString(dtoatualizar);
+
+        mockMvc.perform(put("/funcionario/aceitartermo")
+                        .contentType(MediaType.APPLICATION_JSON).content(jsonaceitartermo))
+                .andExpect(status().isOk())
+                .andReturn();
+
+
+    }
+
+
+    @Test
+    @DisplayName("Deve retornar corretamente o funcionario pois corresponde ao setor da busca")
+    void buscarFuncionariosPorSetor() throws Exception {
+
+        cadastroSetor_dto dto2 = new cadastroSetor_dto();
+        dto2.setNome("teste");
+
+        String json = objectMapper.writeValueAsString(dto2);
+
+        MvcResult resultsetor =  mockMvc.perform(post("/setor")
+                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonsetor =  resultsetor.getResponse().getContentAsString();
+        setor_model setor = objectMapper.readValue(jsonsetor, setor_model.class);
+
+        String setorid = setor.getId().toString();
+
+        cadastroFuncionario_dto dto =  new cadastroFuncionario_dto();
+        dto.setNome("teste");
+        dto.setFuncao("teste");
+        dto.setData_nascimento("12-12-12");
+        dto.setCpf("123456789");
+        dto.setEmail("victoryuzoumc@gmail.com");
+        dto.setCargo(Cargo.FUNCIONARIO);
+        dto.setSalario((Float.valueOf(1000.00f)));
+        dto.setContabancaria("351352-0");
+        dto.setDataentrada("12-12-12");
+        dto.setCep("3516556");
+        dto.setLogradouro("Rua dos Santos");
+        dto.setBairro("Bairro dos Santos");
+        dto.setCidade("Cidade dos Santos");
+        dto.setEstado("Estado dos Santos");
+        dto.setNumero("12345");
+        dto.setComplemento("Complemento dos Santos");
+        dto.setNumerotelefone("1234");
+        dto.setNumerosetor(setorid);
+
+        String json2 = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(post("/funcionario")
+                        .contentType(MediaType.APPLICATION_JSON).content(json2))
+                .andExpect(status().isOk());
+
+        List<Long> listaidsetores = new ArrayList<Long>();
+        listaidsetores.add(Long.valueOf(setorid));
+
+        buscarParaEnviarComunicadoSetor_dto dtosetores =  new buscarParaEnviarComunicadoSetor_dto();
+        dtosetores.setIdsetores(listaidsetores);
+
+        String json3 = objectMapper.writeValueAsString(dtosetores);
+
+
+        mockMvc.perform(post("/funcionario/buscarParaEnviarComunicadoSetor")
+                        .contentType(MediaType.APPLICATION_JSON).content(json3))
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(status().isOk());
+
+
     }
 
     @Test
-    void generateadmin() {
+    @DisplayName("Deve retornar corretamente o funcionario pois corresponde a funcao da busca")
+    void buscarFuncionariosPorFuncao() throws Exception {
+
+        cadastroSetor_dto dto2 = new cadastroSetor_dto();
+        dto2.setNome("teste");
+
+        String json = objectMapper.writeValueAsString(dto2);
+
+        MvcResult resultsetor =  mockMvc.perform(post("/setor")
+                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonsetor =  resultsetor.getResponse().getContentAsString();
+        setor_model setor = objectMapper.readValue(jsonsetor, setor_model.class);
+
+        String setorid = setor.getId().toString();
+
+        cadastroFuncionario_dto dto =  new cadastroFuncionario_dto();
+        dto.setNome("teste");
+        dto.setFuncao("atendente");
+        dto.setData_nascimento("12-12-12");
+        dto.setCpf("123456789");
+        dto.setEmail("victoryuzoumc@gmail.com");
+        dto.setCargo(Cargo.FUNCIONARIO);
+        dto.setSalario((Float.valueOf(1000.00f)));
+        dto.setContabancaria("351352-0");
+        dto.setDataentrada("12-12-12");
+        dto.setCep("3516556");
+        dto.setLogradouro("Rua dos Santos");
+        dto.setBairro("Bairro dos Santos");
+        dto.setCidade("Cidade dos Santos");
+        dto.setEstado("Estado dos Santos");
+        dto.setNumero("12345");
+        dto.setComplemento("Complemento dos Santos");
+        dto.setNumerotelefone("1234");
+        dto.setNumerosetor(setorid);
+
+        String json2 = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(post("/funcionario")
+                        .contentType(MediaType.APPLICATION_JSON).content(json2))
+                .andExpect(status().isOk());
+
+        List<String> listafuncoes = new ArrayList<String>();
+        listafuncoes.add("atendente");
+
+        buscarParaEnviarComunicadoFuncao_dto dtofuncoes =  new buscarParaEnviarComunicadoFuncao_dto();
+        dtofuncoes.setFuncoes(listafuncoes);
+
+        String json3 = objectMapper.writeValueAsString(dtofuncoes);
+
+
+        mockMvc.perform(post("/funcionario/buscarParaEnviarComunicadoFuncao")
+                        .contentType(MediaType.APPLICATION_JSON).content(json3))
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(status().isOk());
+
+
     }
+
+    @Test
+    @DisplayName("Deve retornar corretamente o funcionario pois corresponde ao nomme da busca")
+    void buscarFuncionariosPorNome() throws Exception {
+
+        cadastroSetor_dto dto2 = new cadastroSetor_dto();
+        dto2.setNome("teste");
+
+        String json = objectMapper.writeValueAsString(dto2);
+
+        MvcResult resultsetor =  mockMvc.perform(post("/setor")
+                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonsetor =  resultsetor.getResponse().getContentAsString();
+        setor_model setor = objectMapper.readValue(jsonsetor, setor_model.class);
+
+        String setorid = setor.getId().toString();
+
+        cadastroFuncionario_dto dto =  new cadastroFuncionario_dto();
+        dto.setNome("joao");
+        dto.setFuncao("atendente");
+        dto.setData_nascimento("12-12-12");
+        dto.setCpf("123456789");
+        dto.setEmail("victoryuzoumc@gmail.com");
+        dto.setCargo(Cargo.FUNCIONARIO);
+        dto.setSalario((Float.valueOf(1000.00f)));
+        dto.setContabancaria("351352-0");
+        dto.setDataentrada("12-12-12");
+        dto.setCep("3516556");
+        dto.setLogradouro("Rua dos Santos");
+        dto.setBairro("Bairro dos Santos");
+        dto.setCidade("Cidade dos Santos");
+        dto.setEstado("Estado dos Santos");
+        dto.setNumero("12345");
+        dto.setComplemento("Complemento dos Santos");
+        dto.setNumerotelefone("1234");
+        dto.setNumerosetor(setorid);
+
+        String json2 = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(post("/funcionario")
+                        .contentType(MediaType.APPLICATION_JSON).content(json2))
+                .andExpect(status().isOk());
+
+        List<String> listanomes = new ArrayList<String>();
+        listanomes.add("joao");
+
+        buscarParaEnviarComunicadoNome_dto dtonomes =  new buscarParaEnviarComunicadoNome_dto();
+        dtonomes.setNomes(listanomes);
+
+        String json3 = objectMapper.writeValueAsString(dtonomes);
+
+
+        mockMvc.perform(post("/funcionario/buscarParaEnviarComunicadoNome")
+                        .contentType(MediaType.APPLICATION_JSON).content(json3))
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(status().isOk());
+
+
+    }
+
+
+
 }

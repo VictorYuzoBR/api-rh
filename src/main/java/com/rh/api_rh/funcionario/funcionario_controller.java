@@ -150,11 +150,11 @@ public class funcionario_controller {
 
     }
 
-    @PostMapping("/aceitartermo")
+    @PutMapping("/aceitartermo")
     public ResponseEntity<String> aceitartermo(@RequestBody aceitartermo_dto dto) {
 
         try {
-            String res = funcionario_service.aceitarTermo(dto.getEmail());
+            String res = funcionario_service.aceitarTermo(dto);
             if (res.equals("Atualizado com sucesso!")) {
                 return ResponseEntity.ok().body("Atualizado com sucesso!");
             }
@@ -176,7 +176,7 @@ public class funcionario_controller {
 
     }
 
-    @GetMapping("/buscarParaEnviarComunicadoSetor")
+    @PostMapping("/buscarParaEnviarComunicadoSetor")
     public ResponseEntity<List<funcionario_model>>  buscarParaEnviarComunicadoSetor(@RequestBody buscarParaEnviarComunicadoSetor_dto dto) {
 
         try {
@@ -194,7 +194,7 @@ public class funcionario_controller {
 
     }
 
-    @GetMapping("/buscarParaEnviarComunicadoFuncao")
+    @PostMapping("/buscarParaEnviarComunicadoFuncao")
     public ResponseEntity<List<funcionario_model>>  buscarParaEnviarComunicadoFuncao(@RequestBody buscarParaEnviarComunicadoFuncao_dto dto) {
 
         try {
@@ -212,7 +212,7 @@ public class funcionario_controller {
 
     }
 
-    @GetMapping("/buscarParaEnviarComunicadoNome")
+    @PostMapping("/buscarParaEnviarComunicadoNome")
     public ResponseEntity<List<funcionario_model>>  buscarParaEnviarComunicadoNome(@RequestBody buscarParaEnviarComunicadoNome_dto dto) {
 
         try {

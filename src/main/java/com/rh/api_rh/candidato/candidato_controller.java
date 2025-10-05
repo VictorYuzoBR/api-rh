@@ -30,14 +30,18 @@ public class candidato_controller {
     private final candidato_vaga_service candidato_vaga_service;
 
     @PostMapping
-    public ResponseEntity<String> cadastrar(@RequestBody cadastroCandidato_dto dto){
-        String res ="";
+    public ResponseEntity<candidato_model> cadastrar(@RequestBody cadastroCandidato_dto dto){
+
         try {
-            res = candidato_service.cadastrar(dto);
+            candidato_model res = candidato_service.cadastrar(dto);
+            if (res == null){
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(res);
+
     }
 
     @GetMapping
@@ -47,36 +51,15 @@ public class candidato_controller {
 
         try {
             res = candidato_service.listar();
-        } catch (Exception e) {
-            return null;
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(res);
-
-    }
-
-    @GetMapping("/habilidades/{id}")
-    public ResponseEntity<List<candidato_habilidade_model>> listarHabilidades(@PathVariable  Long id){
-        List<candidato_habilidade_model> res =  new ArrayList<>();
-        try {
-            res = candidato_service.listarhabilidades(id);
-            return ResponseEntity.status(HttpStatus.OK).body(res);
-        }  catch (Exception e) {
-            return null;
-        }
-
-    }
-
-    @GetMapping("/idiomas/{id}")
-    public ResponseEntity<List<candidato_idioma_model>> listarIdiomas(@PathVariable  Long id){
-        List<candidato_idioma_model> res =  new ArrayList<>();
-        try {
-            res = candidato_service.listaridiomas(id);
             return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (Exception e) {
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+
+
+
     }
+
 
     @PostMapping("/filtrar")
     public ResponseEntity<List<candidato_model>> filtrarPorHabilidades(@RequestBody buscarComBaseHabilidades_dto dto){

@@ -79,7 +79,7 @@ public class candidato_service {
     private String salt_secret;
 
     @Transactional(rollbackOn = Exception.class)
-    public String cadastrar(cadastroCandidato_dto dto){
+    public candidato_model cadastrar(cadastroCandidato_dto dto){
 
         cadastroCandidatoMapeado_dto dto_mapeado = mapper.convert(dto);
 
@@ -95,6 +95,11 @@ public class candidato_service {
             String senhahash = new BCryptPasswordEncoder().encode(palavraSalt);
 
             dto_mapeado.getCandidato().setPassword(senhahash);
+
+            Optional<candidato_model> emailjaexiste = candidatorepository.findByEmail(dto_mapeado.getCandidato().getEmail());
+            if (emailjaexiste.isPresent()) {
+                return null;
+            }
 
 
             candidato_model candidato = candidatorepository.save(dto_mapeado.getCandidato());
@@ -120,13 +125,12 @@ public class candidato_service {
             if (formacao.size() > 0) {
                 formacaoAcademicaService.cadastrar(formacao, candidato);
             }
+            return candidato;
 
 
         } catch (Exception e) {
                 throw e;
         }
-
-        return("candidato criado com sucesso ");
 
     }
 
@@ -138,29 +142,6 @@ public class candidato_service {
         }
     }
 
-    public List<candidato_habilidade_model> listarhabilidades(Long id){
-        try {
-            Optional<List<candidato_habilidade_model>> lista = candidatohabilidaderepository.findByCandidatoId(id);
-
-            if (lista.isPresent()) {
-                return lista.get();
-            } else return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<candidato_idioma_model> listaridiomas(Long id){
-        try {
-            Optional<List<candidato_idioma_model>> lista = candidatoidiomarepository.findByCandidatoId(id);
-
-            if (lista.isPresent()) {
-                return lista.get();
-            } else return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     public List<candidato_model> listarComBaseHabilidades(List<String> requisitos ){
 
