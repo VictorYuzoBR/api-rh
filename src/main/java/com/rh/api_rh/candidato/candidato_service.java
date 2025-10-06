@@ -31,9 +31,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class candidato_service {
@@ -138,7 +136,7 @@ public class candidato_service {
         try {
             return candidatorepository.findAll();
         } catch (Exception e) {
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -376,6 +374,11 @@ public class candidato_service {
 
                 }
 
+                retornarPerfil_dto candidatoAntigoDepoisDeDeletarExperiencias = perfil(dto.getId());
+                if (candidatoAntigoDepoisDeDeletarExperiencias.getExperiencias().isEmpty()) {
+                    throw new RuntimeException("um candidato não pode ficar sem experiencias");
+                }
+
 
 
                 for (formacaoAcademica_model formacao : candidatoAntigo.getFormacaoAcademica()) {
@@ -402,6 +405,11 @@ public class candidato_service {
 
                     formacaoAcademicaService.cadastrar(dto.getFormacaoAcademica(), candidato.get());
 
+                }
+
+                retornarPerfil_dto candidatoAntigoDepoisDeDeletarFormacoes = perfil(dto.getId());
+                if (candidatoAntigoDepoisDeDeletarFormacoes.getFormacaoAcademica().isEmpty()) {
+                    throw new RuntimeException("um candidato não pode ficar sem formacoes");
                 }
 
 
@@ -432,10 +440,15 @@ public class candidato_service {
                         candidatohabilidaderepository.delete(habilidade);
                     }
 
-
                 }
 
+
                 habilidadeService.cadastrarParaCandidato(dto.getHabilidades(), candidato.get());
+
+                List<candidato_habilidade_model> listaHabilidadeDepoisDeDeletar = candidatohabilidaderepository.findByCandidato(candidato.get());
+                if (listaHabilidadeDepoisDeDeletar.isEmpty()) {
+                    throw new RuntimeException();
+                }
 
 
                 Optional<List<candidato_idioma_model>> listaIdioma = candidatoidiomarepository.findByCandidatoId(candidato.get().getId());
@@ -472,6 +485,15 @@ public class candidato_service {
 
                 }
                 idiomaService.cadastrarParaCandidato(dto.getIdiomas(), candidato.get());
+
+                Optional<List<candidato_idioma_model>> listaIdiomaDepoisDeDeletar = candidatoidiomarepository.findByCandidatoId(candidato.get().getId());
+                if (listaIdiomaDepoisDeDeletar.isPresent()) {
+                    if (listaIdiomaDepoisDeDeletar.get().isEmpty()) {
+                        throw new RuntimeException();
+                    }
+
+                }
+
 
 
                 candidatorepository.save(candidato.get());

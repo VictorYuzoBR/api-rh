@@ -47,10 +47,10 @@ public class candidato_controller {
     @GetMapping
     public ResponseEntity<List<candidato_model>> listar(){
 
-        List<candidato_model> res =  new ArrayList<>();
+
 
         try {
-            res = candidato_service.listar();
+            List<candidato_model> res = candidato_service.listar();
             return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

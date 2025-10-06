@@ -43,4 +43,8 @@ public class formacaoAcademica_service {
 
     }
 
+    public List<formacaoAcademica_model> listar() {
+        return formacaoAcademica_repository.findAll();
+    }
+
 }
