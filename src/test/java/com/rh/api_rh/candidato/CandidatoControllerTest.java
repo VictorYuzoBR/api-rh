@@ -5,14 +5,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rh.api_rh.DTO.aplicacao.candidato.atualizarCandidato_dto;
 import com.rh.api_rh.DTO.aplicacao.candidato.buscarComBaseHabilidades_dto;
-import com.rh.api_rh.DTO.cadastro.cadastroCandidato_dto;
-import com.rh.api_rh.DTO.cadastro.cadastroHabilidade_dto;
-import com.rh.api_rh.DTO.cadastro.cadastroIdioma_dto;
+import com.rh.api_rh.DTO.cadastro.*;
+import com.rh.api_rh.DTO.login.trocaSenhaCandidato_dto;
+import com.rh.api_rh.candidato.candidato_vaga.etapas;
 import com.rh.api_rh.candidato.experiencia.experiencia_model;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_model;
 import com.rh.api_rh.candidato.formacaoAcademica.formacaoAcademica_service;
+import com.rh.api_rh.candidato.habilidade.habilidade_apenas_formulario_vaga;
 import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
 import com.rh.api_rh.candidato.idioma.idioma_model_apenas_formulario;
+import com.rh.api_rh.candidato.vaga.vaga_model;
 import com.rh.api_rh.funcionario.funcionario_model;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -418,6 +420,7 @@ class CandidatoControllerTest {
     }
 
     @Test
+    @DisplayName("Deve atualizar corretamente um candidato")
     void atualizar() throws Exception{
 
         MvcResult result=  mockMvc.perform(get("/candidato"))
@@ -492,7 +495,65 @@ class CandidatoControllerTest {
     }
 
     @Test
-    @DisplayName("Deve excluir corretamente o funcionario")
+    @DisplayName("Deve falhar atualizar ao enviar um campo obrigatorio faltando")
+    void atualizarFalhar() throws Exception{
+
+        MvcResult result=  mockMvc.perform(get("/candidato"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String json3 = result.getResponse().getContentAsString();
+        List<candidato_model> candidato =  objectMapper.readValue(json3, new TypeReference<List<candidato_model>>() {});
+
+        Long idcandidato = candidato.get(0).getId();
+
+        atualizarCandidato_dto dto = new atualizarCandidato_dto();
+
+        dto.setId(idcandidato);
+        dto.setTelefone("(11) 9134-5678");
+        dto.setLinkedin("linkexemplonaovalido.com");
+        dto.setGithub("https://githubsemsentido.com");
+        dto.setCidade("cidade");
+        dto.setEstado("estado exemplo");
+
+        List<habilidade_model_apenas_formulario> listahabilidades = new ArrayList<>();
+        habilidade_model_apenas_formulario habilidade = new habilidade_model_apenas_formulario();
+        habilidade.setHabilidade("java");
+        habilidade.setTempoExperiencia(5);
+        listahabilidades.add(habilidade);
+        dto.setHabilidades(listahabilidades);
+
+        List<formacaoAcademica_model> listaformacoes = new ArrayList<>();
+
+        List<experiencia_model> listaexperiencias = new ArrayList<>();
+        experiencia_model experiencia = new experiencia_model();
+        experiencia.setEmpresa("xp");
+        experiencia.setDescricao("programacao orientada a gambiarra");
+        experiencia.setDataInicio(LocalDate.parse("2005-12-12"));
+        experiencia.setDataFim(LocalDate.parse("2008-12-12"));
+        listaexperiencias.add(experiencia);
+        dto.setExperiencias(listaexperiencias);
+
+        List<idioma_model_apenas_formulario>  listaidiomas = new ArrayList<>();
+        idioma_model_apenas_formulario idioma = new idioma_model_apenas_formulario();
+        idioma.setIdioma("portugues");
+        idioma.setNivel("1");
+        listaidiomas.add(idioma);
+        dto.setIdiomas(listaidiomas);
+
+        String json = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(put("/candidato/atualizar")
+                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+
+
+
+    }
+
+    @Test
+    @DisplayName("Deve excluir corretamente o candidato")
     void excluir() throws Exception {
 
         MvcResult result =  mockMvc.perform(get("/candidato"))
@@ -518,10 +579,161 @@ class CandidatoControllerTest {
     }
 
     @Test
-    void buscarCandidaturas() {
+    @DisplayName("Busca corretamente as candidaturas do usuário")
+    void buscarCandidaturas() throws Exception {
+
+        cadastroCandidato_dto dto = new cadastroCandidato_dto();
+
+        dto.setPassword("12345678");
+        dto.setNome("john krammer");
+        dto.setEmail("john2@ml.com");
+        dto.setTelefone("(11) 912234-5678");
+        dto.setLinkedin("linkexemplonaovalido.com");
+        dto.setGithub("https://githubsemsentido.com");
+        dto.setCidade("cidade exemplo");
+        dto.setEstado("estado exemplo");
+
+        List<habilidade_model_apenas_formulario> listahabilidades = new ArrayList<>();
+        habilidade_model_apenas_formulario habilidade = new habilidade_model_apenas_formulario();
+        habilidade.setHabilidade("java");
+        habilidade.setTempoExperiencia(5);
+        listahabilidades.add(habilidade);
+        dto.setHabilidades(listahabilidades);
+
+        List<formacaoAcademica_model> listaformacoes = new ArrayList<>();
+        formacaoAcademica_model formacao = new formacaoAcademica_model();
+        formacao.setInstituicao("uniesquina");
+        formacao.setCurso("sem futuro");
+        formacao.setSituacao("qualquer coisa");
+        formacao.setDataInicio(LocalDate.parse("2000-12-12"));
+        formacao.setDataFim(LocalDate.parse("2003-12-12"));
+        listaformacoes.add(formacao);
+        dto.setFormacaoAcademica(listaformacoes);
+
+        List<experiencia_model> listaexperiencias = new ArrayList<>();
+        experiencia_model experiencia = new experiencia_model();
+        experiencia.setEmpresa("xp");
+        experiencia.setDescricao("programacao orientada a gambiarra");
+        experiencia.setDataInicio(LocalDate.parse("2005-12-12"));
+        experiencia.setDataFim(LocalDate.parse("2008-12-12"));
+        listaexperiencias.add(experiencia);
+        dto.setExperiencias(listaexperiencias);
+
+        List<idioma_model_apenas_formulario>  listaidiomas = new ArrayList<>();
+        idioma_model_apenas_formulario idioma = new idioma_model_apenas_formulario();
+        idioma.setIdioma("portugues");
+        idioma.setNivel("1");
+        listaidiomas.add(idioma);
+        dto.setIdiomas(listaidiomas);
+
+        String json = objectMapper.writeValueAsString(dto);
+
+        MvcResult result=  mockMvc.perform(post("/candidato")
+                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String json3 = result.getResponse().getContentAsString();
+        candidato_model candidato =  objectMapper.readValue(json3, candidato_model.class);
+
+        Long candidatoid = candidato.getId();
+
+
+        cadastrarVaga_dto dtovagasetup  = new cadastrarVaga_dto();
+        dtovagasetup.setTitulo("titulo");
+        dtovagasetup.setDescricao("descricao");
+        dtovagasetup.setNivel("iniciante");
+        dtovagasetup.setInformacoes("informacoes");
+        dtovagasetup.setModelo("presencial");
+        dtovagasetup.setLocalizacao("sp");
+        dtovagasetup.setPalavrasChave("teste alo");
+        dtovagasetup.setTipoContrato("clt");
+
+        List<habilidade_apenas_formulario_vaga> lista = new ArrayList<>();
+        habilidade_apenas_formulario_vaga hab1  = new habilidade_apenas_formulario_vaga();
+        hab1.setHabilidade("java");
+        hab1.setPeso(1);
+        lista.add(hab1);
+
+        dtovagasetup.setHabilidades(lista);
+
+        String jsonvaga = objectMapper.writeValueAsString(dtovagasetup);
+
+        MvcResult resultvaga = mockMvc.perform(post("/vaga")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonvaga))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String dadosvaga = resultvaga.getResponse().getContentAsString();
+        vaga_model vaga = objectMapper.readValue(dadosvaga, vaga_model.class);
+
+        Long idvaga = vaga.getId();
+
+        cadastroCandidatura_dto dtocandidatura = new cadastroCandidatura_dto();
+        dtocandidatura.setIdcandidato(candidatoid);
+        dtocandidatura.setIdvaga(idvaga);
+
+        String jsoncandidatura = objectMapper.writeValueAsString(dtocandidatura);
+
+        mockMvc.perform(post("/vaga/candidatura")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsoncandidatura))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        mockMvc.perform(get("/candidato/buscarCandidaturas/"+candidatoid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsoncandidatura))
+                .andExpect(jsonPath("$[0].etapa").value("TRIAGEM"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+
+
+
     }
 
     @Test
-    void trocarSenha() {
+    @DisplayName("Deve trocar a senha corretamente")
+    void trocarSenha() throws Exception {
+
+        trocaSenhaCandidato_dto dtotrocasenha = new trocaSenhaCandidato_dto();
+        dtotrocasenha.setEmail("john@ml.com");
+        dtotrocasenha.setNovasenha("senhateste");
+
+        String jsontrocasenha = objectMapper.writeValueAsString(dtotrocasenha);
+
+        mockMvc.perform(put("/candidato/trocarSenhaCandidato")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsontrocasenha))
+                .andExpect(status().isOk())
+                .andReturn();
+
+
+
+    }
+
+    @Test
+    @DisplayName("Deve falhar por enviar uma senha igual a antiga")
+    void trocarSenhaFalha() throws Exception {
+
+        trocaSenhaCandidato_dto dtotrocasenha = new trocaSenhaCandidato_dto();
+        dtotrocasenha.setEmail("john@ml.com");
+        dtotrocasenha.setNovasenha("12345678");
+
+        String jsontrocasenha = objectMapper.writeValueAsString(dtotrocasenha);
+
+        mockMvc.perform(put("/candidato/trocarSenhaCandidato")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsontrocasenha))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+
+
     }
 }
+
+
+

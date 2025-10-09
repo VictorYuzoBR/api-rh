@@ -56,7 +56,7 @@ public class vaga_service {
 
 
     @Transactional(rollbackOn =  Exception.class)
-    public String cadastrar(cadastrarVaga_dto dto) {
+    public vaga_model cadastrar(cadastrarVaga_dto dto) {
 
         try {
 
@@ -69,6 +69,8 @@ public class vaga_service {
                 String res = habilidadeservice.cadastrarParaVaga(dados.getHabilidades(), vaga);
                 if (!res.equals("sucesso")) {
                     throw new IllegalStateException("uma das habilidade requisitadas não está cadastrada");
+                } else {
+                    return vaga;
                 }
 
             }
@@ -76,7 +78,7 @@ public class vaga_service {
         }  catch (Exception e) {
             throw e;
         }
-        return "sucesso";
+
 
     }
 
@@ -169,7 +171,7 @@ public class vaga_service {
 
     }
 
-    public String finalizarVaga(Long idvaga, UUID idrh) {
+    public vaga_model finalizarVaga(Long idvaga, UUID idrh) {
 
         try {
 
@@ -195,14 +197,14 @@ public class vaga_service {
                 log.setData(new Date());
                 logrepository.save(log);
 
-                return "sucesso";
+                return vaga.get();
 
 
             } else {
-                return "id não encontrado";
+                return null;
             }
         } catch (Exception e) {
-            return e.getMessage();
+            throw new RuntimeException(e);
         }
 
     }

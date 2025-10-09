@@ -339,11 +339,21 @@ public class vaga_application_service {
 
                     for (vaga_habilidade_model aux : habilidadesRequisitadas) {
                         if (aux.getHabilidade().equals(habilidade.getHabilidade())) {
-                            pontuacaoHabilidade = pontuacaoHabilidade + (habilidade.getExperienciaEmMeses() * aux.getPeso());
+
+                            int aux10 = habilidade.getExperienciaEmMeses();
+
+                            if (habilidade.getExperienciaEmMeses() > auxParaMultiplicacao) {
+                                aux10 = auxParaMultiplicacao;
+                            }
+
+                            pontuacaoHabilidade = pontuacaoHabilidade + (aux10 * aux.getPeso());
                             habilidadesRequisitadasPossuidas++;
                             break;
+
+
                         }
                     }
+
                     pontuacao = pontuacao + pontuacaoHabilidade;
 
 
@@ -507,11 +517,21 @@ public class vaga_application_service {
 
                     for (vaga_habilidade_model aux : habilidadesRequisitadas) {
                         if (aux.getHabilidade().equals(habilidade.getHabilidade())) {
-                            pontuacaoHabilidade = pontuacaoHabilidade + (habilidade.getExperienciaEmMeses() * aux.getPeso());
+
+                            int aux10 = habilidade.getExperienciaEmMeses();
+
+                            if (habilidade.getExperienciaEmMeses() > auxParaMultiplicacao) {
+                                aux10 = auxParaMultiplicacao;
+                            }
+
+                            pontuacaoHabilidade = pontuacaoHabilidade + (aux10 * aux.getPeso());
                             habilidadesRequisitadasPossuidas++;
                             break;
+
+
                         }
                     }
+
                     pontuacao = pontuacao + pontuacaoHabilidade;
 
 

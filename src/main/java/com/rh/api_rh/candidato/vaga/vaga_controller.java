@@ -36,19 +36,19 @@ public class vaga_controller {
     private final token_service tokenservice;
 
     @PostMapping
-    public ResponseEntity<String> cadastrar(@RequestBody cadastrarVaga_dto dto) {
+    public ResponseEntity<vaga_model> cadastrar(@RequestBody cadastrarVaga_dto dto) {
 
         try {
 
-            String res = vagaservice.cadastrar(dto);
-            if (res.equals("sucesso")) {
+            vaga_model res = vagaservice.cadastrar(dto);
+            if (res != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(res);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
 
         }  catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
     }
@@ -65,23 +65,6 @@ public class vaga_controller {
 
     }
 
-    @GetMapping("/intermediaria")
-    public  ResponseEntity<List<vaga_habilidade_model>> listarIntermediaria() {
-
-        try {
-
-            List<vaga_habilidade_model> res = vagaservice.listarTabelaIntermediaria();
-            if (res != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(res);
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
-            }
-
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
 
     @PostMapping("/candidatura")
     public ResponseEntity<String> candidatar(@RequestBody cadastroCandidatura_dto dto) {
@@ -98,7 +81,7 @@ public class vaga_controller {
         }
     }
 
-
+    /// id da vaga
     @GetMapping("/teste/{id}")
     public String calcularporcentagem(@PathVariable Long id) {
 
@@ -112,6 +95,7 @@ public class vaga_controller {
 
     }
 
+    /// id da vaga
     @GetMapping("/etapas/{id}")
     public ResponseEntity<quantidadePessoasEtapa_dto> calcularPessoasEtapa(@PathVariable Long id) {
 
@@ -230,17 +214,17 @@ public class vaga_controller {
     /// para concluir o candidato
 
     @PostMapping("/finalizarVaga")
-    public ResponseEntity<String> finalizarVaga(@RequestBody finalizarVaga_dto dto, HttpServletRequest request) {
+    public ResponseEntity<vaga_model> finalizarVaga(@RequestBody finalizarVaga_dto dto, HttpServletRequest request) {
 
         try {
 
             UUID idrh = UUID.fromString(tokenservice.returnIdRh(request));
 
-            String res = vagaservice.finalizarVaga(dto.getVagaid(), idrh);
-            if (res.equals("sucesso")) {
+            vaga_model res = vagaservice.finalizarVaga(dto.getVagaid(), idrh);
+            if (res != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(res);
             } else {
-                return ResponseEntity.badRequest().body(res);
+                return ResponseEntity.notFound().build();
             }
 
         } catch (Exception e) {
