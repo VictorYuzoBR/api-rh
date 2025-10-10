@@ -22,9 +22,9 @@ public class comunicado_controller {
     public ResponseEntity<?> enviarComunicado(@RequestBody enviarComunicado_dto dto) {
 
         try {
-            String res = comunicadoservice.enviar(dto);
+            comunicado_model res = comunicadoservice.enviar(dto);
             if (res == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             } else {
                 return ResponseEntity.ok(res);
             }
@@ -69,10 +69,10 @@ public class comunicado_controller {
     }
 
     @PostMapping("/alterarVisto")
-    public ResponseEntity<String> alterarVisto(@RequestBody alterarVisto_dto dto) {
+    public ResponseEntity<comunicado_funcionario_model> alterarVisto(@RequestBody alterarVisto_dto dto) {
 
         try {
-            String res =  comunicadoservice.alterarVisto(dto.getIdcomunicadotabelaaxuiliar());
+            comunicado_funcionario_model res =  comunicadoservice.alterarVisto(dto.getIdcomunicadotabelaaxuiliar());
             if (res != null) {
                 return ResponseEntity.ok(res);
             } else {

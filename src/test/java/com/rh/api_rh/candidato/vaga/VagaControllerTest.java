@@ -83,7 +83,7 @@ class VagaControllerTest {
 
         dtosetup.setPassword("12345678");
         dtosetup.setNome("john krammer");
-        dtosetup.setEmail("john@ml.com");
+        dtosetup.setEmail("victoryuzoumc@gmail.com");
         dtosetup.setTelefone("(11) 91234-5678");
         dtosetup.setLinkedin("linkexemplonaovalido.com");
         dtosetup.setGithub("https://githubsemsentido.com");
@@ -398,7 +398,7 @@ class VagaControllerTest {
 
         dto.setPassword("12345678");
         dto.setNome("john marcio");
-        dto.setEmail("marcio@hotmail.com");
+        dto.setEmail("3mpa13@gmail.com");
         dto.setTelefone("(11) 912234-5678");
         dto.setLinkedin("linkexemplonaovalido.com");
         dto.setGithub("https://githubsemsentido.com");
@@ -743,7 +743,7 @@ class VagaControllerTest {
         dto3.setFuncao("teste");
         dto3.setData_nascimento("12-12-12");
         dto3.setCpf("123445789");
-        dto3.setEmail("victoryuzofb4c@gmail.com");
+        dto3.setEmail("3mpa13@gmail.com");
         dto3.setCargo(Cargo.RH);
         dto3.setSalario((Float.valueOf(1000.00f)));
         dto3.setContabancaria("355425452-0");
@@ -819,7 +819,7 @@ class VagaControllerTest {
         dto3.setFuncao("teste");
         dto3.setData_nascimento("12-12-12");
         dto3.setCpf("123445789");
-        dto3.setEmail("victoryuzofb4c@gmail.com");
+        dto3.setEmail("3mpa13@gmail.com");
         dto3.setCargo(Cargo.RH);
         dto3.setSalario((Float.valueOf(1000.00f)));
         dto3.setContabancaria("355425452-0");

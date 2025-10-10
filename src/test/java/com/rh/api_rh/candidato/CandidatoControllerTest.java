@@ -81,7 +81,7 @@ class CandidatoControllerTest {
 
         dtosetup.setPassword("12345678");
         dtosetup.setNome("john krammer");
-        dtosetup.setEmail("john@ml.com");
+        dtosetup.setEmail("3mpa13@gmail.com");
         dtosetup.setTelefone("(11) 91234-5678");
         dtosetup.setLinkedin("linkexemplonaovalido.com");
         dtosetup.setGithub("https://githubsemsentido.com");
@@ -142,7 +142,7 @@ class CandidatoControllerTest {
 
         dto.setPassword("12345678");
         dto.setNome("john krammer");
-        dto.setEmail("john2@ml.com");
+        dto.setEmail("victoryuzoumc@gmail.com");
         dto.setTelefone("(11) 912234-5678");
         dto.setLinkedin("linkexemplonaovalido.com");
         dto.setGithub("https://githubsemsentido.com");
@@ -200,7 +200,7 @@ class CandidatoControllerTest {
 
         dto.setPassword("12345678");
         dto.setNome("john krammer");
-        dto.setEmail("john@ml.com");
+        dto.setEmail("victoryuzoumc@gmail.com");
         dto.setTelefone("(11) 912234-5678");
         dto.setLinkedin("linkexemplonaovalido.com");
         dto.setGithub("https://githubsemsentido.com");
@@ -294,7 +294,7 @@ class CandidatoControllerTest {
 
         dto.setPassword("12345678");
         dto.setNome("john krammer");
-        dto.setEmail("john2@ml.com");
+        dto.setEmail("victoryuzoumc@gmail.com");
         dto.setTelefone("(11) 912234-5678");
         dto.setLinkedin("linkexemplonaovalido.com");
         dto.setGithub("https://githubsemsentido.com");
@@ -360,7 +360,7 @@ class CandidatoControllerTest {
 
         dto.setPassword("12345678");
         dto.setNome("john krammer");
-        dto.setEmail("john2@ml.com");
+        dto.setEmail("victoryuzoumc@gmail.com");
         dto.setTelefone("(11) 912234-5678");
         dto.setLinkedin("linkexemplonaovalido.com");
         dto.setGithub("https://githubsemsentido.com");
@@ -586,7 +586,7 @@ class CandidatoControllerTest {
 
         dto.setPassword("12345678");
         dto.setNome("john krammer");
-        dto.setEmail("john2@ml.com");
+        dto.setEmail("victoryuzoumc@gmail.com");
         dto.setTelefone("(11) 912234-5678");
         dto.setLinkedin("linkexemplonaovalido.com");
         dto.setGithub("https://githubsemsentido.com");
@@ -719,7 +719,7 @@ class CandidatoControllerTest {
     void trocarSenhaFalha() throws Exception {
 
         trocaSenhaCandidato_dto dtotrocasenha = new trocaSenhaCandidato_dto();
-        dtotrocasenha.setEmail("john@ml.com");
+        dtotrocasenha.setEmail("3mpa13@gmail.com");
         dtotrocasenha.setNovasenha("12345678");
 
         String jsontrocasenha = objectMapper.writeValueAsString(dtotrocasenha);

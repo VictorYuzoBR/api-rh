@@ -33,7 +33,7 @@ public class comunicado_service {
     private comunicado_funcionario_repository comunicadofuncionariorepository;
 
     @Transactional(rollbackOn = Exception.class)
-    public String enviar(enviarComunicado_dto dto) {
+    public comunicado_model enviar(enviarComunicado_dto dto) {
 
         try {
             comunicado_model comunicado = new comunicado_model();
@@ -46,8 +46,10 @@ public class comunicado_service {
             for (funcionario_model funcionario : dto.getFuncionarios()) {
 
                 String result = emailservice.enviarComunicado(comunicado, funcionario);
+
+                /*
                 if (!result.equals("Email enviado com sucesso!")) {
-                    throw new RuntimeException();
+                    throw new RuntimeException("Email não foi enviado");
                 } else {
 
                     comunicado_funcionario_model intermediaria = new comunicado_funcionario_model();
@@ -57,9 +59,16 @@ public class comunicado_service {
 
                 }
 
+                 */
+
+                comunicado_funcionario_model intermediaria = new comunicado_funcionario_model();
+                intermediaria.setFuncionario(funcionario);
+                intermediaria.setComunicado(comunicado);
+                comunicadofuncionariorepository.save(intermediaria);
+
             }
 
-            return ("emails enviados com sucesso!");
+            return comunicado;
 
         }catch (Exception e) {
             throw  new RuntimeException(e);
@@ -101,13 +110,13 @@ public class comunicado_service {
 
     }
 
-    public String alterarVisto(Long id) {
+    public comunicado_funcionario_model alterarVisto(Long id) {
 
         Optional<comunicado_funcionario_model> comunicado = comunicadofuncionariorepository.findById(id);
         if (comunicado.isPresent()) {
             comunicado.get().setVisto(true);
             comunicadofuncionariorepository.save(comunicado.get());
-            return("ok");
+            return comunicado.get();
         } else {
             return null;
         }
