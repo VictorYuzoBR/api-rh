@@ -2,11 +2,16 @@ package com.rh.api_rh.espelho;
 
 import com.rh.api_rh.DTO.aplicacao.espelho.descreverAbono_dto;
 import com.rh.api_rh.DTO.aplicacao.espelho.gerarFeriado_dto;
+import com.rh.api_rh.DTO.aplicacao.espelho.gerarPDF_dto;
+import com.rh.api_rh.util.pdf_service;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +22,7 @@ public class espelho_controller {
 
     private final espelho_service espelhoService;
     private final espelho_application_service espelhoApplicationService;
+    private final pdf_service pdfService;
 
     @GetMapping
     public ResponseEntity<List<espelho_model>> listar() {
@@ -116,8 +122,32 @@ public class espelho_controller {
 
     }
 
+    @PostMapping("/gerarPDF")
+    public void gerarPDF(@RequestBody gerarPDF_dto dto, HttpServletResponse response ) {
+
+        try {
+
+            byte[] conteudoPDF = pdfService.gerarPDF(dto);
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=\"Holerite.pdf\"");
+            response.setContentLength(conteudoPDF.length);
+
+            OutputStream os = response.getOutputStream();
+            os.write(conteudoPDF);
+            os.flush();
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    }
 
 
 
 
-}

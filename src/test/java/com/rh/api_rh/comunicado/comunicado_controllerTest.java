@@ -247,6 +247,33 @@ class comunicado_controllerTest {
     }
 
     @Test
-    void buscarComunicados() {
+    @DisplayName("Deve retornar corretamente os comunicados")
+    void buscarComunicados() throws  Exception {
+
+        enviarComunicado_dto dtoenviarComunicado = new enviarComunicado_dto();
+
+        MvcResult resultListaFuncionario =  mockMvc.perform(get("/funcionario"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String dataresult = resultListaFuncionario.getResponse().getContentAsString();
+        List<funcionario_model> listafuncionarios = objectMapper.readValue(dataresult, new TypeReference<List<funcionario_model>>(){});
+
+        dtoenviarComunicado.setFuncionarios(listafuncionarios);
+        dtoenviarComunicado.setTitulo("Comunicado");
+        dtoenviarComunicado.setTexto("Comunicado");
+
+        String jsonenviarComunicado = objectMapper.writeValueAsString(dtoenviarComunicado);
+
+        mockMvc.perform(post("/comunicado")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonenviarComunicado))
+                .andExpect(jsonPath("$.titulo").value("Comunicado"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/comunicado"))
+                .andExpect(jsonPath("$[0].titulo").value("Comunicado"))
+                .andExpect(status().isOk());
+
     }
 }
