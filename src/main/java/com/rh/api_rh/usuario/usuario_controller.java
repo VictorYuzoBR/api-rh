@@ -34,8 +34,6 @@ public class usuario_controller {
     }
 
 
-    /// RECEBE ID DO USUARIO E NOVA SENHA
-
 
     @PutMapping("/novasenha")
     public ResponseEntity<String> trocarsenha(@RequestBody trocasenha_dto dto) {

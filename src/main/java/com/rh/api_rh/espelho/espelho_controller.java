@@ -3,6 +3,8 @@ package com.rh.api_rh.espelho;
 import com.rh.api_rh.DTO.aplicacao.espelho.descreverAbono_dto;
 import com.rh.api_rh.DTO.aplicacao.espelho.gerarFeriado_dto;
 import com.rh.api_rh.DTO.aplicacao.espelho.gerarPDF_dto;
+import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
+import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.util.pdf_service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +25,7 @@ public class espelho_controller {
     private final espelho_service espelhoService;
     private final espelho_application_service espelhoApplicationService;
     private final pdf_service pdfService;
+    private final token_service tokenService;
 
     @GetMapping
     public ResponseEntity<List<espelho_model>> listar() {
@@ -41,12 +44,10 @@ public class espelho_controller {
     public ResponseEntity<?> baterponto(@PathVariable UUID id) {
 
         try {
-            String res = espelhoApplicationService.baterPonto(id);
-            if (res.equals("ponto criado com sucesso")) {
+            espelho_item_model res = espelhoApplicationService.baterPonto(id);
+
                 return ResponseEntity.ok(res);
-            } else {
-                return ResponseEntity.badRequest().body(res);
-            }
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -74,11 +75,11 @@ public class espelho_controller {
     public ResponseEntity<?> descreverAbono(@RequestBody descreverAbono_dto dto) {
 
         try {
-            String res = espelhoApplicationService.descreverAbono(dto);
-            if (res.equals("sucesso")) {
+            espelho_item_model res = espelhoApplicationService.descreverAbono(dto);
+            if (res != null) {
                 return ResponseEntity.ok(res);
             } else {
-                return ResponseEntity.badRequest().body(res);
+                return ResponseEntity.badRequest().build();
             }
 
         } catch (Exception e) {
@@ -88,10 +89,13 @@ public class espelho_controller {
     }
 
     @PostMapping("/gerarFeriado")
-    public ResponseEntity<String>  gerarFeriado(@RequestBody gerarFeriado_dto dto) {
+    public ResponseEntity<String>  gerarFeriado(@RequestBody gerarFeriado_dto dto, HttpServletRequest request) {
 
         try {
-            String res = espelhoApplicationService.gerarFeriado(dto.getData());
+
+            UUID idrh = UUID.fromString(tokenService.returnIdRh(request));
+
+            String res = espelhoApplicationService.gerarFeriado(dto.getData(),idrh);
             if (!res.equals("feriado gerado com sucesso")) {
                 return  ResponseEntity.badRequest().body(res);
             } else {
@@ -99,7 +103,7 @@ public class espelho_controller {
             }
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
     }

@@ -7,14 +7,18 @@ import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
 import com.rh.api_rh.espelho.espelho_item.espelho_item_repository;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_service;
+import com.rh.api_rh.log.log_model;
+import com.rh.api_rh.log.log_repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +37,10 @@ public class espelho_application_service {
 
     @Autowired
     private entrada_espelho_repository entradaEspelhoRepository;
+
+    @Autowired
+    private log_repository logRepository;
+
 
     ///  tirar um 0 quando quiser testar
     @Scheduled(fixedRate = 20000)
@@ -57,6 +65,7 @@ public class espelho_application_service {
                     espelho.setPeriodoInicio(primeiroDia);
                     espelho.setPeriodoFim(ultimoDiaDoMes);
                     espelhoRepository.save(espelho);
+
                 }
 
             }
@@ -95,7 +104,7 @@ public class espelho_application_service {
 
     }
 
-    public String baterPonto(UUID idfuncionario) {
+    public espelho_item_model baterPonto(UUID idfuncionario) {
 
         funcionario_model funcionario = funcionarioService.buscar(idfuncionario);
         String registro = funcionario.getIdusuario().getRegistro();
@@ -113,7 +122,7 @@ public class espelho_application_service {
                 int tamanho = entradas.size();
                 if (tamanho > 0) {
                     if (tamanho > 3) {
-                        return ("maximo de pontos diarios atingido");
+                        throw new RuntimeException("maximo de pontos atingidos");
                     }
                     entrada_espelho_model entrada = new entrada_espelho_model();
                     entrada.setItem(espelhoItem.get());
@@ -137,7 +146,7 @@ public class espelho_application_service {
 
                     entradaEspelhoRepository.save(entrada);
 
-                    return("ponto criado com sucesso");
+                    return espelhoItem.get();
 
                 } else {
 
@@ -150,16 +159,16 @@ public class espelho_application_service {
                     espelhoItem.get().setAusencia(false);
                     espelhoItemRepository.save(espelhoItem.get());
 
-                    return("ponto criado com sucesso");
+                    return espelhoItem.get();
 
                 }
 
             } else {
-                return ("erro ao criar ponto");
+                throw new RuntimeException("item diario não encontrado");
             }
 
         } else {
-            return ("erro ao criar ponto");
+            throw new RuntimeException("espelho não encontrado");
         }
 
 
@@ -188,21 +197,22 @@ public class espelho_application_service {
 
     }
 
-    public String descreverAbono(descreverAbono_dto dto) {
+    public espelho_item_model descreverAbono(descreverAbono_dto dto) {
 
         Optional<espelho_item_model> item = espelhoItemRepository.findById(dto.getIditem());
         if (item.isPresent()) {
             item.get().setDescricaoAbono(dto.getDescricao());
             espelhoItemRepository.save(item.get());
-            return ("sucesso");
+            return item.get();
         } else {
-            return("erro");
+            return null;
         }
 
 
     }
 
-    public String gerarFeriado(LocalDate dia) {
+    @Transactional(rollbackFor = Throwable.class)
+    public String gerarFeriado(LocalDate dia, UUID idrh) {
 
         try {
 
@@ -246,6 +256,23 @@ public class espelho_application_service {
 
                     }
 
+                    funcionario_model rh = funcionarioService.buscar(idrh);
+                    if (rh != null) {
+
+                        String registro = rh.getIdusuario().getRegistro();
+
+                        log_model log = new log_model();
+                        log.setData(new Date());
+                        log.setTipo("funcionario");
+                        log.setAcao("Funcionario de registro "+ registro + " criou um feriado no dia "+ dia.toString());
+                        log.setRegistro(registro);
+
+                        logRepository.save(log);
+
+                    } else {
+                        return ("nao achou o rh");
+                    }
+
                 }
 
                 return ("feriado gerado com sucesso");
@@ -257,7 +284,7 @@ public class espelho_application_service {
             }
 
         } catch (Exception e) {
-            return ("erro ao gerar feriado");
+            throw new RuntimeException(e.getMessage());
         }
 
     }
