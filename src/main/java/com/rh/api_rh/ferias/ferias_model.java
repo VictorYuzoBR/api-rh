@@ -28,6 +28,12 @@ public class ferias_model {
     private String status;
 
     @Column
+    private int diasParaDescontar = 0;
+
+    @Column
+    private boolean alterar14dias = false;
+
+    @Column
     private String setorfuncionario;
 
     @Column

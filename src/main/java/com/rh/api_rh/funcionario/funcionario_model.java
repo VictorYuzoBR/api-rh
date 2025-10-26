@@ -57,6 +57,16 @@ public class funcionario_model implements UserDetails {
     @Column
     private String status = "ativo";
 
+    @Column
+    private int feriasDisponiveis = 16;
+
+    @Column
+    private int fracoesDisponiveis = 2;
+
+    @Column
+    private boolean periodo14dias = true;
+
+
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "idusuario", referencedColumnName = "id", nullable = false)

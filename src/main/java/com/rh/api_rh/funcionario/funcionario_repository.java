@@ -24,6 +24,7 @@ public interface funcionario_repository extends JpaRepository<funcionario_model,
 
     List<funcionario_model> findByNome(String nome);
 
+    List<funcionario_model> findByStatus(String status);
 
 
 }

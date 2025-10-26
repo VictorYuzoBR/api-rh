@@ -6,6 +6,7 @@ import com.rh.api_rh.espelho.espelho_item.entrada_espelho.entrada_espelho_reposi
 import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
 import com.rh.api_rh.espelho.espelho_item.espelho_item_repository;
 import com.rh.api_rh.funcionario.funcionario_model;
+import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.funcionario.funcionario_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
@@ -41,12 +42,15 @@ public class espelho_application_service {
     @Autowired
     private log_repository logRepository;
 
+    @Autowired
+    private funcionario_repository funcionarioRepository;
+
 
     ///  tirar um 0 quando quiser testar
     @Scheduled(fixedRate = 20000)
     public void gerarEspelho() {
 
-        List<funcionario_model> funcionarios = funcionarioService.listar();
+        List<funcionario_model> funcionarios = funcionarioRepository.findByStatus("ativo");
         YearMonth anoMesAtual = YearMonth.now();
         LocalDate ultimoDiaDoMes = anoMesAtual.atEndOfMonth();
         LocalDate primeiroDia = anoMesAtual.atDay(1);

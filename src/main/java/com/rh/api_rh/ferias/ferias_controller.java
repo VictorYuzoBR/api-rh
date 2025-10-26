@@ -25,12 +25,8 @@ public class ferias_controller {
     public ResponseEntity<String> cadastrar(@RequestBody cadastrarFerias_dto dto) {
 
         try {
-            String res = ferias_service.cadastrar(dto);
-            if (res.equals("solicitação enviada com sucesso")) {
-                return ResponseEntity.ok().body(res);
-            } else {
-                return ResponseEntity.badRequest().body(res);
-            }
+
+            return ferias_service.cadastrar(dto);
 
         } catch (Exception ex) {
             return ResponseEntity.internalServerError().body(ex.getMessage());

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -146,6 +147,12 @@ public class espelho_controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @GetMapping("/data")
+    public String getCurrentTime() {
+        String currentTime = Instant.now().toString();
+        return currentTime;
     }
 
 

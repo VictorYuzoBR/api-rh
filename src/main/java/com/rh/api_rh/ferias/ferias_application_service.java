@@ -1,6 +1,8 @@
 package com.rh.api_rh.ferias;
 
 import com.rh.api_rh.DTO.aplicacao.ferias.feriasPorSetor_dto;
+import com.rh.api_rh.funcionario.funcionario_model;
+import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.setor.setor_model;
 import com.rh.api_rh.setor.setor_service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class ferias_application_service {
 
     @Autowired
     private setor_service setor_service;
+
+    @Autowired
+    private funcionario_repository funcionario_repository;
 
     public List<feriasPorSetor_dto> feriasPorSetor(int mes) {
 
@@ -205,6 +210,14 @@ public class ferias_application_service {
             }
 
         }
+
+
+    }
+
+    @Scheduled(fixedRate = 1000000)
+    public void calcularFerias() {
+
+        List<funcionario_model> funcionarios = funcionario_repository.findByStatus("ativo");
 
 
     }

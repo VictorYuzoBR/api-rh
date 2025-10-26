@@ -71,11 +71,11 @@ public class authorization_service {
                     usuario.setStatus("ATIVO");
                     usuarioRepository.save(usuario);
                 } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario bloqueado temporariamente");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario bloqueado temporariamente");
                 }
 
             } else if (usuario.getStatus().equals("DESATIVADO")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario desativado");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario desativado");
             }
         }
 
@@ -145,11 +145,11 @@ public class authorization_service {
                 funcionarioparaalteracao.getIdusuario().setTentativas(tentativas);
                 funcionarioRepository.save(funcionarioparaalteracao);
 
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(tentativas);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(tentativas);
 
             }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario ou senha incorretos");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario ou senha incorretos");
 
         }
         return ResponseEntity.badRequest().body("Erro inesperado no login");
@@ -173,11 +173,11 @@ public class authorization_service {
                     candidato.setStatus("ATIVO");
                     candidatoRepository.save(candidato);
                 } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("candidato bloqueado temporariamente");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("candidato bloqueado temporariamente");
                 }
 
             } else if (candidato.getStatus().equals("DESATIVADO")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("candidato desativado");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("candidato desativado");
             }
         }
 
@@ -249,14 +249,14 @@ public class authorization_service {
                 candidato.setTentativas(tentativas);
                 candidatoRepository.save(candidato);
 
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(tentativas);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(tentativas);
 
             }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario ou senha incorretos");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario ou senha incorretos");
 
             }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("erro inesperado no login");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("erro inesperado no login");
 
     }
 
