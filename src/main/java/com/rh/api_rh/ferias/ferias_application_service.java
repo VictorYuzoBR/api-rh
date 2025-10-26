@@ -1,6 +1,10 @@
 package com.rh.api_rh.ferias;
 
 import com.rh.api_rh.DTO.aplicacao.ferias.feriasPorSetor_dto;
+import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
+import com.rh.api_rh.espelho.espelho_item.espelho_item_repository;
+import com.rh.api_rh.espelho.espelho_model;
+import com.rh.api_rh.espelho.espelho_repository;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.setor.setor_model;
@@ -10,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +30,12 @@ public class ferias_application_service {
 
     @Autowired
     private funcionario_repository funcionario_repository;
+
+    @Autowired
+    private espelho_repository espelho_repository;
+
+    @Autowired
+    private espelho_item_repository espelho_item_repository;
 
     public List<feriasPorSetor_dto> feriasPorSetor(int mes) {
 
@@ -202,6 +213,17 @@ public class ferias_application_service {
 
                 if (aux.getDataFim().equals(hoje.minusDays(1))) {
 
+                    funcionario_model funcionario = aux.getFuncionario();
+
+                    funcionario.setFeriasDisponiveis(funcionario.getFeriasDisponiveis() - aux.getDiasParaDescontar());
+                    funcionario.setFracoesDisponiveis(funcionario.getFracoesDisponiveis() - 1);
+
+                    if (aux.isAlterar14dias()) {
+                        funcionario.setPeriodo14dias(true);
+                    }
+
+                    funcionario_repository.save(funcionario);
+
                     aux.setStatus("finalizado");
                     ferias_repository.save(aux);
 
@@ -211,13 +233,157 @@ public class ferias_application_service {
 
         }
 
+    }
+
+    public String finalizarFeriasTesteLogica(Long id) {
+
+        try {
+
+            Optional<ferias_model> ferias = ferias_repository.findById(id);
+            if (ferias.isPresent()) {
+
+                ferias_model f = ferias.get();
+
+                funcionario_model funcionario = f.getFuncionario();
+
+                funcionario.setFeriasDisponiveis(funcionario.getFeriasDisponiveis() - f.getDiasParaDescontar());
+                funcionario.setFracoesDisponiveis(funcionario.getFracoesDisponiveis() - 1);
+
+                if (f.isAlterar14dias()) {
+                    funcionario.setPeriodo14dias(true);
+                }
+
+                funcionario_repository.save(funcionario);
+
+                f.setStatus("finalizado");
+                ferias_repository.save(f);
+
+                return ("ok");
+
+            } else {
+                return null;
+            }
+
+
+        } catch (Exception e) {
+            return null;
+        }
 
     }
 
-    @Scheduled(fixedRate = 1000000)
-    public void calcularFerias() {
+    public void calcularFeriasApenasLogica() {
 
         List<funcionario_model> funcionarios = funcionario_repository.findByStatus("ativo");
+
+        List<espelho_model> listaEspelhos = new ArrayList<>();
+
+        funcionario_model admin = funcionarios.get(0);
+
+        LocalDate datafixa = LocalDate.parse("2024-06-01");
+
+        int numeroFaltas = 0;
+        int saldofinal = 30;
+
+        for (int i = 0; i < 13; i++) {
+
+            espelho_model espelho = espelho_repository.findByPeriodoInicioAndRegistro(datafixa.plusMonths(i), admin.getIdusuario().getRegistro()).get();
+            listaEspelhos.add(espelho);
+
+        }
+
+        for (espelho_model espelho : listaEspelhos) {
+
+            for (espelho_item_model item : espelho.getListaEntradas()) {
+
+                if (item.isAusencia() && item.getDescricaoAbono() == null) {
+                    numeroFaltas++;
+                }
+
+            }
+
+        }
+
+        if (numeroFaltas > 32) {
+            saldofinal = 0;
+        } else if  (numeroFaltas > 23) {
+            saldofinal = 12;
+        } else if (numeroFaltas > 14) {
+            saldofinal = 18;
+        } else if (numeroFaltas > 5) {
+            saldofinal = 24;
+        } else {
+            saldofinal = 30;
+        }
+
+        admin.setPeriodo14dias(false);
+        admin.setFracoesDisponiveis(3);
+        admin.setFeriasDisponiveis(saldofinal);
+
+        funcionario_repository.save(admin);
+
+
+    }
+
+    public void gerarEspelhosFalsos() {
+
+        List<funcionario_model> funcionarios = funcionario_repository.findAll();
+        funcionario_model admin = funcionarios.get(0);
+
+        LocalDate dataInicial = LocalDate.parse(admin.getDataentrada());
+
+        for (int i = 0; i < 13; i++) {
+
+            LocalDate primeiroDia = dataInicial.plusMonths(i);
+            YearMonth anoMes = YearMonth.from(primeiroDia);
+            LocalDate ultimoDiaDoMes = anoMes.atEndOfMonth();
+
+            espelho_model espelho = new espelho_model();
+            espelho.setNomeFuncionario(admin.getNome());
+            espelho.setRegistro(admin.getIdusuario().getRegistro());
+            espelho.setFuncao(admin.getFuncao());
+            espelho.setPeriodoInicio(primeiroDia);
+            espelho.setPeriodoFim(ultimoDiaDoMes);
+            espelho_repository.save(espelho);
+
+        }
+
+        for (int i = 0; i < 13; i++) {
+
+            espelho_model espelho = espelho_repository.findByPeriodoInicioAndRegistro(dataInicial.plusMonths(i), admin.getIdusuario().getRegistro()).get();
+
+            int numeroDias = espelho.getPeriodoFim().getDayOfMonth();
+
+            for (int j = 0; j < numeroDias; j++) {
+
+               if (j == 0 || j == 1) {
+                   espelho_item_model espelhoItem = new espelho_item_model();
+                   espelhoItem.setData(espelho.getPeriodoInicio().plusDays(j));
+                   espelhoItem.setAusencia(true);
+                   espelhoItem.setEspelho(espelho);
+                   espelho_item_repository.save(espelhoItem);
+               } else {
+
+                   espelho_item_model espelhoItem = new espelho_item_model();
+                   espelhoItem.setData(espelho.getPeriodoInicio().plusDays(j));
+                   espelhoItem.setEspelho(espelho);
+                   espelho_item_repository.save(espelhoItem);
+               }
+
+
+                /*
+
+                 espelho_item_model espelhoItem = new espelho_item_model();
+                espelhoItem.setData(espelho.getPeriodoInicio().plusDays(j));
+                espelhoItem.setEspelho(espelho);
+                espelho_item_repository.save(espelhoItem);
+
+                 */
+
+            }
+
+
+        }
+
 
 
     }

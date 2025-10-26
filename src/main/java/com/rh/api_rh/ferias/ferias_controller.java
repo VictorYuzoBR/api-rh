@@ -112,4 +112,48 @@ public class ferias_controller {
 
     }
 
+    /// apenas para mostrar que a logica funciona
+    @PostMapping("/testelogica")
+    public ResponseEntity<String> finalizarFeriasTesteLogica(@RequestParam Long id) {
+
+        try {
+
+            String res = ferias_application_service.finalizarFeriasTesteLogica(id);
+            if (res != null) {
+                return ResponseEntity.ok().body(res);
+            } else {
+                return  ResponseEntity.badRequest().build();
+            }
+
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+    }
+
+    /// apenas para mostrar que a logica funciona
+    @GetMapping("/gerarEspelhosFalsos")
+    public ResponseEntity<String>  gerarEspelhosFalsos() {
+
+        try {
+            ferias_application_service.gerarEspelhosFalsos();
+            return ResponseEntity.ok().body("gerado");
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+    }
+
+    /// apenas para mostrar que a logica funciona
+    @GetMapping("/calcularFeriasFalso")
+    public ResponseEntity<String>  calcularFeriasFalso() {
+
+        try {
+            ferias_application_service.calcularFeriasApenasLogica();
+            return ResponseEntity.ok().body("calculado");
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }

@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -210,6 +211,8 @@ public class funcionario_service {
     public String generateadmin() {
 
         cadastroFuncionario_dto dto = new cadastroFuncionario_dto();
+
+
         dto.setNome("Adrian");
         dto.setFuncao("DBA");
         dto.setData_nascimento("01/01/2001");
@@ -219,7 +222,7 @@ public class funcionario_service {
         dto.setCargo(cargo);
         dto.setSalario(20000.00f);
         dto.setContabancaria("56165156");
-        dto.setDataentrada("02/02/2002");
+        dto.setDataentrada("2024-06-01");
         dto.setCep("6546565");
         dto.setLogradouro("rua do adrian");
         dto.setBairro("bairro do adrian");

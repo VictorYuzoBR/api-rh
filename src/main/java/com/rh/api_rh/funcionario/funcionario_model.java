@@ -58,13 +58,13 @@ public class funcionario_model implements UserDetails {
     private String status = "ativo";
 
     @Column
-    private int feriasDisponiveis = 16;
+    private int feriasDisponiveis = 0;
 
     @Column
-    private int fracoesDisponiveis = 2;
+    private int fracoesDisponiveis = 0;
 
     @Column
-    private boolean periodo14dias = true;
+    private boolean periodo14dias = false;
 
 
     @JsonIgnore
