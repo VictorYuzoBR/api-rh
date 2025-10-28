@@ -318,6 +318,7 @@ public class ferias_application_service {
         admin.setPeriodo14dias(false);
         admin.setFracoesDisponiveis(3);
         admin.setFeriasDisponiveis(saldofinal);
+        admin.setUltimoCalculo(LocalDate.parse("2025-06-01"));
 
         funcionario_repository.save(admin);
 

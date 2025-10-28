@@ -71,6 +71,12 @@ public class ferias_service {
                 String umdiastring = umdia.getDayOfWeek().toString();
                 String doisdiasstring = doisdias.getDayOfWeek().toString();
 
+                if (dto.getDataInicio().isBefore(hoje)) {
+                    return ResponseEntity.badRequest().body("data de inicio requisitada é retroativa");
+                }
+
+
+
 
                 if (umdiastring.equals("SATURDAY") || umdiastring.equals("SUNDAY") || doisdiasstring.equals("SUNDAY") || doisdiasstring.equals("SATURDAY")) {
                     return ResponseEntity.badRequest().body("solicitação não pode começar 1 ou 2 dias antes de um final de semana");
@@ -91,12 +97,17 @@ public class ferias_service {
                 }
 
 
-                if (dto.getDataInicio().isBefore(hoje)) {
-                    return ResponseEntity.badRequest().body("data de inicio requisitada é retroativa");
-                }
-
                 Long dias = (ChronoUnit.DAYS.between(dto.getDataInicio(), dto.getDataFim()));
                 dias = dias + 1;
+
+
+                LocalDate aposUmAno = funcionario.getUltimoCalculo().plusDays(1);
+                LocalDate ultimoDiaPossivelParaEssePeriodo = aposUmAno.minusDays(dias);
+
+                if (dto.getDataInicio().isAfter(ultimoDiaPossivelParaEssePeriodo)) {
+                    return ResponseEntity.badRequest().body("sua solicitação precisa terminar antes de um periodo de 1 ano desde a aquisição de seu saldo");
+                }
+
 
                 if (dias > funcionario.getFeriasDisponiveis()) {
                     return ResponseEntity.badRequest().body("periodo solicitado é maior que o saldo disponível");
