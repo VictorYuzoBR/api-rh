@@ -5,6 +5,7 @@ import com.rh.api_rh.DTO.cadastro.cadastrarFerias_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.funcionario.funcionario_service;
+import org.apache.coyote.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,11 +102,11 @@ public class ferias_service {
                 dias = dias + 1;
 
 
-                LocalDate aposUmAno = funcionario.getUltimoCalculo().plusDays(1);
+                LocalDate aposUmAno = funcionario.getUltimoCalculo().plusYears(1);
                 LocalDate ultimoDiaPossivelParaEssePeriodo = aposUmAno.minusDays(dias);
 
                 if (dto.getDataInicio().isAfter(ultimoDiaPossivelParaEssePeriodo)) {
-                    return ResponseEntity.badRequest().body("sua solicitação precisa terminar antes de um periodo de 1 ano desde a aquisição de seu saldo");
+                    return ResponseEntity.badRequest().body("sua solicitação precisa estar em um período dentro de 1 ano após a aquisição do saldo");
                 }
 
 

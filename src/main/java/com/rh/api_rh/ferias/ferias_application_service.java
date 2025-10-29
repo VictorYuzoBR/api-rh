@@ -356,6 +356,8 @@ public class ferias_application_service {
 
             for (int j = 0; j < numeroDias; j++) {
 
+
+                /*
                if (j == 0 || j == 1) {
                    espelho_item_model espelhoItem = new espelho_item_model();
                    espelhoItem.setData(espelho.getPeriodoInicio().plusDays(j));
@@ -369,16 +371,18 @@ public class ferias_application_service {
                    espelhoItem.setEspelho(espelho);
                    espelho_item_repository.save(espelhoItem);
                }
+               */
 
 
-                /*
+
+
 
                  espelho_item_model espelhoItem = new espelho_item_model();
                 espelhoItem.setData(espelho.getPeriodoInicio().plusDays(j));
                 espelhoItem.setEspelho(espelho);
                 espelho_item_repository.save(espelhoItem);
 
-                 */
+             
 
             }
 
