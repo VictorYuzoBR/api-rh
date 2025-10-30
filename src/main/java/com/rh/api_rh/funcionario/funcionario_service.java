@@ -5,6 +5,8 @@ import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.DTO.login.aceitartermo_dto;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
+import com.rh.api_rh.funcionario.fila_exclusao.fila_exclusao_model;
+import com.rh.api_rh.funcionario.fila_exclusao.fila_exclusao_repository;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.setor.setor_model;
@@ -16,6 +18,7 @@ import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -42,6 +45,8 @@ public class funcionario_service {
     private email_service email_service;
     @Autowired
     private log_repository log_repository;
+    @Autowired
+    private fila_exclusao_repository fila_exclusao_repository;
 
     public funcionario_model cadastrar(funcionario_model funcionario) {
 
@@ -77,17 +82,47 @@ public class funcionario_service {
 
     }
 
-    public String excluir(UUID id) {
+    @Scheduled(fixedRate = 50000)
+    public void excluir() {
+
+       try {
+
+           LocalDate hoje = LocalDate.now();
+
+           List<fila_exclusao_model> fila = fila_exclusao_repository.findByDataexclusao(hoje);
+           if (fila.size() > 0) {
+
+               for (fila_exclusao_model item : fila) {
+
+                   funcionario_model funcionario = buscar(item.getIdfuncionario());
+                   funcionario_repository.delete(funcionario);
+
+               }
+
+           }
+
+
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+
+    }
+
+    public String agendarExclusao(UUID id) {
 
         try {
-            funcionario_model funcionario = buscar(id);
 
-            funcionario_repository.delete(funcionario);
-            telefone_service.excluir(funcionario.getId_telefone());
-            endereco_service.deletar(funcionario.getId_endereco());
-            return "Excluido com sucesso!";
+            funcionario_model funcionario = buscar(id);
+            funcionario.setStatus("desligado");
+            funcionario_repository.save(funcionario);
+            fila_exclusao_model agendamento = new fila_exclusao_model();
+            agendamento.setDataexclusao(LocalDate.now().plusYears(5));
+            agendamento.setIdfuncionario(funcionario.getId());
+            fila_exclusao_repository.save(agendamento);
+            return "exlusao agendada";
+
         } catch (Exception e) {
-            return null;
+            return "erro ao agendar";
         }
 
     }
@@ -319,6 +354,14 @@ public class funcionario_service {
             return null;
         }
 
+    }
+
+    public List<fila_exclusao_model> listarExclusao() {
+        try {
+            return fila_exclusao_repository.findAll();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

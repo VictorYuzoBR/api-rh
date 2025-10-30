@@ -189,6 +189,10 @@ public class ferias_application_service {
 
                 if (aux.getDataInicio().equals(hoje)) {
 
+                    funcionario_model funcionario = aux.getFuncionario();
+                    funcionario.setDeFerias(true);
+                    funcionario_repository.save(funcionario);
+
                     aux.setStatus("andamento");
                     ferias_repository.save(aux);
 
@@ -221,6 +225,8 @@ public class ferias_application_service {
                     if (aux.isAlterar14dias()) {
                         funcionario.setPeriodo14dias(true);
                     }
+
+                    funcionario.setDeFerias(false);
 
                     funcionario_repository.save(funcionario);
 

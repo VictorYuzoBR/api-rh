@@ -4,6 +4,8 @@ import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.rh.api_rh.DTO.aplicacao.espelho.gerarPDF_dto;
+import com.rh.api_rh.espelho.espelho_item.entrada_espelho.entrada_espelho_model;
+import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
 import com.rh.api_rh.espelho.espelho_model;
 import com.rh.api_rh.espelho.espelho_service;
 import com.rh.api_rh.funcionario.funcionario_model;
@@ -56,13 +58,64 @@ public class pdf_service {
                 PdfStamper stamper = new PdfStamper(reader, baos);
                 AcroFields form = stamper.getAcroFields();
 
-                form.setField("Text1",espelho.getRegistro());
-                form.setField("Text2",espelho.getNomeFuncionario());
-                form.setField("Text3",espelho.getFuncao());
-                form.setField("Text4",data);
-                form.setField("Text5",String.valueOf(funcionario.getSalario()));
-                form.setField("Text6","R$0");
-                form.setField("Text7",String.valueOf(funcionario.getSalario()));
+                form.setField("Text1",espelho.getEmpresa());
+                form.setField("Text2",espelho.getEndereco());
+                form.setField("Text3",espelho.getBairro());
+                form.setField("Text4",espelho.getCnpj());
+                form.setField("Text5",espelho.getCep());
+                form.setField("Text6",espelho.getRegistro());
+                form.setField("Text7",espelho.getNomeFuncionario());
+                form.setField("Text8",espelho.getFuncao());
+                form.setField("Text9",data);
+
+                int inicio = 10;
+
+                for (espelho_item_model item : espelho.getListaEntradas()) {
+
+                    form.setField("Text"+String.valueOf(inicio), item.getData().toString());
+
+                    inicio++;
+
+                    int numeroEntradas = 4;
+
+                    for (entrada_espelho_model entradas : item.getEntradas()) {
+
+                        form.setField("Text"+String.valueOf(inicio), entradas.getHora().toString());
+                        inicio++;
+                        numeroEntradas = numeroEntradas - 1;
+
+                    }
+
+                    if (numeroEntradas > 0) {
+
+                        for (int j  = 0; j < numeroEntradas; j++) {
+                            form.setField("Text"+String.valueOf(inicio), "   ");
+                            inicio++;
+                        }
+
+                    }
+
+                    if (item.isAusencia()) {
+                        form.setField("Text"+String.valueOf(inicio), "falta");
+                        inicio++;
+                    } else {
+                        form.setField("Text"+String.valueOf(inicio), "presente");
+                        inicio++;
+                    }
+
+                    if (item.getDescricaoAbono() != null) {
+                        form.setField("Text"+String.valueOf(inicio), item.getDescricaoAbono());
+                        inicio++;
+                    } else {
+                        form.setField("Text"+String.valueOf(inicio), "   ");
+                        inicio++;
+                    }
+
+
+
+                }
+
+
 
                 stamper.setFormFlattening(true);
                 stamper.close();

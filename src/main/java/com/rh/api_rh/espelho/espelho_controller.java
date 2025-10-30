@@ -1,9 +1,11 @@
 package com.rh.api_rh.espelho;
 
+import com.rh.api_rh.DTO.aplicacao.espelho.aplicarAtestado_dto;
 import com.rh.api_rh.DTO.aplicacao.espelho.descreverAbono_dto;
 import com.rh.api_rh.DTO.aplicacao.espelho.gerarFeriado_dto;
 import com.rh.api_rh.DTO.aplicacao.espelho.gerarPDF_dto;
 import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
+import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.util.pdf_service;
 import jakarta.servlet.http.HttpServletRequest;
@@ -153,6 +155,24 @@ public class espelho_controller {
     public String getCurrentTime() {
         String currentTime = Instant.now().toString();
         return currentTime;
+    }
+
+    @PutMapping("/atestado")
+    public ResponseEntity<?> aplicarAtestado(@RequestBody aplicarAtestado_dto dto) {
+
+        try {
+
+            funcionario_model res =  espelhoApplicationService.aplicarAtestado(dto);
+            if (res != null) {
+                return ResponseEntity.ok(res);
+            } else {
+                return ResponseEntity.badRequest().body("funcionario não encontrado");
+            }
+
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
 

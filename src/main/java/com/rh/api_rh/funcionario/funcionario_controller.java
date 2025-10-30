@@ -10,6 +10,7 @@ import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.funcionario.endereco.endereco_mapper;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
+import com.rh.api_rh.funcionario.fila_exclusao.fila_exclusao_model;
 import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
@@ -113,13 +114,14 @@ public class funcionario_controller {
 
 
 
+    ///  usar como desligamento do usuario
     @DeleteMapping("/{id}")
     public ResponseEntity<String> excluir(@PathVariable UUID id) {
 
         try {
-            String res = funcionario_service.excluir(id);
-            if  (res.equals("Excluido com sucesso!")) {
-                return ResponseEntity.ok().body("Excluido com sucesso!");
+            String res = funcionario_service.agendarExclusao(id);
+            if  (res.equals("exlusao agendada")) {
+                return ResponseEntity.ok().body(res);
             } else {
                 return ResponseEntity.badRequest().body(res);
             }
@@ -230,6 +232,14 @@ public class funcionario_controller {
 
     }
 
+    @GetMapping("/filaexclusao")
+    public ResponseEntity<List<fila_exclusao_model>> filaexclusao() {
+        try{
+            return ResponseEntity.ok().body(funcionario_service.listarExclusao());
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
 
 

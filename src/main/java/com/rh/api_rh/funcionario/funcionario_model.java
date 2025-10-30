@@ -70,6 +70,12 @@ public class funcionario_model implements UserDetails {
     @Column
     private boolean periodo14dias = false;
 
+    @Column
+    private boolean deFerias = false;
+
+    @Column
+    private int saldoAtestado = 0;
+
 
     @JsonIgnore
     @OneToOne

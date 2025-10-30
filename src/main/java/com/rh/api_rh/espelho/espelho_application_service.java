@@ -1,5 +1,6 @@
 package com.rh.api_rh.espelho;
 
+import com.rh.api_rh.DTO.aplicacao.espelho.aplicarAtestado_dto;
 import com.rh.api_rh.DTO.aplicacao.espelho.descreverAbono_dto;
 import com.rh.api_rh.espelho.espelho_item.entrada_espelho.entrada_espelho_model;
 import com.rh.api_rh.espelho.espelho_item.entrada_espelho.entrada_espelho_repository;
@@ -131,7 +132,7 @@ public class espelho_application_service {
                     entrada_espelho_model entrada = new entrada_espelho_model();
                     entrada.setItem(espelhoItem.get());
 
-                    entrada.setHora(LocalTime.now());
+                    entrada.setHora(LocalTime.parse(LocalTime.now().toString().substring(0, 8)));
 
 
                     entrada_espelho_model aux = entradas.get(tamanho - 1);
@@ -157,7 +158,7 @@ public class espelho_application_service {
                     entrada_espelho_model entrada = new entrada_espelho_model();
                     entrada.setItem(espelhoItem.get());
                     entrada.setTipo("entrada");
-                    entrada.setHora(LocalTime.now());
+                    entrada.setHora(LocalTime.parse(LocalTime.now().toString().substring(0, 8)));
                     entradaEspelhoRepository.save(entrada);
 
                     espelhoItem.get().setAusencia(false);
@@ -187,12 +188,26 @@ public class espelho_application_service {
         if (lista.size() > 0) {
             for (espelho_item_model item : lista) {
 
+                funcionario_model funcionario = funcionarioRepository.findByIdusuario_Registro(item.getEspelho().getRegistro()).get();
+
                 List<entrada_espelho_model> entradas = entradaEspelhoRepository.findByItem(item);
                 if (entradas.size() == 0) {
 
-                    item.setAusencia(true);
-                    espelhoItemRepository.save(item);
+                    if (funcionario.isDeFerias()) {
+                        item.setAusencia(true);
+                        item.setDescricaoAbono("ferias");
+                    } else if (funcionario.getSaldoAtestado() > 0) {
+                        item.setAusencia(true);
+                        item.setDescricaoAbono("atestado");
+                        funcionario.setSaldoAtestado(funcionario.getSaldoAtestado() - 1);
+                        funcionarioRepository.save(funcionario);
+                    }
 
+                    else {
+                        item.setAusencia(true);
+
+                    }
+                    espelhoItemRepository.save(item);
                 }
 
             }
@@ -294,6 +309,28 @@ public class espelho_application_service {
     }
 
 
+    @Transactional(rollbackFor = Throwable.class)
+    public funcionario_model aplicarAtestado(aplicarAtestado_dto dto) {
+
+        try {
+
+            Optional<funcionario_model> data = funcionarioRepository.findById(dto.getFuncionarioid());
+            if (data.isPresent()) {
+
+                funcionario_model funcionario = data.get();
+                funcionario.setSaldoAtestado(dto.getDiasDeAtestado());
+                funcionarioRepository.save(funcionario);
+                return funcionario;
+
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
 
 
 }
