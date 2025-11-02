@@ -1,6 +1,7 @@
 package com.rh.api_rh.ferias;
 
 import com.rh.api_rh.DTO.aplicacao.ferias.atualizarFerias_dto;
+import com.rh.api_rh.DTO.aplicacao.ferias.venderFerias_dto;
 import com.rh.api_rh.DTO.cadastro.cadastrarFerias_dto;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
@@ -134,19 +135,8 @@ public class ferias_service {
                             return ResponseEntity.badRequest().body("esta é sua ultima fração de férias e é necesseário que seja um período igual ou maior à 14 dias");
                         } else if (dias >= 14 && diasRestantesCasoAprovado > 0) {
 
-                            ferias_model novaferias = new ferias_model();
-                            novaferias.setFuncionario(funcionario);
-                            novaferias.setStatus("solicitado");
-                            novaferias.setDataInicio(dto.getDataInicio());
-                            novaferias.setDataFim(dto.getDataFim());
-                            novaferias.setSetorfuncionario(funcionario.getIdsetor().getNome());
-                            novaferias.setDiasParaDescontar(dias.intValue());
-                            novaferias.setAlterar14dias(true);
-                            ferias_repository.save(novaferias);
+                            return ResponseEntity.badRequest().body("sua solicitacao nao pode fazer com que exista um saldo restante");
 
-
-
-                            return ResponseEntity.ok().body("AVISO essa solicitação foi enviada porém você ficará com saldo de férias que não poderá mais ser utilizado em caso de aprovação, em caso de erro entre em contato com um funcionário de recursos humanos para alteração");
                         } else {
                             ferias_model novaferias = new ferias_model();
                             novaferias.setFuncionario(funcionario);
@@ -194,19 +184,8 @@ public class ferias_service {
 
                             if (diasRestantesCasoAprovado < 5 && diasRestantesCasoAprovado > 0) {
 
-                                ferias_model novaferias = new ferias_model();
-                                novaferias.setFuncionario(funcionario);
-                                novaferias.setStatus("solicitado");
-                                novaferias.setDataInicio(dto.getDataInicio());
-                                novaferias.setDataFim(dto.getDataFim());
-                                novaferias.setSetorfuncionario(funcionario.getIdsetor().getNome());
-                                novaferias.setDiasParaDescontar(dias.intValue());
-                                novaferias.setAlterar14dias(true);
-                                ferias_repository.save(novaferias);
 
-
-                                return ResponseEntity.ok().body("AVISO essa solicitação foi enviada porém você ficará com saldo de férias que não poderá " +
-                                        "mais ser utilizado em caso de aprovação pois seu saldo restante será menor que 5 dias, em caso de erro entre em contato com um funcionário de recursos humanos para alteração");
+                                return ResponseEntity.badRequest().body("sua solicitacao nao pode  fazer com que exista um saldo restante menor que 5 dias");
 
                             } else {
 
@@ -232,9 +211,11 @@ public class ferias_service {
 
                     if (funcionario.getFracoesDisponiveis() == 3) {
 
-                        if (dias > 14) {
+                        if (funcionario.getFeriasDisponiveis() < 19) {
 
-                            if (diasRestantesCasoAprovado < 5 && diasRestantesCasoAprovado > 0) {
+                            if (dias != funcionario.getFeriasDisponiveis()) {
+                                return ResponseEntity.badRequest().body("como voce possui um saldo menor que 19 dias, sua requisição precisa utilizar todo o seu saldo de uma vez");
+                            } else {
 
                                 ferias_model novaferias = new ferias_model();
                                 novaferias.setFuncionario(funcionario);
@@ -247,9 +228,20 @@ public class ferias_service {
                                 ferias_repository.save(novaferias);
 
 
+                                return ResponseEntity.ok().body("solicitação enviada com sucesso");
 
-                                return ResponseEntity.ok().body("AVISO essa solicitação foi enviada porém você ficará com saldo de férias que não poderá " +
-                                        "mais ser utilizado em caso de aprovação pois seu saldo restante será menor que 5 dias, em caso de erro entre em contato com um funcionário de recursos humanos para alteração");
+                            }
+
+                        }
+
+
+
+                        if (dias > 14) {
+
+                            if (diasRestantesCasoAprovado < 5 && diasRestantesCasoAprovado > 0) {
+
+
+                                return ResponseEntity.badRequest().body("sua solicitacao nao pode fazer com que existe um saldo restante menor que 5 dias");
 
                             } else {
 
@@ -263,7 +255,6 @@ public class ferias_service {
                                 novaferias.setAlterar14dias(true);
                                 ferias_repository.save(novaferias);
 
-                                buscarFeriados(2025);
 
                                 return ResponseEntity.ok().body("solicitação enviada com sucesso");
 
@@ -300,8 +291,7 @@ public class ferias_service {
                             ferias_repository.save(novaferias);
 
 
-                            return ResponseEntity.ok().body("AVISO essa solicitação foi enviada porém você ficará com saldo de férias que não poderá " +
-                                    "mais ser utilizado em caso de aprovação pois seu saldo restante será menor que 5 dias, em caso de erro entre em contato com um funcionário de recursos humanos para alteração");
+                            return ResponseEntity.badRequest().body("sua solicitacao nao pode  fazer com que exista um saldo restante  menor que 5 dias");
 
                         } else {
 
@@ -325,7 +315,9 @@ public class ferias_service {
             }
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body("falha ao tentar cadastrar ferias");
+
         }
     }
 
@@ -413,6 +405,21 @@ public class ferias_service {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public funcionario_model venderFerias(venderFerias_dto dto) {
+
+        try {
+
+            funcionario_model funcionario = funcionario_service.buscar(dto.getFuncionarioid());
+            funcionario.setVenderFerias(dto.getQuantidadeDias());
+            funcionario_repository.save(funcionario);
+
+            return funcionario;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 
 }

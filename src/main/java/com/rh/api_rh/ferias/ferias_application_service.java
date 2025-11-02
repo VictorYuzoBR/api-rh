@@ -321,6 +321,16 @@ public class ferias_application_service {
             saldofinal = 30;
         }
 
+        if (admin.getVenderFerias() > 0) {
+
+            int umterco = saldofinal/3;
+            if (admin.getVenderFerias() <= umterco) {
+                saldofinal = saldofinal - admin.getVenderFerias();
+                admin.setVenderFerias(0);
+            }
+
+        }
+
         admin.setPeriodo14dias(false);
         admin.setFracoesDisponiveis(3);
         admin.setFeriasDisponiveis(saldofinal);
@@ -363,6 +373,7 @@ public class ferias_application_service {
             for (int j = 0; j < numeroDias; j++) {
 
 
+
                 /*
                if (j == 0 || j == 1) {
                    espelho_item_model espelhoItem = new espelho_item_model();
@@ -380,13 +391,12 @@ public class ferias_application_service {
                */
 
 
-
-
-
                  espelho_item_model espelhoItem = new espelho_item_model();
                 espelhoItem.setData(espelho.getPeriodoInicio().plusDays(j));
                 espelhoItem.setEspelho(espelho);
                 espelho_item_repository.save(espelhoItem);
+
+
 
              
 

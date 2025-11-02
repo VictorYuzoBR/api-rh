@@ -76,6 +76,9 @@ public class funcionario_model implements UserDetails {
     @Column
     private int saldoAtestado = 0;
 
+    @Column
+    private int venderFerias = 0;
+
 
     @JsonIgnore
     @OneToOne

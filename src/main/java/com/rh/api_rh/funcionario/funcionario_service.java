@@ -1,9 +1,12 @@
 package com.rh.api_rh.funcionario;
 
+import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarEndereco_dto;
 import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.DTO.login.aceitartermo_dto;
+import com.rh.api_rh.funcionario.endereco.endereco_model;
+import com.rh.api_rh.funcionario.endereco.endereco_repository;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
 import com.rh.api_rh.funcionario.fila_exclusao.fila_exclusao_model;
 import com.rh.api_rh.funcionario.fila_exclusao.fila_exclusao_repository;
@@ -47,6 +50,8 @@ public class funcionario_service {
     private log_repository log_repository;
     @Autowired
     private fila_exclusao_repository fila_exclusao_repository;
+    @Autowired
+    private endereco_repository endereco_repository;
 
     public funcionario_model cadastrar(funcionario_model funcionario) {
 
@@ -362,6 +367,44 @@ public class funcionario_service {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Transactional(rollbackOn =  Exception.class)
+    public funcionario_model atualizarEndereco(atualizarEndereco_dto dto, UUID idrh) {
+
+       try {
+
+           funcionario_model rh = buscar(idrh);
+
+           funcionario_model funcionario = buscar(dto.getFuncionarioid());
+
+           endereco_model endereco = funcionario.getId_endereco();
+
+           endereco.setBairro(dto.getBairro());
+           endereco.setCidade(dto.getCidade());
+           endereco.setEstado(dto.getEstado());
+           endereco.setCep(dto.getCep());
+           endereco.setComplemento(dto.getComplemento());
+           endereco.setNumero(dto.getNumero());
+           endereco.setLogradouro(dto.getLogradouro());
+
+           endereco_repository.save(endereco);
+
+           String registroDoRh = rh.getIdusuario().getRegistro();
+           String texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + funcionario.getIdusuario().getRegistro();;
+           log_model log = new log_model();
+           log.setAcao(texto);
+           log.setRegistro(registroDoRh);
+           log.setData(new Date());
+           log.setTipo("funcionario");
+           log_repository.save(log);
+
+           return  funcionario;
+
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+
     }
 
 

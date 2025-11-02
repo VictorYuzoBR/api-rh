@@ -1,11 +1,8 @@
 package com.rh.api_rh.funcionario;
 
 
-import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoFuncao_dto;
-import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoNome_dto;
-import com.rh.api_rh.DTO.aplicacao.funcionario.buscarParaEnviarComunicadoSetor_dto;
+import com.rh.api_rh.DTO.aplicacao.funcionario.*;
 import com.rh.api_rh.DTO.login.aceitartermo_dto;
-import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.funcionario.endereco.endereco_mapper;
@@ -241,6 +238,21 @@ public class funcionario_controller {
         }
     }
 
+    @PutMapping("/atualizarEndereco")
+    public ResponseEntity<funcionario_model> atualizarEndereco(@RequestBody atualizarEndereco_dto dto, HttpServletRequest request) {
+
+        try {
+
+            UUID idrh = UUID.fromString(token_service.returnIdRh(request));
+
+            funcionario_model res = funcionario_service.atualizarEndereco(dto, idrh);
+            return ResponseEntity.ok().body(res);
+
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+    }
 
 
 

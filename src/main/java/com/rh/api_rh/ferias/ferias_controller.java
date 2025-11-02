@@ -2,7 +2,9 @@ package com.rh.api_rh.ferias;
 
 import com.rh.api_rh.DTO.aplicacao.ferias.atualizarFerias_dto;
 import com.rh.api_rh.DTO.aplicacao.ferias.feriasPorSetor_dto;
+import com.rh.api_rh.DTO.aplicacao.ferias.venderFerias_dto;
 import com.rh.api_rh.DTO.cadastro.cadastrarFerias_dto;
+import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.infra.security.token_service;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -154,6 +156,19 @@ public class ferias_controller {
         } catch (Exception ex) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @PutMapping("/venderferias")
+    public ResponseEntity<funcionario_model> venderFerias(@RequestBody venderFerias_dto dto) {
+
+        try {
+
+            return ResponseEntity.ok().body(ferias_service.venderFerias(dto));
+
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+
     }
 
 }
