@@ -16,6 +16,8 @@ import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.refreshToken.refresh_token_service;
 import com.rh.api_rh.usuario.usuario_model;
 import com.rh.api_rh.usuario.usuario_repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -91,12 +93,8 @@ public class authorization_service {
             Optional<funcionario_model> funcionario = funcionarioRepository.findByIdusuario_Registro(userDetails.getUsername());
             if (funcionario.isPresent()) {
 
-                log_model log = new log_model();
-                log.setRegistro(dto.registro());
-                log.setAcao("Tentativa de login bem sucedida no usuário de registro "+dto.registro());
-                log.setData(new Date());
-                log.setTipo("funcionario");
-                logRepository.save(log);
+                Logger log = LoggerFactory.getLogger(authorization_service.class);
+                log.info("Tentativa de login bem sucedida no usuário de registro "+dto.registro());
 
                 funcionario.get().getIdusuario().setTentativas(0);
                 funcionarioRepository.save(funcionario.get());
@@ -123,12 +121,9 @@ public class authorization_service {
 
             Optional<funcionario_model> funcionario = funcionarioRepository.findByIdusuario_Registro(dto.registro());
             if (funcionario.isPresent()) {
-                log_model log = new log_model();
-                log.setRegistro(dto.registro());
-                log.setAcao("Tentativa de login falha no usuário de registro "+dto.registro());
-                log.setData(new Date());
-                log.setTipo("funcionario");
-                logRepository.save(log);
+
+                Logger log = LoggerFactory.getLogger(authorization_service.class);
+                log.warn("Tentativa de login falha no usuário de registro "+dto.registro());
 
                 funcionario_model funcionarioparaalteracao = funcionario.get();
                 int tentativas = funcionarioparaalteracao.getIdusuario().getTentativas();
@@ -194,12 +189,8 @@ public class authorization_service {
                 candidato_model candidato = candidato_model2.get();
 
 
-                log_model log = new log_model();
-                log.setRegistro(String.valueOf(candidato.getId()));
-                log.setAcao("Tentativa de login bem sucedida no candidato de id "+candidato.getId());
-                log.setData(new Date());
-                log.setTipo("candidato");
-                logRepository.save(log);
+                Logger log = LoggerFactory.getLogger(authorization_service.class);
+                log.info("Tentativa de login bem sucedida no candidato de id "+candidato.getId());
 
                 candidato.setTentativas(0);
                 candidatoRepository.save(candidato);
@@ -228,12 +219,8 @@ public class authorization_service {
 
                 candidato_model candidato = candidato_model3.get();
 
-                log_model log = new log_model();
-                log.setRegistro(String.valueOf(candidato.getId()));
-                log.setAcao("Tentativa de login falha no candidato de id "+candidato.getId());
-                log.setData(new Date());
-                log.setTipo("funcionario");
-                logRepository.save(log);
+                Logger log = LoggerFactory.getLogger(authorization_service.class);
+                log.warn("Tentativa de login falha no candidato de id "+candidato.getId());
 
                 int tentativas = candidato.getTentativas();
                 tentativas = tentativas + 1;

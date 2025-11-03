@@ -1,8 +1,11 @@
 package com.rh.api_rh.usuario;
 
 import com.rh.api_rh.funcionario.funcionario_model;
+import com.rh.api_rh.funcionario.funcionario_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -84,36 +87,43 @@ public class usuario_service {
 
         usuario_model usuario = buscar(id);
 
-        String senha2 = usuario.getRegistro() + senha + salt_secret;
+        try {
 
-        String senhaoriginal = usuario.getSenha();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String senha2 = usuario.getRegistro() + senha + salt_secret;
 
-        if (encoder.matches(senha2, senhaoriginal)) {
-            return("A senha nova não pode ser igual a antiga");
-        } else {
+            String senhaoriginal = usuario.getSenha();
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-            String senhahash = new BCryptPasswordEncoder().encode(senha2);
-            usuario.setSenha(senhahash);
+            if (encoder.matches(senha2, senhaoriginal)) {
+                return ("A senha nova não pode ser igual a antiga");
+            } else {
 
-            if (usuario.isPrimeirologin() == true) {
-                usuario.setPrimeirologin(false);
+                String senhahash = new BCryptPasswordEncoder().encode(senha2);
+                usuario.setSenha(senhahash);
+
+                if (usuario.isPrimeirologin() == true) {
+                    usuario.setPrimeirologin(false);
+                }
+
+                usuario_repository.save(usuario);
+
+
+                log_model log = new log_model();
+                log.setRegistro(usuario.getRegistro());
+                log.setAcao("Troca de senha realizada no usuário de registro: " + usuario.getRegistro());
+                log.setData(new Date());
+                log.setTipo("funcionario");
+                log_repository.save(log);
+
+
+                return ("A senha foi atualizada com sucesso!");
+
             }
+        } catch (Exception e) {
 
-            usuario_repository.save(usuario);
-
-
-            log_model log = new log_model();
-            log.setRegistro(usuario.getRegistro());
-            log.setAcao("Troca de senha realizada no usuário de registro: "+usuario.getRegistro());
-            log.setData(new Date());
-            log.setTipo("funcionario");
-            log_repository.save(log);
-
-
-
-
-            return("A senha foi atualizada com sucesso!");
+            Logger log = LoggerFactory.getLogger(usuario_service.class);
+            log.error("Erro ao atualizar senha no usuario de registro " + usuario.getRegistro()+": "+ e.getMessage());
+            throw new RuntimeException("Erro ao atualizar senha");
 
         }
 

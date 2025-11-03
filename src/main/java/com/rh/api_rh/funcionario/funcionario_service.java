@@ -5,6 +5,7 @@ import com.rh.api_rh.DTO.aplicacao.funcionario.atualizarfuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.DTO.login.aceitartermo_dto;
+import com.rh.api_rh.candidato.candidato_service;
 import com.rh.api_rh.funcionario.endereco.endereco_model;
 import com.rh.api_rh.funcionario.endereco.endereco_repository;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
@@ -17,9 +18,12 @@ import com.rh.api_rh.setor.setor_service;
 import com.rh.api_rh.funcionario.telefone.telefone_model;
 import com.rh.api_rh.funcionario.telefone.telefone_repository;
 import com.rh.api_rh.funcionario.telefone.telefone_service;
+import com.rh.api_rh.usuario.usuario_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
 import com.rh.api_rh.util.email_service;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -76,6 +80,10 @@ public class funcionario_service {
 
             telefone_service.excluir(funcionario.getId_telefone());
             endereco_service.deletar(funcionario.getId_endereco());
+
+            Logger log = LoggerFactory.getLogger(funcionario_service.class);
+            log.error("Erro ao criar novo funcionario: " + e.getMessage());
+
             return null;
         }
 
@@ -155,6 +163,9 @@ public class funcionario_service {
             if (data.isPresent()) {
                 funcionario_model funcionario = data.get();
 
+                float salarioantigo = funcionario.getSalario();
+                String contaantiga = funcionario.getContabancaria();
+
                 funcionario.setContabancaria(dto.getContabancaria());
                 funcionario.setEmail(dto.getEmail());
                 funcionario.setSalario(dto.getSalario());
@@ -206,7 +217,16 @@ public class funcionario_service {
                 Optional<funcionario_model> funcionariorh = funcionario_repository.findById(idrh);
                 if (funcionariorh.isPresent()) {
                     String registroDoRh = funcionariorh.get().getIdusuario().getRegistro();
-                    String texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + funcionario.getIdusuario().getRegistro();;
+
+                    String texto;
+
+                    if (salarioantigo != dto.getSalario() || (!contaantiga.equals(dto.getContabancaria()))) {
+                        texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + funcionario.getIdusuario().getRegistro() + " " +
+                                "mudanças críticas foram feitas: salario alterado de: " + salarioantigo+ " para "+dto.getSalario()+ " conta bancaria: " + contaantiga+" para "+dto.getContabancaria();
+                    } else {
+                        texto = "O usuário RH de registro: " + registroDoRh + " realizou mudanças nas informações do funcionário de registro: " + funcionario.getIdusuario().getRegistro();;
+                    }
+
                     log_model log = new log_model();
                     log.setAcao(texto);
                     log.setRegistro(registroDoRh);
@@ -224,6 +244,10 @@ public class funcionario_service {
 
             }
         } catch (Exception e) {
+
+            Logger log = LoggerFactory.getLogger(funcionario_service.class);
+            log.error("Erro ao atualizar o funcionario: " + e.getMessage());
+
             throw new RuntimeException("Erro ao atualizar o funcionario", e);
         }
 
@@ -285,12 +309,8 @@ public class funcionario_service {
             if (result != null) {
                 email_service.enviarcadastro(funcionario.getEmail(), provisorio);
 
-                log_model log = new log_model();
-                log.setRegistro(funcionario.getIdusuario().getRegistro());
-                log.setAcao("Novo funcionário cadastrado no sistema com registro: "+funcionario.getIdusuario().getRegistro());
-                log.setData(new Date());
-                log.setTipo("funcionario");
-                log_repository.save(log);
+                Logger log = LoggerFactory.getLogger(funcionario_model.class);
+                log.info("Novo funcionário cadastrado no sistema com registro: "+funcionario.getIdusuario().getRegistro());
 
                 return ("Cadastrado com sucesso!");
             } else {

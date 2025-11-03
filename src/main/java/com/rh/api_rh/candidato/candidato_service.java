@@ -23,8 +23,11 @@ import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
 import com.rh.api_rh.candidato.habilidade.habilidade_service;
 import com.rh.api_rh.candidato.idioma.idioma_model_apenas_formulario;
 import com.rh.api_rh.candidato.idioma.idioma_service;
+import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.util.email_service;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -123,11 +126,19 @@ public class candidato_service {
             if (formacao.size() > 0) {
                 formacaoAcademicaService.cadastrar(formacao, candidato);
             }
+
+            Logger log = LoggerFactory.getLogger(candidato_service.class);
+            log.info("Novo candidato cadastrado com id "+candidato.getId());
+
             return candidato;
 
 
         } catch (Exception e) {
-                throw e;
+
+            Logger log = LoggerFactory.getLogger(candidato_service.class);
+            log.error("Erro ao cadastrar novo candidato: " + e.getMessage());
+
+            throw e;
         }
 
     }
@@ -524,6 +535,10 @@ public class candidato_service {
                 candidatoidiomarepository.deleteByCandidato(candidato.get());
 
                 candidatorepository.delete(candidato.get());
+
+                Logger log = LoggerFactory.getLogger(candidato_service.class);
+                log.info("Candidato de id "+ candidato.get().getId() + " excluido com sucesso!");
+
                 return ("excluido com sucesso");
             } else {
                 return ("falha ao excluir");
