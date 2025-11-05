@@ -154,7 +154,7 @@ public class ferias_controller {
             ferias_application_service.calcularFeriasApenasLogica();
             return ResponseEntity.ok().body("calculado");
         } catch (Exception ex) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.internalServerError().body(ex.getMessage());
         }
     }
 

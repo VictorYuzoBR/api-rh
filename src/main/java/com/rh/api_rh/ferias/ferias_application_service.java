@@ -9,6 +9,8 @@ import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.setor.setor_model;
 import com.rh.api_rh.setor.setor_service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -238,6 +240,185 @@ public class ferias_application_service {
             }
 
         }
+
+    }
+
+    @Scheduled(fixedRate = 20000000)
+    public void calcularFerias() {
+
+        LocalDate hoje = LocalDate.now();
+
+        List<funcionario_model> funcionarios = funcionario_repository.findByStatus("ativo");
+
+        for  (funcionario_model f : funcionarios) {
+
+            List<espelho_model> listaEspelhos = new ArrayList<>();
+
+            if (f.getUltimoCalculo() == null) {
+
+                if (LocalDate.parse(f.getDataentrada()).equals(hoje.minusYears(1))) {
+
+                    YearMonth ym = YearMonth.from(hoje.minusYears(1));
+
+                    LocalDate dataprimeiroespelho = ym.atDay(1);
+
+                    LocalDate primeirodia = hoje.minusYears(1);
+
+                    int numeroFaltas = 0;
+                    int saldofinal = 30;
+
+                    for (int i = 0; i < 14; i++) {
+
+                        espelho_model espelho = espelho_repository.findByPeriodoInicioAndRegistro(dataprimeiroespelho.plusMonths(i), f.getIdusuario().getRegistro()).get();
+                        listaEspelhos.add(espelho);
+
+                    }
+
+                    if (listaEspelhos.size() != 13) {
+                        Logger log = LoggerFactory.getLogger(ferias_application_service.class);
+                        log.error("Erro ao calcular ferias devido a espelhos insuficientes. Registro do funcionario: " + f.getIdusuario().getRegistro());
+                        throw new RuntimeException();
+                    } else {
+
+                        for (espelho_model espelho : listaEspelhos) {
+
+                            for (espelho_item_model item : espelho.getListaEntradas()) {
+
+
+                                if (!item.getData().isBefore(primeirodia)) {
+
+                                    if (item.getData().equals(hoje)) {
+                                        break;
+                                    }
+
+                                    if (item.isAusencia() && item.getDescricaoAbono() == null) {
+                                        numeroFaltas++;
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                        if (numeroFaltas > 32) {
+                            saldofinal = 0;
+                        } else if  (numeroFaltas > 23) {
+                            saldofinal = 12;
+                        } else if (numeroFaltas > 14) {
+                            saldofinal = 18;
+                        } else if (numeroFaltas > 5) {
+                            saldofinal = 24;
+                        } else {
+                            saldofinal = 30;
+                        }
+
+                        if (f.getVenderFerias() > 0) {
+
+                            int umterco = saldofinal/3;
+                            if (f.getVenderFerias() <= umterco) {
+                                saldofinal = saldofinal - f.getVenderFerias();
+                                f.setVenderFerias(0);
+                            }
+
+                        }
+
+                        f.setPeriodo14dias(false);
+                        f.setFracoesDisponiveis(3);
+                        f.setFeriasDisponiveis(saldofinal);
+                        f.setUltimoCalculo(hoje);
+
+                        funcionario_repository.save(f);
+
+                    }
+
+
+                }
+
+            } else {
+
+                if (f.getUltimoCalculo().equals(hoje.minusYears(1))) {
+
+                    YearMonth ym = YearMonth.from(hoje.minusYears(1));
+
+                    LocalDate dataprimeiroespelho = ym.atDay(1);
+
+                    LocalDate primeirodia = hoje.minusYears(1);
+
+                    int numeroFaltas = 0;
+                    int saldofinal = 30;
+
+                    for (int i = 0; i < 14; i++) {
+
+                        espelho_model espelho = espelho_repository.findByPeriodoInicioAndRegistro(dataprimeiroespelho.plusMonths(i), f.getIdusuario().getRegistro()).get();
+                        listaEspelhos.add(espelho);
+
+                    }
+
+                    if (listaEspelhos.size() != 13) {
+                        Logger log = LoggerFactory.getLogger(ferias_application_service.class);
+                        log.error("Erro ao calcular ferias devido a espelhos insuficientes. Registro do funcionario: " + f.getIdusuario().getRegistro());
+                        throw new RuntimeException();
+                    } else {
+
+                        for (espelho_model espelho : listaEspelhos) {
+
+                            for (espelho_item_model item : espelho.getListaEntradas()) {
+
+
+                                if (!item.getData().isBefore(primeirodia)) {
+
+                                    if (item.getData().equals(hoje)) {
+                                        break;
+                                    }
+
+                                    if (item.isAusencia() && item.getDescricaoAbono() == null) {
+                                        numeroFaltas++;
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                        if (numeroFaltas > 32) {
+                            saldofinal = 0;
+                        } else if  (numeroFaltas > 23) {
+                            saldofinal = 12;
+                        } else if (numeroFaltas > 14) {
+                            saldofinal = 18;
+                        } else if (numeroFaltas > 5) {
+                            saldofinal = 24;
+                        } else {
+                            saldofinal = 30;
+                        }
+
+                        if (f.getVenderFerias() > 0) {
+
+                            int umterco = saldofinal/3;
+                            if (f.getVenderFerias() <= umterco) {
+                                saldofinal = saldofinal - f.getVenderFerias();
+                                f.setVenderFerias(0);
+                            }
+
+                        }
+
+                        f.setPeriodo14dias(false);
+                        f.setFracoesDisponiveis(3);
+                        f.setFeriasDisponiveis(saldofinal);
+                        f.setUltimoCalculo(hoje);
+
+                        funcionario_repository.save(f);
+
+                    }
+
+
+                }
+
+            }
+
+        }
+
+
 
     }
 

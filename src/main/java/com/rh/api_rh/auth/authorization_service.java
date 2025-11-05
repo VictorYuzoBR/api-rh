@@ -153,11 +153,11 @@ public class authorization_service {
 
     public ResponseEntity<?> loginCandidato(login_candidato_dto dto) {
 
-        String salt = dto.getEmail() + dto.getPassword() + salt_secret;
+        String salt = dto.getEmail().toLowerCase() + dto.getPassword() + salt_secret;
 
-        var usernamePassword = new candidato_token(dto.getEmail(), salt);
+        var usernamePassword = new candidato_token(dto.getEmail().toLowerCase(), salt);
 
-        Optional<candidato_model> candidato_model = candidatoRepository.findByEmail(dto.getEmail());
+        Optional<candidato_model> candidato_model = candidatoRepository.findByEmail(dto.getEmail().toLowerCase());
         if (candidato_model.isPresent()) {
             candidato_model candidato = candidato_model.get();
 

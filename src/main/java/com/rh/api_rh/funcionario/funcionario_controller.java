@@ -54,6 +54,7 @@ public class funcionario_controller {
         funcionario_model funcionario = dados.getFuncionario();
         usuarioprovisorio provisorio = dados.getProvisorio();
 
+
         try {
             funcionario_model result = funcionario_service.cadastrar(funcionario);
             if (result != null) {

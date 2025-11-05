@@ -61,6 +61,10 @@ public class funcionario_service {
 
         try {
 
+            funcionario.setNome(funcionario.getNome().toLowerCase());
+            funcionario.setEmail(funcionario.getEmail().toLowerCase());
+            funcionario.setFuncao(funcionario.getFuncao().toLowerCase());
+
             funcionario_repository.save(funcionario);
 
             log_model log = new log_model();

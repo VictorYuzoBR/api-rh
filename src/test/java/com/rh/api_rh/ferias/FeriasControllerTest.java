@@ -8,6 +8,7 @@ import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.cadastroSetor_dto;
 import com.rh.api_rh.funcionario.Cargo;
 import com.rh.api_rh.funcionario.funcionario_model;
+import com.rh.api_rh.funcionario.funcionario_repository;
 import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.setor.setor_model;
 import com.rh.api_rh.setor.setor_repository;
@@ -59,6 +60,9 @@ class FeriasControllerTest {
     @Autowired
     private setor_repository setorRepository;
 
+    @Autowired
+    private funcionario_repository funcionarioRepository;
+
     @BeforeEach
     void setUp() throws Exception {
 
@@ -86,7 +90,7 @@ class FeriasControllerTest {
         dto.setCargo(Cargo.FUNCIONARIO);
         dto.setSalario((Float.valueOf(1000.00f)));
         dto.setContabancaria("351352-0");
-        dto.setDataentrada("12-12-12");
+        dto.setDataentrada("2024-06-01");
         dto.setCep("3516556");
         dto.setLogradouro("Rua dos Santos");
         dto.setBairro("Bairro dos Santos");
@@ -102,6 +106,15 @@ class FeriasControllerTest {
         mockMvc.perform(post("/funcionario")
                         .contentType(MediaType.APPLICATION_JSON).content(json2))
                 .andExpect(status().isOk());
+
+        List<funcionario_model> funcionarios = funcionarioRepository.findAll();
+
+        funcionario_model f = funcionarios.get(0);
+
+        f.setUltimoCalculo(LocalDate.parse("2025-06-01"));
+        f.setFeriasDisponiveis(30);
+        f.setFracoesDisponiveis(3);
+
 
     }
 
@@ -129,8 +142,25 @@ class FeriasControllerTest {
 
         dtoferias.setIdfuncionario(funcioarioId);
 
-        LocalDate inicio = LocalDate.parse("2025-10-01");
-        LocalDate fim = LocalDate.parse("2025-10-10");
+        LocalDate inicioaux = funcionario.getUltimoCalculo().plusDays(240);
+
+        boolean quarta = false;
+
+        LocalDate inicioaux2 = inicioaux;
+
+        while (!quarta) {
+
+            if (inicioaux2.getDayOfWeek().toString().equals("WEDNESDAY")) {
+                quarta = true;
+            } else {
+                inicioaux2 =  inicioaux2.plusDays(1);
+            }
+
+        }
+
+
+        LocalDate inicio = inicioaux2;
+        LocalDate fim = inicioaux2.plusDays(14);
 
         dtoferias.setDataInicio(inicio);
         dtoferias.setDataFim(fim);
@@ -170,8 +200,25 @@ class FeriasControllerTest {
 
         dtoferias.setIdfuncionario(funcioarioId);
 
-        LocalDate inicio = LocalDate.parse("2025-10-01");
-        LocalDate fim = LocalDate.parse("2025-10-10");
+        LocalDate inicioaux = funcionario.getUltimoCalculo().plusDays(240);
+
+        boolean quarta = false;
+
+        LocalDate inicioaux2 = inicioaux;
+
+        while (!quarta) {
+
+            if (inicioaux2.getDayOfWeek().toString().equals("WEDNESDAY")) {
+                quarta = true;
+            } else {
+                inicioaux2 =  inicioaux2.plusDays(1);
+            }
+
+        }
+
+
+        LocalDate inicio = inicioaux2;
+        LocalDate fim = inicioaux2.plusDays(14);
 
         dtoferias.setDataInicio(inicio);
         dtoferias.setDataFim(fim);
@@ -235,8 +282,25 @@ class FeriasControllerTest {
 
         dtoferias.setIdfuncionario(funcioarioId);
 
-        LocalDate inicio = LocalDate.parse("2025-10-01");
-        LocalDate fim = LocalDate.parse("2025-10-10");
+        LocalDate inicioaux = funcionario.getUltimoCalculo().plusDays(240);
+
+        boolean quarta = false;
+
+        LocalDate inicioaux2 = inicioaux;
+
+        while (!quarta) {
+
+            if (inicioaux2.getDayOfWeek().toString().equals("WEDNESDAY")) {
+                quarta = true;
+            } else {
+                inicioaux2 =  inicioaux2.plusDays(1);
+            }
+
+        }
+
+
+        LocalDate inicio = inicioaux2;
+        LocalDate fim = inicioaux2.plusDays(14);
 
         dtoferias.setDataInicio(inicio);
         dtoferias.setDataFim(fim);
@@ -274,7 +338,7 @@ class FeriasControllerTest {
         assertEquals("aprovado",listaferias.get(0).getStatus());
 
 
-        mockMvc.perform(get("/ferias/feriasporsetor/10"))
+        mockMvc.perform(get("/ferias/feriasporsetor/1"))
                 .andExpect(jsonPath("$[0].quantidadeAprovadas").value(1))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -306,8 +370,25 @@ class FeriasControllerTest {
 
         dtoferias.setIdfuncionario(funcioarioId);
 
-        LocalDate inicio = LocalDate.parse("2025-10-01");
-        LocalDate fim = LocalDate.parse("2025-10-10");
+        LocalDate inicioaux = funcionario.getUltimoCalculo().plusDays(240);
+
+        boolean quarta = false;
+
+        LocalDate inicioaux2 = inicioaux;
+
+        while (!quarta) {
+
+            if (inicioaux2.getDayOfWeek().toString().equals("WEDNESDAY")) {
+                quarta = true;
+            } else {
+                inicioaux2 =  inicioaux2.plusDays(1);
+            }
+
+        }
+
+
+        LocalDate inicio = inicioaux2;
+        LocalDate fim = inicioaux2.plusDays(14);
 
         dtoferias.setDataInicio(inicio);
         dtoferias.setDataFim(fim);
@@ -353,8 +434,25 @@ class FeriasControllerTest {
 
         dtoferias.setIdfuncionario(funcioarioId);
 
-        LocalDate inicio = LocalDate.parse("2025-10-01");
-        LocalDate fim = LocalDate.parse("2025-10-10");
+        LocalDate inicioaux = funcionario.getUltimoCalculo().plusDays(240);
+
+        boolean quarta = false;
+
+        LocalDate inicioaux2 = inicioaux;
+
+        while (!quarta) {
+
+            if (inicioaux2.getDayOfWeek().toString().equals("WEDNESDAY")) {
+                quarta = true;
+            } else {
+                inicioaux2 =  inicioaux2.plusDays(1);
+            }
+
+        }
+
+
+        LocalDate inicio = inicioaux2;
+        LocalDate fim = inicioaux2.plusDays(14);
 
         dtoferias.setDataInicio(inicio);
         dtoferias.setDataFim(fim);
@@ -402,7 +500,7 @@ class FeriasControllerTest {
         dto3.setCargo(Cargo.RH);
         dto3.setSalario((Float.valueOf(1000.00f)));
         dto3.setContabancaria("355425452-0");
-        dto3.setDataentrada("12-12-12");
+        dto3.setDataentrada("2024-06-01");
         dto3.setCep("35162556");
         dto3.setLogradouro("Rua dos Sansdftos");
         dto3.setBairro("Bairro dos Ssdfantos");
@@ -421,10 +519,22 @@ class FeriasControllerTest {
                 .andReturn();
 
 
+        List<funcionario_model> funcionarios2 = funcionarioRepository.findAll();
+
+        funcionario_model f2 = funcionarios2.get(1);
+
+        f2.setUltimoCalculo(LocalDate.parse("2025-06-01"));
+        f2.setFeriasDisponiveis(30);
+        f2.setFracoesDisponiveis(3);
+        funcionarioRepository.save(f2);
+
+
+
         MvcResult resultBuscarFuncionarios2 = mockMvc.perform(get("/funcionario"))
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(status().isOk())
                 .andReturn();
+
 
         String buscarFuncionariosData2 =  resultBuscarFuncionarios2.getResponse().getContentAsString();
         List<funcionario_model> listaFuncionarios2 = objectMapper.readValue(buscarFuncionariosData2, new TypeReference<List<funcionario_model>>() {});
@@ -436,11 +546,8 @@ class FeriasControllerTest {
 
         dtoferias2.setIdfuncionario(funcioarioId2);
 
-        LocalDate inicio2 = LocalDate.parse("2025-10-01");
-        LocalDate fim2 = LocalDate.parse("2025-10-10");
-
-        dtoferias2.setDataInicio(inicio2);
-        dtoferias2.setDataFim(fim2);
+        dtoferias2.setDataInicio(inicio);
+        dtoferias2.setDataFim(fim);
 
         String jsonferias2 =  objectMapper.writeValueAsString(dtoferias2);
 
@@ -488,8 +595,25 @@ class FeriasControllerTest {
 
         dtoferias.setIdfuncionario(funcioarioId);
 
-        LocalDate inicio = LocalDate.parse("2025-10-01");
-        LocalDate fim = LocalDate.parse("2025-10-10");
+        LocalDate inicioaux = funcionario.getUltimoCalculo().plusDays(240);
+
+        boolean quarta = false;
+
+        LocalDate inicioaux2 = inicioaux;
+
+        while (!quarta) {
+
+            if (inicioaux2.getDayOfWeek().toString().equals("WEDNESDAY")) {
+                quarta = true;
+            } else {
+                inicioaux2 =  inicioaux2.plusDays(1);
+            }
+
+        }
+
+
+        LocalDate inicio = inicioaux2;
+        LocalDate fim = inicioaux2.plusDays(14);
 
         dtoferias.setDataInicio(inicio);
         dtoferias.setDataFim(fim);

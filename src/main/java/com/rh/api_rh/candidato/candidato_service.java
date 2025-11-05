@@ -83,6 +83,7 @@ public class candidato_service {
     public candidato_model cadastrar(cadastroCandidato_dto dto){
 
         cadastroCandidatoMapeado_dto dto_mapeado = mapper.convert(dto);
+        dto_mapeado.getCandidato().setEmail(dto_mapeado.getCandidato().getEmail().toLowerCase());
 
         List<experiencia_model> experiencias = dto_mapeado.getExperiencias();
         List<habilidade_model_apenas_formulario> habilidades = dto_mapeado.getHabilidades();
