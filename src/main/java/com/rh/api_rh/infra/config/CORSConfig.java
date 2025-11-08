@@ -13,7 +13,7 @@ public class CORSConfig implements WebMvcConfigurer {
         // apply cors in all endpoints
         registry.addMapping("/**")
                 // because the front-end is local
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://localhost:3000","https://bikube-frontend.vercel.app/")
                 // type os requests allowed
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 // headers allowed, authorzation for the barer token, content type for json and

@@ -89,7 +89,7 @@ public class token_service {
 
 
     public Instant generateExpiration() {
-        return LocalDateTime.now().plusMinutes(10).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusMinutes(60).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public String returnClaim(String token) {

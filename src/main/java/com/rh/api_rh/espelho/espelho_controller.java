@@ -7,6 +7,7 @@ import com.rh.api_rh.DTO.aplicacao.espelho.gerarPDF_dto;
 import com.rh.api_rh.espelho.espelho_item.espelho_item_model;
 import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.infra.security.token_service;
+import com.rh.api_rh.util.csv_service;
 import com.rh.api_rh.util.pdf_service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.OutputStream;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +32,7 @@ public class espelho_controller {
     private final espelho_application_service espelhoApplicationService;
     private final pdf_service pdfService;
     private final token_service tokenService;
+    private final csv_service csvService;
 
     @GetMapping
     public ResponseEntity<List<espelho_model>> listar() {
@@ -151,9 +155,36 @@ public class espelho_controller {
         }
     }
 
+    @GetMapping("/gerarCSV/{datainicio}")
+    public void gerarCSV(@PathVariable LocalDate datainicio,  HttpServletResponse response ) {
+
+        try {
+
+            byte[] conteudoCSV = csvService.gerarCSV(datainicio);
+
+
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition", "attachment; filename=\"espelhos.zip\"");
+            response.setContentLength(conteudoCSV.length);
+
+            OutputStream os = response.getOutputStream();
+            os.write(conteudoCSV);
+            os.flush();
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+
+
     @GetMapping("/data")
     public String getCurrentTime() {
-        String currentTime = Instant.now().toString();
+        ZoneId zone = ZoneId.of("America/Sao_Paulo");
+        String currentTime = Instant.now().atZone(zone).toString();
         return currentTime;
     }
 

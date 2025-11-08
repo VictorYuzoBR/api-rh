@@ -51,26 +51,6 @@ class FuncionarioControllerTest {
     @Autowired
     private token_service tokenService;
 
-    @Test
-    @Order(1)
-    @DisplayName("Rota utilizada apenas em testes")
-    void generateadmin() throws Exception {
-
-        cadastroSetor_dto dto2 = new cadastroSetor_dto();
-        dto2.setNome("teste");
-
-        String json = objectMapper.writeValueAsString(dto2);
-
-        mockMvc.perform(post("/setor")
-                        .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        mockMvc.perform(get("/funcionario/generateadmin"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-    }
 
     @Test
     @DisplayName("Deve cadastrar com sucesso um setor e funcionario")

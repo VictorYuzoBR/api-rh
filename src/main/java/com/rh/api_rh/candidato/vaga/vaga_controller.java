@@ -211,7 +211,7 @@ public class vaga_controller {
 
     }
 
-    /// para concluir o candidato
+
 
     @PostMapping("/finalizarVaga")
     public ResponseEntity<vaga_model> finalizarVaga(@RequestBody finalizarVaga_dto dto, HttpServletRequest request) {
