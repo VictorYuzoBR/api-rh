@@ -18,6 +18,7 @@ import com.rh.api_rh.funcionario.funcionario_model;
 import com.rh.api_rh.funcionario.funcionario_service;
 import com.rh.api_rh.log.log_model;
 import com.rh.api_rh.log.log_repository;
+import com.rh.api_rh.util.email_service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,9 @@ public class vaga_service {
 
     @Autowired
     private vaga_application_service vagaapplicationservice;
+
+    @Autowired
+    private email_service emailService;
 
 
     @Transactional(rollbackOn =  Exception.class)
@@ -181,8 +185,20 @@ public class vaga_service {
                 List<candidato_vaga_model>  listaAplicacoes = candidatovagarepository.findByVaga(vaga.get());
 
                 for (candidato_vaga_model aplicacao : listaAplicacoes) {
-                    aplicacao.setEtapa(etapas.FINALIZADO);
-                    candidatovagarepository.save(aplicacao);
+
+                    if (!aplicacao.getEtapa().equals(etapas.OFERTA)) {
+
+                        aplicacao.setEtapa(etapas.FINALIZADO);
+                        candidatovagarepository.save(aplicacao);
+
+                        emailService.enviarFinalizacaoCandidatura(aplicacao.getCandidato(), aplicacao.getVaga());
+
+
+                    } else {
+                        aplicacao.setEtapa(etapas.FINALIZADO);
+                        candidatovagarepository.save(aplicacao);
+                    }
+
                 }
 
                 vaga.get().setStatus("finalizado");

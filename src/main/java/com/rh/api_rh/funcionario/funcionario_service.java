@@ -131,6 +131,7 @@ public class funcionario_service {
 
             funcionario_model funcionario = buscar(id);
             funcionario.setStatus("desligado");
+            funcionario.getIdusuario().setStatus("DESATIVADO");
             funcionario_repository.save(funcionario);
             fila_exclusao_model agendamento = new fila_exclusao_model();
             agendamento.setDataexclusao(LocalDate.now().plusYears(5));

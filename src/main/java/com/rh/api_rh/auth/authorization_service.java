@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class authorization_service {
@@ -60,7 +61,9 @@ public class authorization_service {
     @Value("${SALT_SECRETWORD:!Senhasecreta1}")
     private String salt_secret;
 
-
+    /// função de login do funcionario, recebe registro e senha, se receber o registro correto com senha incorreta
+    /// retorna o numero de tentativas, se receber registro e senha incorretos retorna mensagem de erro padrão,
+    /// bloqueia temporariamente com 3 tentativas falhas e permanentemente com 5.
     public ResponseEntity<?> loginFuncionario(loginFuncionario_dto dto) {
 
         Optional<usuario_model> datausuario = usuarioRepository.findByRegistro(dto.registro());
@@ -101,6 +104,7 @@ public class authorization_service {
 
                 String role = funcionario.get().getCargo().toString();
                 String email = funcionario.get().getEmail();
+                UUID idfuncionario = funcionario.get().getId();
                 var token = tokenService.generateToken(funcionario.get());
                 var refreshtoken = refreshTokenService.generateRefreshToken(funcionario.get());
                 String aceitoutermo = Boolean.toString(funcionario.get().getIdusuario().isAceitoutermos());
@@ -109,7 +113,7 @@ public class authorization_service {
                 loginResponse_dto response = new loginResponse_dto();
 
                 response.setRole(role);
-                response.setEmail(email);
+                response.setIdfuncionario(idfuncionario);
                 response.setTermo(aceitoutermo);
                 response.setPrimeiro_login(primeirologin);
                 response.setAccess_token(token);
@@ -151,6 +155,9 @@ public class authorization_service {
     }
 
 
+    /// função de login do candidato, recebe email e senha, se receber o email correto com senha incorreta
+    /// retorna o numero de tentativas, se receber email e senha incorretos retorna mensagem de erro padrão,
+    /// bloqueia temporariamente com 3 tentativas falhas e permanentemente com 5.
     public ResponseEntity<?> loginCandidato(login_candidato_dto dto) {
 
         String salt = dto.getEmail().toLowerCase() + dto.getPassword() + salt_secret;

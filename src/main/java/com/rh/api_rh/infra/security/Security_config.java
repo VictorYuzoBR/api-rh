@@ -40,7 +40,8 @@ public class Security_config {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        /*
+
+
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/logincandidato").permitAll()
@@ -48,10 +49,10 @@ public class Security_config {
                         .requestMatchers(HttpMethod.POST, "/codigosenhacandidato/validar").permitAll()
                         .requestMatchers(HttpMethod.POST, "/confirmaremail").permitAll()
                         .requestMatchers(HttpMethod.POST, "/confirmaremail/validar").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/habilidade").hasAnyRole("ADMIN", "RH")
+                        .requestMatchers(HttpMethod.GET, "/habilidade").permitAll()
                         .requestMatchers(HttpMethod.POST, "/habilidade").hasAnyRole("ADMIN", "RH")
                         .requestMatchers(HttpMethod.POST, "/idioma").hasAnyRole("ADMIN", "RH")
-                        .requestMatchers(HttpMethod.GET, "/idioma").hasAnyRole("ADMIN", "RH")
+                        .requestMatchers(HttpMethod.GET, "/idioma").permitAll()
                         .requestMatchers(HttpMethod.POST, "/vaga").hasAnyRole("ADMIN", "RH")
                         .requestMatchers(HttpMethod.GET, "/vaga").authenticated()
                         .requestMatchers(HttpMethod.POST, "/vaga/candidatura").authenticated()
@@ -129,7 +130,9 @@ public class Security_config {
                         .requestMatchers(HttpMethod.POST, "/codigosenhacandidato").permitAll()
                         .requestMatchers(HttpMethod.POST, "/codigosenhacandidato/validar").permitAll()
 
-                         */
+
+
+
                         .anyRequest().permitAll()
 
                 )
