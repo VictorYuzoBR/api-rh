@@ -283,23 +283,23 @@ public class funcionario_service {
 
 
         dto.setNome("Adrian");
-        dto.setFuncao("DBA");
-        dto.setData_nascimento("01/01/2001");
-        dto.setCpf("145.145.14.45");
+        dto.setFuncao("Administrador do sistema");
+        dto.setData_nascimento("2000-01-01");
+        dto.setCpf("000.000.000-00");
         dto.setEmail("victoryuzoumc@gmail.com");
         Cargo cargo = Cargo.ADMIN;
         dto.setCargo(cargo);
         dto.setSalario(20000.00f);
         dto.setContabancaria("56165156");
         dto.setDataentrada("2024-06-01");
-        dto.setCep("6546565");
+        dto.setCep("00000-0000");
         dto.setLogradouro("rua do adrian");
         dto.setBairro("bairro do adrian");
         dto.setCidade("cidade do adrian");
         dto.setEstado("estado do adrian");
         dto.setNumero("154");
-        dto.setComplemento("teste");
-        dto.setNumerotelefone("45545");
+        dto.setComplemento("complemento do adrian");
+        dto.setNumerotelefone("11900000000");
         dto.setNumerosetor("1");
 
         emailnotificarcadastro_dto dados  = funcionario_mapper.convert(dto);
