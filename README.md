@@ -1,7 +1,23 @@
-# API-REST SISTEMA DE RH UTILIZANDO SPRINGBOOT
+# BIKUBE RH
 
 ## DESCRIÇÃO
-Projeto realizado utilizando java springboot para criação de um sistema de RH de fácil manipulação.
+Bikube rh é um projeto web de sistema de recursos humanos, criado com intenção de facilitar e otimizar processos relacionados a recrutamento e gerenciamento de funcionários da área de ti.
+O projeto foi criado como projeto de conclusão de curso para a Universidade de Mogi das Cruzes no curso de engenharia de software em 2025.
+
+Entre suas principais funcionalidades, bikube rh conta com:
+
+- Sistema de recrutamento, contendo: área do candidato, criação de vagas, criação de candidaturas, banco de talentos(envio automático de notificações de criação de novas vagas relacionadas ao perfil do usuário),
+gerenciamento de etapas (triagem, entrevista, oferta), e como principal funcionalidade, um dashboard informativo contendo diversas informações, entre elas, algumas se destacam: número de candidatos que possuem todas as
+habilidades requisitadas, porcentagem de compatibilidade de um candidato com a vaga e classificação de melhores candidatos.
+
+- Sistema de espelho de pontos, permitindo funcionários baterem pontos online, verificar os pontos do mês e baixarem um arquivo pdf do espelho de pontos. Para o lado do funcionário de recursos humanos, ele poderá:
+visualizar espelhos de todos os funcionários, aplicar atestados, descrever abonos de faltas, gerar feriados internos e exportar espelhos para arquivos csv.
+
+- Sistema de solicitação de férias, permitindo funcionários comuns realizarem a solicitação de pedido de férias de forma online, contendo todas as verificações legislativas. O sistema realiza o calculo de saldo de férias com
+os dados gerados nos espelhos de pontos. O funcionário de recursos humanos poderá realizar o desconto do saldo de férias em caso de venda.
+
+- Sistema de comunicados, criado para facilitar a comunicação entre funcionários, permitindo funcionários de recursos humanos enviarem comunicados para funcionários da empresa.
+
 
 ## Dependências utilizadas
 
@@ -13,6 +29,11 @@ Projeto realizado utilizando java springboot para criação de um sistema de RH 
 * Spring security: para configurações de segurança da aplicação.
 * Java JWT: para criação de access tokens e refresh tokens.
 * Springboot starter mail: para envio de emails personalizados.
+* Sendgrid: depêndencia do sistema sendgrid de envio de emails, para realizar o envio de emails.
+* Itextpdf: para facilitar a criação de arquivos pdf. (AVISO: Este projeto é de caráter educacional e sem fins lucrativos, fazendo uso da dependência itext licenciada sob AGPL)
+* Json: para manipulação de arquivos json.
+* Postgresql: para integração com banco de dados postgresql.
+* Spring starter validation: para validação de campos em requisições.
 
 ```java
 <dependencies>
@@ -20,10 +41,25 @@ Projeto realizado utilizando java springboot para criação de um sistema de RH 
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.9.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.13.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20230227</version>
 		</dependency>
 
 		<dependency>
@@ -32,11 +68,15 @@ Projeto realizado utilizando java springboot para criação de um sistema de RH 
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<scope>runtime</scope>
+				</dependency>
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.5</version>
 		</dependency>
 
 		<dependency>
@@ -44,7 +84,6 @@ Projeto realizado utilizando java springboot para criação de um sistema de RH 
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -73,98 +112,103 @@ Projeto realizado utilizando java springboot para criação de um sistema de RH 
 			<artifactId>spring-boot-starter-mail</artifactId>
 			<version>3.4.4</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+
+
 	</dependencies>
 ```
 
 ## Aplicações utilizadas
 * IntelliJ para construção do projeto
+* Docker para criação de container do projeto
 * Postman para testes de requisições
+* Railway para deploy gratuíto do projeto
 
 ## Objetivos alcançados
 
-* Ser uma API-REST
+* Utilização de status em retornos HTTP
 * Utilização de mapper
 * Utilização de DTO
 * Utilização de hashing + salt para armazenamento de senhas
 * Utilização de verificação de tentativas de login
 * Controle de permissões por cargo
 * Access token
-* Refresh token
 * Cadastro de entidade
 * Atualização de entidade
 * Exclusão de entidade
 * Registro de logs
 * Envio de emails
 * Geração de códigos de confirmação
-* Estrutura MVC
-* Login seguro
-* Variáveis de ambiente para chave secreta de algoritmo de encriptação
-
-## Explicações
-
-O sistema foi codificado com divisão de pastas por entidades, onde cada pasta possui os arquivos necessários para a estrutura da entidade (Model. controller, service, repository), algumas entidades que
-recebem dados vindos do front-end, possuem um arquivo de classe mapper, que em conjunto com os DTOS, são responsáveis por receber todos os dados necessários para uma requisição, e mapear de forma correta 
-para a estrutura que as funções trabalham.
-
-Exemplo: objeto DTO de cadastro recebe tudo que é necessário de uma vez, informações do funcionário, endereço, etc, e constroi de forma correta cada objeto de cada classe utilizada na função de cadastro, 
-nesse caso, um objeto da classe funcionário, um objeto da classe endereço e um objeto da classe telefone, para serem utilizados nas funções correspondentes.
+* Estrutura híbrida MVC + DDD
+* Login seguro com dois providers
+* Criação de testes de integração com Junit
+* Criação de container
+* Deploy
+* Integração com bando de dados relacional
+* Programação orientada a objetos
 
 
-![image](https://github.com/user-attachments/assets/573f24d5-cc14-4c25-bfd6-7057da2f81dc)
+## Arquitetura
 
-![image](https://github.com/user-attachments/assets/9a3a899f-77a5-4c09-a17b-163c15a3442a)
+O sistema foi codificado em uma arquitetura em camadas, combinando conceitos de MVC e DDD, com uma divisão de pastas por entidade, onde cada pasta contem todos os arquivos relacionados a ela.
 
-Exemplo da classe mapper construindo um objeto da classe funcionário
+<img width="269" height="238" alt="image" src="https://github.com/user-attachments/assets/8d599138-e38d-4ea1-a2b9-92ab30571240" />
 
-![image](https://github.com/user-attachments/assets/7c243701-5579-4f7a-8478-aabc00a2388e)
+## Métodos de execução do projeto
 
-Os arquivos service são responsáveis por conter as funções relacionadas a cada entidade
+### 1 - Download zip
 
-Os arquivos controller são responsáveis por gerenciar os endpoints relacionados a cada entidade
+Pré-requisito -> PostgreSQL + PgAdmin, Conta no site SendGrid, Postman.
 
-Os arquivos model são responsáveis por conter a estrutura de cada entidade
+- Faça o download do zip do projeto
+- Realize a extração da pasta em algum diretório
+- Abra a pasta do projeto utilizando alguma IDE de sua escolha
+- Caso sua IDE não realize o download das dependências automaticamente, realize a instalação manualmente.
+- Abra o arquivo chamado Application.properties dentro do projeto, localizado na pasta Resources
+- Troque as variáveis de banco de dados para corresponder ao seu banco de dados.
+- No mesmo arquivo, na variável chamada SENDGRID_API_KEY, coloque sua chave gerada no site do SendGrid.
+- Execute o projeto para que o banco de dados seja populado com as tabelas
+- Realize a inserção manualmente utilizando PgAdmin de um setor, o dado deve ser criado na tabela setor_model.
+- Realize uma requisição utilizando postman na rota GET /funcionario/generateadmin para gerar o seu admin inicial
+- Os dados de acesso irão aparecer no terminal.
 
-### Cadastro
+### - Docker image
 
-O primeiro usuário ADMIN será inserido manualmente no banco de dados, após isso, ele poderá cadastrar novos usuários RH, que poderão cadastrar novos funcionários comuns.
+Pré-requisito -> Docker, PostgreSQL + PgAdmin, Conta no site SendGrid, Postman.
 
-Após o cadastro, o funcionário recebe em seu email seu par de credenciais inicial.
+- Utilize docker pull victoryuzo/api-rh:latest para realizar o download da imagem do container
+- Execute o container substituindo os valores das variáveis de ambiente:
 
-![image](https://github.com/user-attachments/assets/d9fdf69f-44a5-4439-9559-c8f3c8f9aab5)
+  docker run -d \
+  --name api-rh \
+  -p 8080:8080 \
+  -e DB_URL=digite seu banco \
+  -e DB_USER=digite o usuario do banco \
+  -e DB_PASS=digite a senha do banco \
+  -e DDL_AUTO=digite a forma de inicialização do banco \
+  -e JWT_SECRET=digite um valor aleatorio para servir de chave para o token \
+  -e SALT_SECRETWORD=digite um valor aleatorio para servir de criptografia \
+  -e API_KEY=digite a sua api key do SendGrid \
+  victoryuzo/api-rh:latest
+
+- Realize a inserção manualmente utilizando PgAdmin de um setor, o dado deve ser criado na tabela setor_model.
+- Realize uma requisição utilizando postman na rota GET /funcionario/generateadmin para gerar o seu admin inicial
+- Os dados de acesso irão aparecer no terminal.
+
+### Créditos
+
+Desenvolvido por: 
+
+- Victor Matsunaga: https://github.com/VictorYuzoBR.
+- Marcio Araujo: https://github.com/MarcioPAraujo.
+- Adrian Felipe: https://github.com/Adrian128018.
+
+Repositório Front-end do projeto: https://github.com/MarcioPAraujo/bikube-frontend.
 
 
-### Login com token
 
-Após a criação de um funcionário, a função de login irá utilizar um par de credenciais escolhidas manualmente para realizar a verificação, as credenciais escolhidas para o sistema foram o registro do funcionário, que é um registro
-gerado automaticamente pelo sistema contendo o formato 6 letras maiúsculas e 2 números (AAAAAA00) e uma senha. A primeira senha do usuário será gerada automaticamente pelo sistema, e após o primeiro login o usuário será redirecionado 
-para uma troca de senha inicial.
-
-Quando um login é feito com sucesso, um par de tokens access token e refresh token é gerado para o usuário.
-
-Caso ocorram muitas tentativas falhas de login, a conta do usuário poderá ser bloqueada temporariamente e depois permanentemente, tendo que solicitar ao DBA a liberação de sua conta.
-
-os tokens serão utilizados para acessar rotas que necessitem de verificação por cargo, por exemplo, a rota de cadastro de novo funcionário poderá ser acessada apenas por um funcionário de cargo RH ou superior.
-
-Os refresh tokens são utilizados para gerar novos access tokens toda vez que são expirados. 
-
-Por motivos de testes, o access token possui duração de 1 minuto e o refresh token 3 minutos.
-
-### Reset de senha
-
-O usuário poderá requisitar a troca de senha em caso de esquecimento, sendo enviado um código de verificação para seu email, o código tem duração definida e é deletado após sua utilização ou expiração.
-
-### Controle de permissões
-
-o controle de permissões é feito por meio da utilização de um atributo Cargo na entidade funcionário, que é passado para o corpo dos tokens de acesso, e é verificado em cada requisição. A definição de nível de acesso
-é feita indicando qual o cargo necessário para acessar a função da rota em questão.
-
-![image](https://github.com/user-attachments/assets/84985d41-8e50-45f7-88b5-1828016b38d1)
-
-### LOGS
-
-O sistema gera automaticamente objetos de LOG para cada ação importante no sistema, como por exemplo: cadastro, atualização de dados, logins bem sucedidos, etc.
-
-### Hashing de senha
-
-A encriptação da senha é feita utilizando a técnica de SALT, onde uma chave secreta foi criada em váriavel de ambiente, e é adicionada com o registro do usuário + a senha original, para gerar um hash único e de alta complexidade.
 
