@@ -95,7 +95,7 @@ public class funcionario_service {
 
     public List<funcionario_model> listar() {
 
-        return funcionario_repository.findAll();
+        return funcionario_repository.findByStatus("ativo");
 
     }
 
@@ -292,7 +292,7 @@ public class funcionario_service {
         dto.setSalario(20000.00f);
         dto.setContabancaria("56165156");
         dto.setDataentrada("2024-06-01");
-        dto.setCep("00000-0000");
+        dto.setCep("000000000");
         dto.setLogradouro("rua do adrian");
         dto.setBairro("bairro do adrian");
         dto.setCidade("cidade do adrian");

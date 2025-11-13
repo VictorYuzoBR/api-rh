@@ -19,7 +19,7 @@ public class experiencia_model {
     @Column
     private String empresa;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @Column

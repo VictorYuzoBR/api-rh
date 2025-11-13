@@ -19,7 +19,7 @@ public class vaga_model {
     private String modelo;
 
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @Column

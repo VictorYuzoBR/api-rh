@@ -80,8 +80,8 @@ public class ferias_service {
 
 
 
-                if (umdiastring.equals("SATURDAY") || umdiastring.equals("SUNDAY") || doisdiasstring.equals("SUNDAY") || doisdiasstring.equals("SATURDAY")) {
-                    return ResponseEntity.badRequest().body("solicitação não pode começar 1 ou 2 dias antes de um final de semana");
+                if (umdiastring.equals("SATURDAY") || umdiastring.equals("SUNDAY") || doisdiasstring.equals("SUNDAY") || doisdiasstring.equals("SATURDAY") || dto.getDataInicio().getDayOfWeek().toString().equals("SUNDAY")) {
+                    return ResponseEntity.badRequest().body("solicitação não pode começar 1 ou 2 dias antes do repouso remunerado e nem sábado ou domingo");
                 }
 
                 List<LocalDate> feriados = buscarFeriados(dto.getDataInicio().getYear());

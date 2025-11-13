@@ -1,9 +1,6 @@
 package com.rh.api_rh.comunicado;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,9 +13,12 @@ public class comunicado_model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String titulo;
 
+    @Column(columnDefinition = "TEXT")
     private String texto;
 
+    @Column
     private LocalDate datacriacao;
 }
