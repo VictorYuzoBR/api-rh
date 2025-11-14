@@ -46,7 +46,7 @@ public class espelho_application_service {
     @Autowired
     private funcionario_repository funcionarioRepository;
 
-
+    /// realiza a criacao automatica do objeto espelho de um objeto funcionario
     ///  tirar um 0 quando quiser testar
     @Scheduled(fixedRate = 20000)
     public void gerarEspelho() {
@@ -78,6 +78,8 @@ public class espelho_application_service {
 
     }
 
+
+    /// realiza a criacao automatica do objeto de item diario de um espelho
     @Scheduled(fixedRate = 30000)
     public void gerarItemDiario() {
 
@@ -109,6 +111,8 @@ public class espelho_application_service {
 
     }
 
+    /// cria uma entrada para o objeto de item diario de data atual de um funcionario a partir do id do funcionario
+    /// seguindo a ordem entrada-saida-entrada-saida ate um maximo de 4 entradas
     public espelho_item_model baterPonto(UUID idfuncionario) {
 
         funcionario_model funcionario = funcionarioService.buscar(idfuncionario);
@@ -179,6 +183,7 @@ public class espelho_application_service {
 
     }
 
+    /// verifica a existencia de entradas em um objeto de item diario, e sinaliza com ausencia em caso de entradas nulas
     @Scheduled(fixedRate = 40000)
     public void gerarAusencia() {
 
@@ -216,6 +221,7 @@ public class espelho_application_service {
 
     }
 
+    /// insere a justificativa de uma ausencia a partir do id do item diario
     public espelho_item_model descreverAbono(descreverAbono_dto dto) {
 
         Optional<espelho_item_model> item = espelhoItemRepository.findById(dto.getIditem());
@@ -230,6 +236,8 @@ public class espelho_application_service {
 
     }
 
+    ///  recebe um localdate com uma data dentro do mes atual, gera um item diario ou modifica os existentes de cada espelho do mes atual
+    /// e faz com que esta data seja marcada como feriado, possibilitando a criacao de folgas gerais internas
     @Transactional(rollbackFor = Throwable.class)
     public String gerarFeriado(LocalDate dia, UUID idrh) {
 
@@ -309,6 +317,7 @@ public class espelho_application_service {
     }
 
 
+    ///  aplica um saldo de atestado em um objeto funcionario, fazendo com que as proximas ausencias sejam marcadas como atestado
     @Transactional(rollbackFor = Throwable.class)
     public funcionario_model aplicarAtestado(aplicarAtestado_dto dto) {
 

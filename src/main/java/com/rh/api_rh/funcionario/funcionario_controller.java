@@ -99,6 +99,23 @@ public class funcionario_controller {
         }
     }
 
+    @GetMapping("/meuperfil")
+    public ResponseEntity<funcionario_model> perfil(HttpServletRequest request) {
+        try {
+            UUID idfuncionario = UUID.fromString(token_service.returnIdRh(request));
+            funcionario_model funcionario = funcionario_service.buscar(idfuncionario);
+            if (funcionario != null) {
+                return ResponseEntity.ok(funcionario);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
     @GetMapping("/buscarporcargo/{cargo}")
     public ResponseEntity<List<funcionario_model>> buscarporcargo(@PathVariable Cargo cargo) {
         try {

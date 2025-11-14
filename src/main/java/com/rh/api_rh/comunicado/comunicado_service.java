@@ -32,6 +32,10 @@ public class comunicado_service {
     @Autowired
     private comunicado_funcionario_repository comunicadofuncionariorepository;
 
+
+    /// recebe os dados para criacao de um objeto comunicado e uma lista de objtos funcionario, realiza o salvamento do
+    /// comunicado no banco, e para cada funcionario, cria um objeto intermediario para liga o funcionario ao comunicado, por fim
+    /// envia um email com o mesmo comunicado para os emails dos funcionarios
     @Transactional(rollbackOn = Exception.class)
     public comunicado_model enviar(enviarComunicado_dto dto) {
 
@@ -75,6 +79,8 @@ public class comunicado_service {
         }
     }
 
+    ///  retorna a lista de objetos intermediarios que contem a ligação entre um funcionario e um comunicado de um funcionario
+    /// especifico a partir do if
     public List<comunicado_funcionario_model> buscarComunicadosFuncionario(UUID id) {
 
         try {
@@ -94,6 +100,7 @@ public class comunicado_service {
 
     }
 
+    /// retorna todos objetos comunicado
     public List<comunicado_model> listarComunicados() {
         return comunicadorepository.findAll();
     }
@@ -110,6 +117,7 @@ public class comunicado_service {
 
     }
 
+    /// muda o valor do atributo visto em um objeto intermediario de funcionario-comunicado a partir do id do objeto intermediario
     public comunicado_funcionario_model alterarVisto(Long id) {
 
         Optional<comunicado_funcionario_model> comunicado = comunicadofuncionariorepository.findById(id);

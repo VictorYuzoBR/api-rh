@@ -35,6 +35,7 @@ public class espelho_service {
         return espelhoRepository.findAll();
     }
 
+    /// retorna os dados de um objeto espelho a partir do id
     public espelho_model buscarPorId(Long id) {
 
         Optional<espelho_model> optional = espelhoRepository.findById(id);
@@ -59,6 +60,7 @@ public class espelho_service {
 
     }
 
+    ///  retorna a lista de objetos espelho a partir do id de um objeto funcionario
     public List<espelho_model> retornarEspelhosFuncionario(UUID idfuncionario) {
 
         Optional<funcionario_model> funcionario = funcionarioRepository.findById(idfuncionario);
@@ -78,6 +80,7 @@ public class espelho_service {
 
     }
 
+    ///  retorna o objeto espelho do mes atual de um objeto funcionario
     public espelho_model retornarEspelhoDoMesDoFuncionario(UUID idfuncionario) {
 
         try {

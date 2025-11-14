@@ -10,7 +10,9 @@ import com.rh.api_rh.candidato.candidato_habilidade.candidato_habilidade_model;
 import com.rh.api_rh.candidato.candidato_idioma.candidato_idioma_model;
 import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_model;
 import com.rh.api_rh.candidato.candidato_vaga.candidato_vaga_service;
+import com.rh.api_rh.infra.security.token_service;
 import com.rh.api_rh.util.email_service;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,6 +31,7 @@ public class candidato_controller {
     private final candidato_service candidato_service;
     private final email_service email_service;
     private final candidato_vaga_service candidato_vaga_service;
+    private final token_service token_service;
 
     @PostMapping
     public ResponseEntity<candidato_model> cadastrar(@RequestBody cadastroCandidato_dto dto){
@@ -119,10 +123,32 @@ public class candidato_controller {
 
     }
 
-    @PutMapping("/atualizar")
-    public ResponseEntity<candidato_model> atualizar(@RequestBody atualizarCandidato_dto dto){
+    @GetMapping("/meuperfil")
+    public ResponseEntity<retornarPerfil_dto>  perfil(HttpServletRequest request){
 
         try {
+            Long idcandidato = Long.valueOf(token_service.returnIdRh(request));
+            retornarPerfil_dto dto =  candidato_service.perfil(idcandidato);
+            if (dto == null){
+                return ResponseEntity.badRequest().body(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(dto);
+            }
+
+        }    catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+
+
+    @PutMapping("/atualizar")
+    public ResponseEntity<candidato_model> atualizar(@RequestBody atualizarCandidato_dto dto, HttpServletRequest request){
+
+        try {
+            Long idcandidato = Long.valueOf(token_service.returnIdRh(request));
+            dto.setId(idcandidato);
             candidato_model res =  candidato_service.atualizar(dto);
             if (res == null){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -135,11 +161,12 @@ public class candidato_controller {
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String>  excluir(@PathVariable Long id){
+    @DeleteMapping()
+    public ResponseEntity<String>  excluir(HttpServletRequest request){
 
         try {
-            String res = candidato_service.excluir(id);
+            Long idcandidato = Long.valueOf(token_service.returnIdRh(request));
+            String res = candidato_service.excluir(idcandidato);
             if (res.equals("excluido com sucesso")) {
                 return ResponseEntity.status(HttpStatus.OK).body(res);
             } else {

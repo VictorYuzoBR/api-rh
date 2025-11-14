@@ -79,6 +79,9 @@ public class candidato_service {
     @Value("${SALT_SECRETWORD:!Senhasecreta1}")
     private String salt_secret;
 
+
+    /// Função de cadastro de candidato, recebe um dto contendo todos os dados necessários para cadastrar o candidato e outras entidades
+    /// relacionadas, utiliza um mapper para obter o objeto correto de cada classe e realizar os salvamentos
     @Transactional(rollbackOn = Exception.class)
     public candidato_model cadastrar(cadastroCandidato_dto dto){
 
@@ -153,6 +156,7 @@ public class candidato_service {
     }
 
 
+    ///  Recebe uma lista de strings e procura todos os candidatos que possuem todas as habilidades com o mesmo valor das strings
     public List<candidato_model> listarComBaseHabilidades(List<String> requisitos ){
 
         List<candidato_model> res =  new ArrayList<candidato_model>();
@@ -190,6 +194,8 @@ public class candidato_service {
 
     }
 
+    ///  Recebe uma lista de objetos candidato e envia um email para cada, informado da criação de uma vaga que corresponde ao seu perfil
+    /// deve ser utilizada em conjunto com a função listarComBaseHabilidades
     public String enviarEmailParaCandidatosComHabilidade(enviarEmailNovaVaga_dto dto) {
 
         if (dto.getCandidatos().isEmpty()) {
@@ -215,6 +221,7 @@ public class candidato_service {
 
     }
 
+    ///  retorna um objeto candidato conforme o email indicado
     public candidato_model buscar(String email) {
 
         try{
@@ -229,6 +236,7 @@ public class candidato_service {
         }
     }
 
+    /// retorna a lista de objetos de candidatura de um candidato a partir de um id
     public List<candidato_vaga_model> buscarCandidaturasUsuario(Long id) {
 
         try {
@@ -250,6 +258,7 @@ public class candidato_service {
 
     }
 
+    /// altera o status de termo aceito em um objeto candidato a partir do id
     public String aceitartermo(Long id) {
 
         try {
@@ -264,6 +273,8 @@ public class candidato_service {
         }
     }
 
+
+    /// retorna os dados de um candidato em formato de perfil a partir do id
     public retornarPerfil_dto perfil(Long id) {
 
         try {
@@ -330,6 +341,7 @@ public class candidato_service {
 
     }
 
+    /// recebe todos os dados de um objeto candidato, atualiza os que foram alterados e mantem os que não foram
     @Transactional(rollbackOn =  Exception.class)
     public candidato_model atualizar(atualizarCandidato_dto dto) {
 
@@ -522,6 +534,7 @@ public class candidato_service {
 
     }
 
+    ///  exclui um objeto candidato a partir do id
     @Transactional(rollbackOn =  Exception.class)
     public String excluir(Long id) {
 
@@ -551,6 +564,7 @@ public class candidato_service {
 
     }
 
+    ///  recebe uma nova senha para um objeto candidato, realiza verificacao caso a senha seja igual a antiga
     public String trocarSenha(trocaSenhaCandidato_dto dto) {
 
         try {

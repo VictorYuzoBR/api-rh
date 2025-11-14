@@ -59,6 +59,7 @@ public class vaga_service {
     private email_service emailService;
 
 
+    /// recebe os dados necessarios de um objeto vaga e realiza o salvamento no banco
     @Transactional(rollbackOn =  Exception.class)
     public vaga_model cadastrar(cadastrarVaga_dto dto) {
 
@@ -96,6 +97,7 @@ public class vaga_service {
 
     }
 
+    ///  recebe o id de um objeto vaga, um objeto candidato, e realiza a criacao de um objeto intermediario candidatura
     public String candidatar(cadastroCandidatura_dto dto) {
 
         Optional<candidato_model> candidato = candidatorepository.findById(dto.getIdcandidato());
@@ -121,6 +123,7 @@ public class vaga_service {
 
     }
 
+    /// recebe o id de um objeto vaga e retorna a quantidade de candidatos em cada etapa
     public quantidadePessoasEtapa_dto calcularPessoasEtapa(Long idvaga) {
         quantidadePessoasEtapa_dto dto = new quantidadePessoasEtapa_dto();
         try {
@@ -175,6 +178,9 @@ public class vaga_service {
 
     }
 
+
+    /// muda o status de um objeto vaga para finalizado, retirando da listagem de outras funções e enviando um email para cada candidato que estava
+    /// aplicando para vaga
     public vaga_model finalizarVaga(Long idvaga, UUID idrh) {
 
         try {
@@ -225,6 +231,7 @@ public class vaga_service {
 
     }
 
+    ///  lista objetos vaga com status ativo
     public List<vaga_model> listarVagasAtivas() {
 
         List<vaga_model> vagas = new ArrayList<vaga_model>();
@@ -233,6 +240,7 @@ public class vaga_service {
 
     }
 
+    /// recebe o id de um objeto vaga, uma etapa, e retorna uma lista de candidatos que estão na etapa
     public List<listaCompatibilidade_dto> listarPorUmaEtapa(Long idvaga, etapas etapa) {
 
         List<listaCompatibilidade_dto> res = new ArrayList<>();

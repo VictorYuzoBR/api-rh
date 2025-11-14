@@ -38,6 +38,7 @@ public class ferias_service {
     private funcionario_repository funcionario_repository;
 
 
+    ///  realiza a criacao de um objeto de solicitacao de ferias seguindo todas as validacoes da clt
     public ResponseEntity<String> cadastrar(cadastrarFerias_dto dto) {
 
         try {
@@ -320,6 +321,7 @@ public class ferias_service {
 
         }
     }
+
 
     public String atualizar(atualizarFerias_dto dto, UUID idrh) {
 

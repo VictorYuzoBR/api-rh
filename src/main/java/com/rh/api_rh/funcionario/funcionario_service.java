@@ -130,6 +130,11 @@ public class funcionario_service {
         try {
 
             funcionario_model funcionario = buscar(id);
+
+            if (funcionario.getCpf().equals("000000000")) {
+                return("Impossível excluir o ADMIN inicial");
+            }
+
             funcionario.setStatus("desligado");
             funcionario.getIdusuario().setStatus("DESATIVADO");
             funcionario_repository.save(funcionario);
