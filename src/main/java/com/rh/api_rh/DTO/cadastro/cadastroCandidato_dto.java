@@ -6,6 +6,7 @@ import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
 import com.rh.api_rh.candidato.idioma.idioma_model_apenas_formulario;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -21,6 +22,8 @@ public class cadastroCandidato_dto {
     private String telefone;
 
     private String linkedin;
+
+    private LocalDate datanascimento;
 
     private String github;
 

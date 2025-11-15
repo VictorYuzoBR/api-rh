@@ -19,6 +19,7 @@ public class cadastroCandidatoMapper {
         candidato.setCidade(dto.getCidade());
         candidato.setEstado(dto.getEstado());
         candidato.setGithub(dto.getGithub());
+        candidato.setDatanascimento(dto.getDatanascimento());
         candidato.setLinkedin(dto.getLinkedin());
         candidato.setPassword(dto.getPassword());
 

@@ -78,6 +78,24 @@ public class espelho_controller {
 
     }
 
+    @GetMapping("/meuespelho")
+    public ResponseEntity<List<espelho_model>> espelhosFuncionario(HttpServletRequest request) {
+
+        try {
+            UUID idfuncionario = UUID.fromString(tokenService.returnIdRh(request));
+            List<espelho_model> res = espelhoService.retornarEspelhosFuncionario(idfuncionario);
+            if (res != null) {
+                return ResponseEntity.ok(res);
+            } else {
+                return ResponseEntity.badRequest().body(res);
+            }
+
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
     @PostMapping("/abono")
     public ResponseEntity<?> descreverAbono(@RequestBody descreverAbono_dto dto) {
 
@@ -116,11 +134,12 @@ public class espelho_controller {
     }
 
     ///  retorna espelho do mes de um funcionario
-    @GetMapping("/espelhoDoMes/{id}")
-    public ResponseEntity<espelho_model> espelhoDoMes(@PathVariable UUID id) {
+    @GetMapping("/espelhoDoMes")
+    public ResponseEntity<espelho_model> espelhoDoMes(HttpServletRequest request) {
 
         try {
-            espelho_model res = espelhoService.retornarEspelhoDoMesDoFuncionario(id);
+            UUID idfuncionario = UUID.fromString(tokenService.returnIdRh(request));
+            espelho_model res = espelhoService.retornarEspelhoDoMesDoFuncionario(idfuncionario);
             if  (res != null) {
                 return ResponseEntity.ok(res);
             } else {
