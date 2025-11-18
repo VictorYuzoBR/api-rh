@@ -6,6 +6,7 @@ import com.rh.api_rh.candidato.habilidade.habilidade_model_apenas_formulario;
 import com.rh.api_rh.candidato.idioma.idioma_model_apenas_formulario;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -24,6 +25,8 @@ public class retornarPerfil_dto {
     private String cidade;
 
     private String estado;
+
+    private LocalDate datanascimento;
 
     private List<habilidade_model_apenas_formulario> habilidades;
 

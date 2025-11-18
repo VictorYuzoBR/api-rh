@@ -291,6 +291,7 @@ public class candidato_service {
                 res.setEmail(candidato.get().getEmail());
                 res.setGithub(candidato.get().getGithub());
                 res.setLinkedin(candidato.get().getLinkedin());
+                res.setDatanascimento(candidato.get().getDatanascimento());
 
                 List<formacaoAcademica_model> listaFormacao = formacaoAcademicarepository.findByCandidato(candidato.get());
                 res.setFormacaoAcademica(listaFormacao);

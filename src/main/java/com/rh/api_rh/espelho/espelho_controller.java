@@ -160,7 +160,7 @@ public class espelho_controller {
             byte[] conteudoPDF = pdfService.gerarPDF(dto);
 
             response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment; filename=\"Holerite.pdf\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"espelho.pdf\"");
             response.setContentLength(conteudoPDF.length);
 
             OutputStream os = response.getOutputStream();
