@@ -146,7 +146,7 @@ public class Security_config {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();// Replace with your frontend origin
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://bikube-frontend.vercel.app/"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://bikube-frontend.vercel.app/","https://bikuberh.netlify.app/"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

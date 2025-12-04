@@ -2,6 +2,8 @@ package com.rh.api_rh.candidato.confirmarEmail;
 
 import com.rh.api_rh.DTO.cadastro.confirmarEmail_dto;
 import com.rh.api_rh.DTO.cadastro.validarCodigoConfirmacao_dto;
+import com.rh.api_rh.candidato.candidato_model;
+import com.rh.api_rh.candidato.candidato_repository;
 import com.rh.api_rh.util.email_service;
 import com.rh.api_rh.util.registro_service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,18 @@ public class confirmarEmail_service {
     @Autowired
     private confirmarEmail_repository confirmarEmailRepository;
 
+    @Autowired
+    private candidato_repository candidato_repository;
+
     public String enviarEmail(confirmarEmail_dto dto) {
 
         try {
+
+            Optional<candidato_model> candidatoexiste = candidato_repository.findByEmail(dto.getEmail());
+            if (candidatoexiste.isPresent()) {
+                return ("email já cadastrado no sistema");
+            }
+
 
             Optional<confirmarEmail_model> existeRegistro = confirmarEmailRepository.findByEmail(dto.getEmail());
             if (existeRegistro.isPresent()) {
