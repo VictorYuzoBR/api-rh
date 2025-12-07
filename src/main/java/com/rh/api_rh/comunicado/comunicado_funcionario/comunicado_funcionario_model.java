@@ -5,6 +5,8 @@ import com.rh.api_rh.comunicado.comunicado_model;
 import com.rh.api_rh.funcionario.funcionario_model;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
@@ -16,6 +18,7 @@ public class comunicado_funcionario_model {
 
     @ManyToOne
     @JoinColumn
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private funcionario_model funcionario;
 
     @ManyToOne

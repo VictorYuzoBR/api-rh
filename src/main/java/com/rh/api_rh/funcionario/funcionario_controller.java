@@ -14,8 +14,10 @@ import com.rh.api_rh.log.log_repository;
 import com.rh.api_rh.funcionario.telefone.telefone_mapper;
 import com.rh.api_rh.funcionario.telefone.telefone_service;
 import com.rh.api_rh.usuario.usuarioprovisorio;
+import com.rh.api_rh.util.csv_service;
 import com.rh.api_rh.util.email_service;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -23,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +46,7 @@ public class funcionario_controller {
     private final log_repository log_repository;
     private final funcionario_repository funcionario_repository;
     private final token_service token_service;
+    private final csv_service csv_service;
 
 
 
@@ -134,9 +138,11 @@ public class funcionario_controller {
     public ResponseEntity<String> excluir(@PathVariable UUID id) {
 
         try {
-            String res = funcionario_service.agendarExclusao(id);
-            if  (res.equals("exlusao agendada")) {
-                return ResponseEntity.ok().body(res);
+
+
+            String res = funcionario_service.excluirdados(id);
+            if  (res.equals("excluido")) {
+                return ResponseEntity.ok().body("Dados do funcionário excluidos");
             } else {
                 return ResponseEntity.badRequest().body(res);
             }
@@ -144,6 +150,27 @@ public class funcionario_controller {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/csvdesligamento/{id}")
+    public void csvdesligamento(@PathVariable UUID id, HttpServletResponse response) {
+
+        try {
+
+            byte[] conteudoCSV = csv_service.gerarCSVdemissao(id);
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition", "attachment; filename=\"espelhos.zip\"");
+            response.setContentLength(conteudoCSV.length);
+
+            OutputStream os = response.getOutputStream();
+            os.write(conteudoCSV);
+            os.flush();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+
     }
 
 

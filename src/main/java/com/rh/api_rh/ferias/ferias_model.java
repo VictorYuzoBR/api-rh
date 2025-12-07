@@ -3,6 +3,8 @@ package com.rh.api_rh.ferias;
 import com.rh.api_rh.funcionario.funcionario_model;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
@@ -16,6 +18,7 @@ public class ferias_model {
 
     @ManyToOne
     @JoinColumn
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private funcionario_model funcionario;
 
     @Column

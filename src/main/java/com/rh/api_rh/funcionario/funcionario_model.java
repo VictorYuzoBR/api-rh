@@ -85,7 +85,7 @@ public class funcionario_model implements UserDetails {
     @JoinColumn(name = "idusuario", referencedColumnName = "id", nullable = false)
     private usuario_model idusuario;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_telefone", referencedColumnName = "id", nullable = false)
     private telefone_model id_telefone;
 

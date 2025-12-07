@@ -6,6 +6,10 @@ import com.rh.api_rh.DTO.cadastro.cadastroFuncionario_dto;
 import com.rh.api_rh.DTO.cadastro.emailnotificarcadastro_dto;
 import com.rh.api_rh.DTO.login.aceitartermo_dto;
 import com.rh.api_rh.candidato.candidato_service;
+import com.rh.api_rh.comunicado.comunicado_funcionario.comunicado_funcionario_model;
+import com.rh.api_rh.comunicado.comunicado_funcionario.comunicado_funcionario_repository;
+import com.rh.api_rh.espelho.espelho_model;
+import com.rh.api_rh.espelho.espelho_repository;
 import com.rh.api_rh.funcionario.endereco.endereco_model;
 import com.rh.api_rh.funcionario.endereco.endereco_repository;
 import com.rh.api_rh.funcionario.endereco.endereco_service;
@@ -56,6 +60,11 @@ public class funcionario_service {
     private fila_exclusao_repository fila_exclusao_repository;
     @Autowired
     private endereco_repository endereco_repository;
+    @Autowired
+    private comunicado_funcionario_repository comunicado_funcionario_repository;
+
+    @Autowired
+    private espelho_repository espelho_repository;
 
     public funcionario_model cadastrar(funcionario_model funcionario) {
 
@@ -124,6 +133,38 @@ public class funcionario_service {
        }
 
     }
+
+    public String excluirdados(UUID id) {
+
+        try {
+
+
+            funcionario_model funcionario =  buscar(id);
+
+            List<espelho_model> espelhos = espelho_repository.findByRegistro(funcionario.getIdusuario().getRegistro());
+            List<comunicado_funcionario_model> comunicados = comunicado_funcionario_repository.findByFuncionario(funcionario);
+
+            for (comunicado_funcionario_model item : comunicados) {
+                comunicado_funcionario_repository.delete(item);
+            }
+
+
+            for  (espelho_model item : espelhos) {
+                espelho_repository.delete(item);
+            }
+
+
+            funcionario_repository.delete(funcionario);
+            return "excluido";
+
+
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+
+    }
+
+
 
     public String agendarExclusao(UUID id) {
 
